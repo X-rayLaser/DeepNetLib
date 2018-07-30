@@ -33,5 +33,5 @@ def step(context):
     xs = [-10, -5, -1, 0, 1, 5, 10]
     for x in xs:
         y = math.sin(x)**2
-        a = context.nnet.feed(x)
-        assert abs(a[0] - y) < 0.1
+        a = context.nnet.feed(np.array([x], float))
+        assert abs(a[0] - y) < 0.1, 'a[0]={}, y={}'.format(a[0], y)

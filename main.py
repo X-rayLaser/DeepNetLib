@@ -2,7 +2,7 @@ import numpy as np
 
 
 def sigma(z):
-    pass
+    return 1.0 / (1.0 + np.exp(z))
 
 
 class NeuralNet:
@@ -32,11 +32,13 @@ class NeuralNet:
             prev_sz = sz
 
     def _feed_next(self, activations, layer):
-        if layer >= len(self._sizes):
+        effective_layers_count = len(self._sizes) - 1
+        if layer >= effective_layers_count:
             return activations
-        z = self._weights[layer] * activations + self._biases[layer]
+
+        z = np.dot(self._weights[layer], activations) + self._biases[layer]
         a = sigma(z)
-        return self.feed(a)
+        return self._feed_next(activations=a, layer=layer+1)
 
     def feed(self, x):
         return self._feed_next(activations=x, layer=0)
