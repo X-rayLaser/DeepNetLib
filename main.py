@@ -19,13 +19,16 @@ class NeuralNet:
         self._sizes = layer_sizes
 
         self._weights = []
-        self._biases = [np.zeros((4,), float), np.zeros((3,), float)]
+        self._biases = []
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
             shape = (sz, prev_sz)
             w = np.zeros(shape, dtype=float)
             self._weights.append(w)
+
+            b = np.zeros((sz,), dtype=float)
+            self._biases.append(b)
             prev_sz = sz
 
     def _feed_next(self, activations, layer):
