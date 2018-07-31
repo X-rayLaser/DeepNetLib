@@ -1,6 +1,7 @@
 import unittest
-from main import NeuralNet
 import numpy as np
+from main import NeuralNet
+import helpers
 
 
 class NeuralNetInitialization(unittest.TestCase):
@@ -68,6 +69,24 @@ class NeuralNetTrain(unittest.TestCase):
         for i in range(len(xes)):
             res = nnet.feed(xes[i])
             self.assertAlmostEqual(res[0], ys[i][0], places=1)
+
+    def test_gives_correct_output_for_unseen_data(self):
+        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+
+        def parabola(x):
+            return x**2
+
+        examples = helpers.generate_data(f=parabola, start_value=-1,
+                                         end_value=1, step_value=0.05)
+
+        nnet.train(examples=examples, epochs=100)
+
+        xval = -0.5000125
+        yval = parabola(xval)
+
+        net_input = np.array([xval], float)
+        output = nnet.feed(net_input)
+        self.assertAlmostEqual(output[0], yval, places=2)
 
 
 if __name__ == '__main__':

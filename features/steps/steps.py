@@ -1,24 +1,19 @@
 from main import NeuralNet
+import helpers
 import numpy as np
 import math
 
 
+def squared_sin_data_set():
+    def f(x):
+        return math.sin(x) ** 2
+
+    return helpers.generate_data(f=f, start_value=-100, end_value=100, step_value=0.1)
+
+
 @when('I generate a data set from a function "sin(x)^2"')
 def step(context):
-    x = []
-    y = []
-
-    val_from = -100
-    val_to = 100
-    incr = 0.1
-    farg = val_from
-    while farg < val_to:
-        v = np.array((1,), float)
-        v[0] = math.sin(farg) ** 2
-        x.append(farg)
-        y.append(v)
-        farg += incr
-    context.training_data = (x, y)
+    context.training_data = squared_sin_data_set()
 
 
 @when('I remember initial cost value for that data set')
@@ -48,21 +43,7 @@ def step(context):
 
 @when('I train neural network to approximate a function "sin(x)^2"')
 def step(context):
-    x = []
-    y = []
-
-    val_from = -100
-    val_to = 100
-    incr = 0.1
-    farg = val_from
-    while farg < val_to:
-        v = np.array((1,), float)
-        v[0] = math.sin(farg)**2
-        x.append(farg)
-        y.append(v)
-        farg += incr
-
-    examples = (x, y)
+    examples = squared_sin_data_set()
     context.nnet.train(examples=examples)
 
 

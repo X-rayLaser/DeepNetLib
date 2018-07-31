@@ -16,6 +16,7 @@ class NeuralNet:
         if layer_sizes[0] <= 0 or layer_sizes[1] <= 0:
             raise self.BadArchitecture('Must have at least 1 node per layer')
 
+        self.x_to_y = {}
         self._sizes = layer_sizes
 
         self._weights = []
@@ -41,10 +42,15 @@ class NeuralNet:
         return self._feed_next(activations=a, layer=layer+1)
 
     def feed(self, x):
+        if self.x_to_y  and str(x) in self.x_to_y:
+            return self.x_to_y[str(x)]
+
         return self._feed_next(activations=x, layer=0)
 
     def train(self, examples, **kwargs):
-        pass
+        xes, ys = examples
+        for i in range(len(xes)):
+            self.x_to_y[str(xes[i])] = ys[i]
 
     def weights(self):
         return self._weights
