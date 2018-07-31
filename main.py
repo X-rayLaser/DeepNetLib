@@ -5,6 +5,21 @@ def sigma(z):
     return 1.0 / (1.0 + np.exp(z))
 
 
+def quadratic_per_example(activation, expected_output):
+    v = activation - expected_output
+    return v.dot(v) / 2.0
+
+
+def quadratic_cost(activations, outputs):
+    vector_len = len(activations)
+
+    s = 0
+    for i in range(vector_len):
+        s += quadratic_per_example(activation=activations[i],
+                                   expected_output=outputs[i])
+    return s / vector_len
+
+
 class NeuralNet:
     class BadArchitecture(Exception):
         pass
@@ -59,4 +74,6 @@ class NeuralNet:
         return self._biases
 
     def get_cost(self, data_set):
-        return 100
+        xes, ys = data_set
+        activations = [self.feed(x) for x in xes]
+        return quadratic_cost(activations=activations, outputs=ys)
