@@ -145,10 +145,7 @@ class BackpropagationTests(unittest.TestCase):
             g2 = grad2[i]
             mtx = g1 - g2
             s = np.abs(mtx).sum()
-            self.assertLess(s, 0.01)
-
-    def _weights_gradient(self, weights, x, y, neural_net):
-        pass
+            self.assertLess(s, 0.001)
 
     def back_propagation_slow(self, examples, neural_net):
         return helpers.back_propagation_slow(examples=examples, neural_net=neural_net)
@@ -157,13 +154,18 @@ class BackpropagationTests(unittest.TestCase):
         nnet = NeuralNet(layer_sizes=[1, 1, 1])
         x = np.array([5], float)
         y = np.array([0.25], float)
-        w_grad, b_grad = helpers.back_propagation_slow_per_example(x, y, neural_net=nnet)
+        examples = ([x], [y])
+        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+
+        w_grad_expected = [np.array([[0]], float), np.array([[1/32]], float)]
+        b_grad_expected = [np.array([[0]], float), np.array([[1/16]], float)]
+
+        self.compareGrads(w_grad, w_grad_expected)
+        self.compareGrads(b_grad, b_grad_expected)
 
     def test_back_propagation(self):
-        nnet = NeuralNet(layer_sizes=[60, 15, 10])
-        xes = [np.array([1, 2, 4, 8], float)]
-        ys = [np.array([1, 0.5, 0.25, 0.125], float)]
-        examples = (xes, ys)
+        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        examples = helpers.generate_random_examples(10, 4, 10)
 
         w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = self.back_propagation_slow(examples=examples, neural_net=nnet)
