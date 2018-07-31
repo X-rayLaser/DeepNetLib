@@ -56,5 +56,19 @@ class NeuralNetFeedforward(unittest.TestCase):
         self.assertEqual(a[1], 0.5)
 
 
+class NeuralNetTrain(unittest.TestCase):
+    def test_gives_correct_output_on_training_data(self):
+        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+
+        xes = [np.array([-10], float), np.array([100], float)]
+        ys = [np.array([0.5], float), np.array([0.75], float)]
+
+        nnet.train(examples=(xes, ys), epochs=100)
+
+        for i in range(len(xes)):
+            res = nnet.feed(xes[i])
+            self.assertAlmostEqual(res[0], ys[i][0], places=1)
+
+
 if __name__ == '__main__':
     unittest.main()
