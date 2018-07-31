@@ -2,7 +2,11 @@ import numpy as np
 
 
 def sigma(z):
-    return 1.0 / (1.0 + np.exp(z))
+    return 1.0 / (1.0 + np.exp(-z))
+
+
+def sigma_prime(z):
+    return sigma(z) * (1 - sigma(z))
 
 
 def quadratic_per_example(activation, expected_output):
@@ -18,6 +22,10 @@ def quadratic_cost(activations, outputs):
         s += quadratic_per_example(activation=activations[i],
                                    expected_output=outputs[i])
     return s / vector_len
+
+
+def back_propagation(examples, neural_net):
+    return [], []
 
 
 class NeuralNet:
@@ -72,6 +80,16 @@ class NeuralNet:
 
     def biases(self):
         return self._biases
+
+    def set_weight(self, layer, row, col, new_value):
+        """layer must be between 1 and number of layers inclusive"""
+        w = self.weights()[layer-1]
+        w[row, col] = new_value
+
+    def set_bias(self, layer, row, new_value):
+        """layer must be between 1 and number of layers inclusive"""
+        b = self.biases()[layer-1]
+        b[row] = new_value
 
     def get_cost(self, data_set):
         xes, ys = data_set

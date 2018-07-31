@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import NeuralNet, quadratic_per_example, quadratic_cost
+from main import NeuralNet, quadratic_per_example, quadratic_cost, back_propagation, sigma, sigma_prime
 import helpers
 
 
@@ -116,6 +116,60 @@ class NeuralNetCost(unittest.TestCase):
         examples = (xes, ys)
         cost = nnet.get_cost(examples)
         self.assertAlmostEqual(cost, 1.0/64, places=4)
+
+
+class SigmoidTests(unittest.TestCase):
+    def test_sigma(self):
+        self.assertAlmostEqual(sigma(0), 0.5, places=2)
+        self.assertAlmostEqual(sigma(50), 1, places=2)
+        self.assertAlmostEqual(sigma(-50), 0, places=2)
+
+        self.assertAlmostEqual(sigma(1), 0.731, places=2)
+        self.assertAlmostEqual(sigma(-1), 0.2689, places=2)
+
+    def test_sigma_prime(self):
+        self.assertAlmostEqual(sigma_prime(0), 0.25, places=3)
+        self.assertAlmostEqual(sigma_prime(-50), 0, places=3)
+        self.assertAlmostEqual(sigma_prime(50), 0, places=3)
+
+        self.assertAlmostEqual(sigma_prime(50), sigma(50) * (1 - sigma(50)), places=3)
+
+
+class BackpropagationTests(unittest.TestCase):
+    def compareGrads(self, grad1, grad2):
+        nmatrices = len(grad1)
+        self.assertEqual(nmatrices, len(grad2))
+
+        for i in range(nmatrices):
+            g1 = grad1[i]
+            g2 = grad2[i]
+            mtx = g1 - g2
+            s = np.abs(mtx).sum()
+            self.assertLess(s, 0.01)
+
+    def _weights_gradient(self, weights, x, y, neural_net):
+        pass
+
+    def back_propagation_slow(self, examples, neural_net):
+        return helpers.back_propagation_slow(examples=examples, neural_net=neural_net)
+
+    def test_back_propagation_slow_per_example(self):
+        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+        x = np.array([5], float)
+        y = np.array([0.25], float)
+        w_grad, b_grad = helpers.back_propagation_slow_per_example(x, y, neural_net=nnet)
+
+    def test_back_propagation(self):
+        nnet = NeuralNet(layer_sizes=[60, 15, 10])
+        xes = [np.array([1, 2, 4, 8], float)]
+        ys = [np.array([1, 0.5, 0.25, 0.125], float)]
+        examples = (xes, ys)
+
+        w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
+        w_grad2, b_grad2 = self.back_propagation_slow(examples=examples, neural_net=nnet)
+
+        self.compareGrads(grad1=w_grad1, grad2=w_grad2)
+        self.compareGrads(grad1=b_grad1, grad2=b_grad2)
 
 
 if __name__ == '__main__':
