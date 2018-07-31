@@ -43,7 +43,7 @@ class NeuralNet:
     def feed(self, x):
         return self._feed_next(activations=x, layer=0)
 
-    def train(self, examples):
+    def train(self, examples, **kwargs):
         pass
 
     def weights(self):
@@ -51,3 +51,6 @@ class NeuralNet:
 
     def biases(self):
         return self._biases
+
+    def get_cost(self, data_set):
+        return 100

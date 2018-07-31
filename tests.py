@@ -1,5 +1,6 @@
 import unittest
 from main import NeuralNet
+import numpy as np
 
 
 class NeuralNetInitialization(unittest.TestCase):
@@ -48,12 +49,11 @@ class NeuralNetInitialization(unittest.TestCase):
 
 class NeuralNetFeedforward(unittest.TestCase):
     def test_feed_after_initialization(self):
-        #nnet = NeuralNet(layer_sizes=[2, 2])
-        #x = 3
-        #a = nnet.feed(x)
-        #self.assertEqual(a[0], 0.5)
-        #self.assertEqual(a[1], 0.5)
-        pass
+        nnet = NeuralNet(layer_sizes=[3, 2, 2])
+        x = np.array([1, 9, 323], float)
+        a = nnet.feed(x)
+        self.assertEqual(a[0], 0.5)
+        self.assertEqual(a[1], 0.5)
 
 
 if __name__ == '__main__':
