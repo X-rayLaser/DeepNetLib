@@ -248,7 +248,13 @@ class HelpersTests(unittest.TestCase):
         self.assertTrue(np.allclose(layer_error, grad))
 
     def test_get_error_in_layer(self):
-        self.fail()
+        nabla_next = np.array([2, 9, 5], float)
+        w_next = np.array([[3, 0], [0, 1], [4, 5]], float)
+        z = np.array([2, -1])
+        nabla = helpers.get_error_in_layer(nabla_next, w_next, z)
+
+        expected_nabla = np.array([2.72983, 6.6848])
+        self.assertTrue(np.allclose(nabla, expected_nabla))
 
 
 class SigmoidTests(unittest.TestCase):

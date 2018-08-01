@@ -139,8 +139,8 @@ def get_bias_gradient(layer_error):
     return layer_error
 
 
-def get_error_in_layer():
-    pass
+def get_error_in_layer(nabla_next, w_next, z):
+    return w_next.T.dot(nabla_next) * main.sigma_prime(z)
 
 
 def gradients_per_example(x, y, neural_net):
