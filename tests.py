@@ -222,7 +222,33 @@ class HelpersTests(unittest.TestCase):
         self.assertAlmostEqual(nabla[0], (a_last - y) * sigma_prime(z_last), places=2)
 
     def test_get_final_layer_error_for_arrays(self):
-        pass
+        z_last = np.array([3, -1], float)
+        y = np.array([0, 0.5], float)
+        a_last = sigma(z_last)
+        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+
+        self.assertAlmostEqual(nabla[0], 0.04, places=2)
+        self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * sigma_prime(z_last[1]),
+                               places=2)
+
+    def test_get_weights_gradient(self):
+        layer_error = np.array([3, 5, 10], float)
+        activations = np.array([0.5, 0.3], float)
+        grad = helpers.get_weights_gradient(layer_error=layer_error,
+                                            previous_layer_activations=activations)
+
+        expected_grad = np.array([[1.5, 0.9], [2.5, 1.5], [5., 3.]], float)
+
+        self.assertTupleEqual(grad.shape, expected_grad.shape)
+        self.assertTrue(np.allclose(grad, expected_grad))
+
+    def test_get_bias_gradient(self):
+        layer_error = np.array([2, 9, 12, 83])
+        grad = helpers.get_bias_gradient(layer_error=layer_error)
+        self.assertTrue(np.allclose(layer_error, grad))
+
+    def test_get_error_in_layer(self):
+        self.fail()
 
 
 class SigmoidTests(unittest.TestCase):

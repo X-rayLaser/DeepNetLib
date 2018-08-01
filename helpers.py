@@ -128,6 +128,21 @@ def get_final_layer_error(a_last, y, z_last):
     return (a_last - y) * main.sigma_prime(z_last)
 
 
+def get_weights_gradient(layer_error, previous_layer_activations):
+    nabla = layer_error
+    a = previous_layer_activations
+
+    return np.outer(nabla, a)
+
+
+def get_bias_gradient(layer_error):
+    return layer_error
+
+
+def get_error_in_layer():
+    pass
+
+
 def gradients_per_example(x, y, neural_net):
     net_layers = neural_net.number_of_layers() - 1
     activations = [x]
@@ -159,7 +174,7 @@ def gradients_per_example(x, y, neural_net):
     blist = neural_net.biases()
     last_layer_index = net_layers - 1
 
-    for layer in range(last_layer_index - 1, -1, step=-1):
+    for layer in range(last_layer_index - 1, -1, -1):
         z = zs.pop()
         w_next = wlist[layer + 1]
         previous_layer_activations = activations.pop()
