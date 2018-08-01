@@ -56,6 +56,28 @@ class NeuralNetFeedforward(unittest.TestCase):
         self.assertEqual(a[0], 0.5)
         self.assertEqual(a[1], 0.5)
 
+    def test_feed_into_layer(self):
+        nnet = NeuralNet(layer_sizes=[2, 3, 2])
+
+        x = np.array([5, 10], float)
+        a, z = nnet.feed_into_layer(x, layer=0)
+
+        self.assertTupleEqual(a.shape, (3,))
+        self.assertTupleEqual(z.shape, (3,))
+        self.assertEqual(z[0], 0)
+        self.assertEqual(z[1], 0)
+        self.assertEqual(a[0], 0.5)
+        self.assertEqual(a[1], 0.5)
+
+        x = np.array([5, 10, 2], float)
+        a, z = nnet.feed_into_layer(x, layer=1)
+        self.assertTupleEqual(a.shape, (2,))
+        self.assertTupleEqual(z.shape, (2,))
+        self.assertEqual(z[0], 0)
+        self.assertEqual(z[1], 0)
+        self.assertEqual(a[0], 0.5)
+        self.assertEqual(a[1], 0.5)
+
 
 class NeuralNetTrain(unittest.TestCase):
     def test_gives_correct_output_on_training_data(self):
@@ -160,7 +182,6 @@ class HelpersTests(unittest.TestCase):
         self.assertTrue(np.all(grad[0] == expected_grad[0]))
         self.assertTrue(np.all(grad[1] == expected_grad[1]))
 
-
     def test_average_gradient(self):
         mtx1 = np.array(
             [[5, 10],
@@ -186,6 +207,22 @@ class HelpersTests(unittest.TestCase):
 
         self.assertTrue(np.all(grad[0] == expected_gradient[0]))
         self.assertTrue(np.all(grad[1] == expected_gradient[1]))
+
+    def test_get_final_layer_error_for_1_element_vectors(self):
+        z_last = np.array([3], float)
+        y = np.array([0], float)
+        a_last = sigma(z_last)
+        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+        self.assertAlmostEqual(nabla[0], 0.04, places=2)
+
+        z_last = np.array([-1], float)
+        y = np.array([0.5], float)
+        a_last = sigma(z_last)
+        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+        self.assertAlmostEqual(nabla[0], (a_last - y) * sigma_prime(z_last), places=2)
+
+    def test_get_final_layer_error_for_arrays(self):
+        pass
 
 
 class SigmoidTests(unittest.TestCase):

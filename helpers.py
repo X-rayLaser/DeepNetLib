@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import main
 
 
 def generate_data(f, start_value, end_value, step_value):
@@ -123,8 +124,53 @@ def gradients_equal(grad1, grad2):
     return True
 
 
+def get_final_layer_error(a_last, y, z_last):
+    return (a_last - y) * main.sigma_prime(z_last)
+
+
 def gradients_per_example(x, y, neural_net):
-    pass
+    net_layers = neural_net.number_of_layers() - 1
+    activations = [x]
+    zs = []
+    a = x
+    for layer in range(net_layers):
+        a, z = neural_net.feed_into_layer(a, layer=layer)
+        activations.append(a)
+        zs.append(z)
+
+    z_L = zs.pop()
+    a = activations.pop()
+    nabla_L = get_final_layer_error(a, y, z_L)
+
+    nabla_next = nabla_L
+
+    weights_gradient = []
+    biases_gradient = []
+
+    previous_layer_activations = activations.pop()
+    wg = get_weights_gradient(layer_error=nabla_L,
+                              previous_layer_activations=previous_layer_activations)
+    weights_gradient.append(wg)
+
+    bg = get_bias_gradient(layer_error=nabla_L)
+    biases_gradient.append(bg)
+
+    wlist = neural_net.weights()
+    blist = neural_net.biases()
+    last_layer_index = net_layers - 1
+
+    for layer in range(last_layer_index - 1, -1, step=-1):
+        z = zs.pop()
+        w_next = wlist[layer + 1]
+        previous_layer_activations = activations.pop()
+        nabla = get_error_in_layer(nabla_next, w_next, z)
+        wg = get_weights_gradient(layer_error=nabla,
+                                  previous_layer_activations=previous_layer_activations)
+        bg = get_bias_gradient(layer_error=nabla)
+        nabla_next = nabla
+
+        weights_gradient.append(wg)
+        biases_gradient.append(bg)
 
 
 def zero_gradients_list(neural_net):

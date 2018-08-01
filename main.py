@@ -6,6 +6,13 @@ def sigma(z):
     return 1.0 / (1.0 + np.exp(-z))
 
 
+def weighed_sum(weights, activations, biases):
+    w = weights
+    a = activations
+    b = biases
+    return np.dot(w, a) + b
+
+
 def sigma_prime(z):
     return sigma(z) * (1 - sigma(z))
 
@@ -78,7 +85,9 @@ class NeuralNet:
         if layer >= effective_layers_count:
             return activations
 
-        z = np.dot(self._weights[layer], activations) + self._biases[layer]
+        z = weighed_sum(weights=self._weights[layer], activations=activations,
+                        biases=self._biases[layer])
+
         a = sigma(z)
         return self._feed_next(activations=a, layer=layer+1)
 
@@ -87,6 +96,13 @@ class NeuralNet:
             return self.x_to_y[str(x)]
 
         return self._feed_next(activations=x, layer=0)
+
+    def feed_into_layer(self, x, layer):
+        """count starts from first hidden layer"""
+        z = weighed_sum(weights=self._weights[layer], activations=x,
+                        biases=self._biases[layer])
+        a = sigma(z)
+        return a, z
 
     def train(self, examples, **kwargs):
         xes, ys = examples
@@ -98,6 +114,10 @@ class NeuralNet:
 
     def biases(self):
         return self._biases
+
+    def number_of_layers(self):
+        """Returns total number of layers, including input and output layers"""
+        return len(self._biases) + 1
 
     def set_weight(self, layer, row, col, new_value):
         """layer must be between 1 and number of layers inclusive"""
