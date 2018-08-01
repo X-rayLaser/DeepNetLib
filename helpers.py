@@ -121,3 +121,31 @@ def gradients_equal(grad1, grad2):
         if s > 0.001:
             return False
     return True
+
+
+def gradients_per_example(x, y, neural_net):
+    pass
+
+
+def zero_gradients_list(neural_net):
+    weights_grad = []
+    biases_grad = []
+    wlist = neural_net.weights()
+    blist = neural_net.biases()
+
+    for i in range(len(wlist)):
+        wshape = wlist[i].shape
+        weights_grad.append(np.zeros(wshape))
+
+        bshape = blist[i].shape
+        biases_grad.append(np.zeros(bshape))
+
+    return weights_grad, biases_grad
+
+
+def update_total_gradients(summed_gradients, new_gradients):
+    pass
+
+
+def average_gradient():
+    pass

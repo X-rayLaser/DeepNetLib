@@ -118,6 +118,27 @@ class NeuralNetCost(unittest.TestCase):
         self.assertAlmostEqual(cost, 1.0/64, places=4)
 
 
+class HelpersTests(unittest.TestCase):
+    def test_zero_gradients_list(self):
+        nnet = NeuralNet(layer_sizes=[3, 5, 4])
+        weights_grads, biases_grads = helpers.zero_gradients_list(neural_net=nnet)
+        nmatrices = len(weights_grads)
+        self.assertEqual(nmatrices, len(biases_grads))
+
+        self.assertTupleEqual(weights_grads[0].shape, (5, 3))
+        self.assertTupleEqual(weights_grads[1].shape, (4, 5))
+
+        self.assertTupleEqual(biases_grads[0].shape, (5,))
+        self.assertTupleEqual(biases_grads[1].shape, (4,))
+
+        for w in weights_grads:
+            self.assertAlmostEqual(w.sum(), 0, places=8)
+
+        for b in biases_grads:
+            self.assertAlmostEqual(b.sum(), 0, places=8)
+
+
+
 class SigmoidTests(unittest.TestCase):
     def test_sigma(self):
         self.assertAlmostEqual(sigma(0), 0.5, places=2)
