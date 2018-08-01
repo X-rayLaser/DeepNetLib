@@ -136,16 +136,8 @@ class SigmoidTests(unittest.TestCase):
 
 
 class BackpropagationTests(unittest.TestCase):
-    def compareGrads(self, grad1, grad2):
-        nmatrices = len(grad1)
-        self.assertEqual(nmatrices, len(grad2))
-
-        for i in range(nmatrices):
-            g1 = grad1[i]
-            g2 = grad2[i]
-            mtx = g1 - g2
-            s = np.abs(mtx).sum()
-            self.assertLess(s, 0.001)
+    def compare_grads(self, grad1, grad2):
+        self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
     def back_propagation_slow(self, examples, neural_net):
         return helpers.back_propagation_slow(examples=examples, neural_net=neural_net)
@@ -160,8 +152,8 @@ class BackpropagationTests(unittest.TestCase):
         w_grad_expected = [np.array([[0]], float), np.array([[1/32]], float)]
         b_grad_expected = [np.array([[0]], float), np.array([[1/16]], float)]
 
-        self.compareGrads(w_grad, w_grad_expected)
-        self.compareGrads(b_grad, b_grad_expected)
+        self.compare_grads(w_grad, w_grad_expected)
+        self.compare_grads(b_grad, b_grad_expected)
 
     def test_back_propagation(self):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
@@ -170,8 +162,8 @@ class BackpropagationTests(unittest.TestCase):
         w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = self.back_propagation_slow(examples=examples, neural_net=nnet)
 
-        self.compareGrads(grad1=w_grad1, grad2=w_grad2)
-        self.compareGrads(grad1=b_grad1, grad2=b_grad2)
+        self.compare_grads(grad1=w_grad1, grad2=w_grad2)
+        self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
 
 if __name__ == '__main__':

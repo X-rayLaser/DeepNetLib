@@ -25,6 +25,7 @@ def quadratic_cost(activations, outputs):
 
 
 def back_propagation(examples, neural_net):
+
     return [], []
 
 
@@ -90,6 +91,15 @@ class NeuralNet:
         """layer must be between 1 and number of layers inclusive"""
         b = self.biases()[layer-1]
         b[row] = new_value
+
+    def randomize_parameters(self):
+        return
+        for i in range(len(self._weights)):
+            rows, cols = self._weights[i].shape
+            self._weights[i] = np.random.rand(rows, cols)
+
+            rows, = self._biases[i].shape
+            self._biases[i] = np.random.rand(rows, 1)
 
     def get_cost(self, data_set):
         xes, ys = data_set

@@ -1,4 +1,4 @@
-from main import NeuralNet
+from main import NeuralNet, back_propagation
 import helpers
 import numpy as np
 import math
@@ -54,3 +54,29 @@ def step(context):
         y = math.sin(x)**2
         a = context.nnet.feed(np.array([x], float))
         assert abs(a[0] - y) < 0.1, 'a[0]={}, y={}'.format(a[0], y)
+
+
+@when("I randomly initialize net's parameters")
+def step(context):
+    context.nnet.randomize_parameters()
+
+
+@when('I compute the gradient for weights and biases by running back propagation')
+def step(context):
+    context.back_prop_gradients = back_propagation(examples=context.training_data,
+                                                   neural_net=context.nnet)
+
+
+@when('I compute the gradient for weights and biases by taking numerical derivatives')
+def step(context):
+    context.numerical_gradients = helpers.back_propagation_slow(
+        examples=context.training_data, neural_net=context.nnet
+    )
+
+
+@then('these two sets of gradients are the same')
+def step(context):
+    wgrad1, bgrad1 = context.back_prop_gradients
+    wgrad2, bgrad2 = context.numerical_gradients
+    helpers.gradients_equal(wgrad1, wgrad2)
+    helpers.gradients_equal(bgrad1, bgrad2)

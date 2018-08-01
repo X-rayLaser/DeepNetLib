@@ -105,3 +105,19 @@ def back_propagation_slow(examples, neural_net):
             bias_grad[layer] = _bias_gradient(examples, neural_net, layer, row)
 
     return weight_grad, bias_grad
+
+
+def gradients_equal(grad1, grad2):
+    nmatrices = len(grad1)
+
+    if nmatrices != len(grad2):
+        return False
+
+    for i in range(nmatrices):
+        g1 = grad1[i]
+        g2 = grad2[i]
+        mtx = g1 - g2
+        s = np.abs(mtx).sum()
+        if s > 0.001:
+            return False
+    return True
