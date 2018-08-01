@@ -154,5 +154,9 @@ def update_total_gradients(summed_gradients_list, new_gradients_list):
     return res_list
 
 
-def average_gradient():
-    pass
+def average_gradient(gradient_sum, examples_count):
+    res_list = []
+    for i in range(len(gradient_sum)):
+        res_list.append(gradient_sum[i] / float(examples_count))
+
+    return res_list

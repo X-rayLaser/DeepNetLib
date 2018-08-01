@@ -161,6 +161,33 @@ class HelpersTests(unittest.TestCase):
         self.assertTrue(np.all(grad[1] == expected_grad[1]))
 
 
+    def test_average_gradient(self):
+        mtx1 = np.array(
+            [[5, 10],
+             [2, 4]], float
+        )
+
+        mtx2 = np.array([[1, 2, 4]], float)
+        gradient_sum = [mtx1, mtx2]
+
+        mtx1_expected = np.array(
+            [[1, 2],
+             [0.4, 0.8]], float
+        )
+
+        mtx2_expected = np.array([[0.2, 0.4, 0.8]], float)
+
+        expected_gradient = [mtx1_expected, mtx2_expected]
+        grad = helpers.average_gradient(gradient_sum=gradient_sum, examples_count=5)
+
+        self.assertEqual(len(grad), 2)
+        self.assertTupleEqual(grad[0].shape, (2, 2))
+        self.assertTupleEqual(grad[1].shape, (1, 3))
+
+        self.assertTrue(np.all(grad[0] == expected_gradient[0]))
+        self.assertTrue(np.all(grad[1] == expected_gradient[1]))
+
+
 class SigmoidTests(unittest.TestCase):
     def test_sigma(self):
         self.assertAlmostEqual(sigma(0), 0.5, places=2)
