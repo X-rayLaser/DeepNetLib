@@ -143,8 +143,15 @@ def zero_gradients_list(neural_net):
     return weights_grad, biases_grad
 
 
-def update_total_gradients(summed_gradients, new_gradients):
-    pass
+def update_total_gradients(summed_gradients_list, new_gradients_list):
+    summed_len = len(summed_gradients_list)
+    new_len = len(new_gradients_list)
+    assert summed_len == new_len
+
+    res_list = []
+    for i in range(summed_len):
+        res_list.append(summed_gradients_list[i] + new_gradients_list[i])
+    return res_list
 
 
 def average_gradient():

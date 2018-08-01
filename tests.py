@@ -120,16 +120,19 @@ class NeuralNetCost(unittest.TestCase):
 
 class HelpersTests(unittest.TestCase):
     def test_zero_gradients_list(self):
-        nnet = NeuralNet(layer_sizes=[3, 5, 4])
+        nnet = NeuralNet(layer_sizes=[3, 5, 4, 1])
         weights_grads, biases_grads = helpers.zero_gradients_list(neural_net=nnet)
         nmatrices = len(weights_grads)
+        self.assertEqual(nmatrices, 3)
         self.assertEqual(nmatrices, len(biases_grads))
 
         self.assertTupleEqual(weights_grads[0].shape, (5, 3))
         self.assertTupleEqual(weights_grads[1].shape, (4, 5))
+        self.assertTupleEqual(weights_grads[2].shape, (1, 4))
 
         self.assertTupleEqual(biases_grads[0].shape, (5,))
         self.assertTupleEqual(biases_grads[1].shape, (4,))
+        self.assertTupleEqual(biases_grads[2].shape, (1,))
 
         for w in weights_grads:
             self.assertAlmostEqual(w.sum(), 0, places=8)
@@ -137,6 +140,25 @@ class HelpersTests(unittest.TestCase):
         for b in biases_grads:
             self.assertAlmostEqual(b.sum(), 0, places=8)
 
+    def test_update_total_gradients(self):
+        grad_total = [np.array([[100, 120, 130], [50, 10, 60]], int),
+                      np.array([[10, 20], [10, 10]], int)]
+
+        grad_last = [np.array([[5, 10, 20], [10, 10, 10]], int),
+                     np.array([[1, 1], [2, 4]], int)]
+
+        grad = helpers.update_total_gradients(summed_gradients_list=grad_total,
+                                              new_gradients_list=grad_last)
+
+        expected_grad = [np.array([[105, 130, 150], [60, 20, 70]], int),
+                         np.array([[11, 21], [12, 14]], int)]
+
+        self.assertEqual(len(grad), 2)
+        self.assertTupleEqual(grad[0].shape, (2, 3))
+        self.assertTupleEqual(grad[1].shape, (2, 2))
+
+        self.assertTrue(np.all(grad[0] == expected_grad[0]))
+        self.assertTrue(np.all(grad[1] == expected_grad[1]))
 
 
 class SigmoidTests(unittest.TestCase):

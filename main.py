@@ -35,8 +35,10 @@ def back_propagation(examples, neural_net):
         x = xes[i]
         y = ys[i]
         wgrad, bgrad = helpers.gradients_per_example(x, y, neural_net=neural_net)
-        helpers.update_total_gradients(weights_grad, wgrad)
-        helpers.update_total_gradients(biases_grad, bgrad)
+        weights_grad = helpers.update_total_gradients(summed_gradients_list=weights_grad,
+                                                      new_gradients_list=wgrad)
+        biases_grad = helpers.update_total_gradients(summed_gradients_list=biases_grad,
+                                                     new_gradients_list=bgrad)
 
     helpers.average_gradient(weights_grad, examples_count)
     helpers.average_gradient(biases_grad, examples_count)
