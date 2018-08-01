@@ -187,6 +187,10 @@ def gradients_per_example(x, y, neural_net):
         weights_gradient.append(wg)
         biases_gradient.append(bg)
 
+    weights_gradient.reverse()
+    biases_gradient.reverse()
+    return weights_gradient, biases_gradient
+
 
 def zero_gradients_list(neural_net):
     weights_grad = []
