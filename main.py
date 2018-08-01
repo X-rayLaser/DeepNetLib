@@ -93,13 +93,12 @@ class NeuralNet:
         b[row] = new_value
 
     def randomize_parameters(self):
-        return
         for i in range(len(self._weights)):
             rows, cols = self._weights[i].shape
             self._weights[i] = np.random.rand(rows, cols)
 
             rows, = self._biases[i].shape
-            self._biases[i] = np.random.rand(rows, 1)
+            self._biases[i] = np.random.rand(rows)
 
     def get_cost(self, data_set):
         xes, ys = data_set

@@ -78,5 +78,5 @@ def step(context):
 def step(context):
     wgrad1, bgrad1 = context.back_prop_gradients
     wgrad2, bgrad2 = context.numerical_gradients
-    helpers.gradients_equal(wgrad1, wgrad2)
-    helpers.gradients_equal(bgrad1, bgrad2)
+    assert helpers.gradients_equal(wgrad1, wgrad2)
+    assert helpers.gradients_equal(bgrad1, bgrad2)
