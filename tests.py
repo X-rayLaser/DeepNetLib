@@ -258,9 +258,37 @@ class HelpersTests(unittest.TestCase):
 
     def test_compute_activations_and_zsums(self):
         nnet = NeuralNet(layer_sizes=[2, 3, 2])
-        x = np.array([0.5, 3])
-        #nnet.set_weight(layer=1)
-        #helpers.compute_activations_and_zsums(x=x, neural_net=nnet)
+        x = np.array([0.5, 3], float)
+        nnet.randomize_parameters()
+
+        a, zs = helpers.compute_activations_and_zsums(x=x, neural_net=nnet)
+        expected_activations = nnet.feed(x=x)
+        self.assertTrue(np.allclose(a[-1], expected_activations))
+
+    def test_compute_errors(self):
+        nnet = NeuralNet(layer_sizes=[1, 2, 1])
+        nnet.set_weight(layer=1, row=0, col=0, new_value=-0.5)
+        nnet.set_weight(layer=1, row=1, col=0, new_value=1.5)
+        nnet.set_weight(layer=2, row=0, col=1, new_value=5)
+
+        nnet.set_bias(layer=1, row=0, new_value=1)
+        nnet.set_bias(layer=2, row=0, new_value=-1)
+
+        x = np.array([2], float)
+
+        y = np.array([1], float)
+
+        a, zs = helpers.compute_activations_and_zsums(x=x, neural_net=nnet)
+
+        errors_list = helpers.compute_errors(neural_net=nnet, output_activations=a[-1],
+                                             expected_output=y, weighed_sums=zs)
+
+        expected_nabla2 = (a[-1] - y) * sigma_prime(zs[-1])
+        expected_nabla1 = helpers.get_error_in_layer(nabla_next=expected_nabla2,
+                                                     w_next=np.array([[0, 5]]), z=zs[0])
+
+        self.assertTrue(np.allclose(errors_list[0], expected_nabla1))
+        self.assertTrue(np.allclose(errors_list[1], expected_nabla2))
 
 
 class SetWeight(unittest.TestCase):
