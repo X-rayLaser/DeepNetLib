@@ -107,10 +107,9 @@ class NeuralNet:
         a = sigma(z)
         return a, z
 
-    def train(self, examples, **kwargs):
-        xes, ys = examples
+    def train(self, examples, nepochs=1):
         descent = GradientDescent(neural_net=self)
-        descent.train(examples=examples, nepochs=1)
+        descent.train(examples=examples, nepochs=nepochs)
 
     def weights(self):
         return self._weights
@@ -158,7 +157,7 @@ class NeuralNet:
 class GradientDescent:
     def __init__(self, neural_net):
         self._nnet= neural_net
-        self._rate = 0.01
+        self._rate = 3
 
     def update_weights(self, weight_gradient):
         weights = self._nnet.weights()
@@ -176,4 +175,5 @@ class GradientDescent:
         self.update_biases(bias_gradient=bgrad)
 
     def train(self, examples, nepochs):
-        pass
+        for i in range(nepochs):
+            self.training_epoch(examples=examples)

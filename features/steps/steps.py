@@ -8,7 +8,7 @@ def squared_sin_data_set():
     def f(x):
         return math.sin(x) ** 2
 
-    return helpers.generate_data(f=f, start_value=-100, end_value=100, step_value=0.1)
+    return helpers.generate_data(f=f, start_value=0, end_value=6.28, step_value=0.05)
 
 
 @when('I generate a data set from a function "sin(x)^2"')
@@ -25,7 +25,7 @@ def step(context):
 @when('I train neural network on that data set for {nepoch} epochs')
 def step(context, nepoch):
     data = context.training_data
-    context.nnet.train(training_epochs=nepoch, examples=data)
+    context.nnet.train(nepochs=int(nepoch), examples=data)
 
 
 @then('the cost function gives much smaller error value than before')
