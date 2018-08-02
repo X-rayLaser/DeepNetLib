@@ -34,7 +34,7 @@ def quadratic_cost(activations, outputs):
 
 def back_propagation(examples, neural_net):
     xes, ys = examples
-    examples_count = len(examples)
+    examples_count = len(ys)
 
     weights_grad, biases_grad = helpers.zero_gradients_list(neural_net)
 

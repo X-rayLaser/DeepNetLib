@@ -96,14 +96,14 @@ def back_propagation_slow(examples, neural_net):
         rows, cols = wlist[layer].shape
         for i in range(rows):
             for j in range(cols):
-                weight_grad[layer] = _weight_gradient(examples, neural_net, layer, i, j)
+                weight_grad[layer][i][j] = _weight_gradient(examples, neural_net, layer, i, j)
 
     for layer in range(nmatrices):
         bias_grad.append(np.zeros(blist[layer].shape))
 
         rows, = blist[layer].shape
         for row in range(rows):
-            bias_grad[layer] = _bias_gradient(examples, neural_net, layer, row)
+            bias_grad[layer][row] = _bias_gradient(examples, neural_net, layer, row)
 
     return weight_grad, bias_grad
 
