@@ -57,6 +57,9 @@ class NeuralNet:
     class BadArchitecture(Exception):
         pass
 
+    class LayerOutOfBound(Exception):
+        pass
+
     def __init__(self, layer_sizes):
         if len(layer_sizes) < 3:
             raise self.BadArchitecture('Must be at least 3 layers')
@@ -120,7 +123,12 @@ class NeuralNet:
         return len(self._biases) + 1
 
     def set_weight(self, layer, row, col, new_value):
-        """layer must be between 1 and number of layers inclusive"""
+        """layer must be between 1 and number of layers exclusive"""
+        if layer < 1 or layer >= self.number_of_layers():
+            raise self.LayerOutOfBound(
+                'layer must be between 1 and number of layers exclusive'
+            )
+
         w = self.weights()[layer-1]
         w[row, col] = new_value
 
