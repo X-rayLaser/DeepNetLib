@@ -109,8 +109,8 @@ class NeuralNet:
 
     def train(self, examples, **kwargs):
         xes, ys = examples
-        for i in range(len(xes)):
-            self.x_to_y[str(xes[i])] = ys[i]
+        descent = GradientDescent(neural_net=self)
+        descent.train(examples=examples, nepochs=1)
 
     def weights(self):
         return self._weights
@@ -153,3 +153,25 @@ class NeuralNet:
         xes, ys = data_set
         activations = [self.feed(x) for x in xes]
         return quadratic_cost(activations=activations, outputs=ys)
+
+
+class GradientDescent:
+    def __init__(self, neural_net):
+        self._nnet= neural_net
+        self._rate = 0.01
+
+    def update_weights(self, weight_gradient):
+        weights = self._nnet.weights()
+        for i in range(len(weights)):
+            weights[i] -= self._rate * weight_gradient[i]
+
+    def update_biases(self, bias_gradient):
+        biases = self._nnet.biases()
+        for i in range(len(biases)):
+            biases[i] -= self._rate * bias_gradient[i]
+
+    def training_epoch(self, examples):
+        pass
+
+    def train(self, examples, nepochs):
+        pass

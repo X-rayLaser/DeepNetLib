@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import NeuralNet, quadratic_per_example, quadratic_cost, back_propagation, sigma, sigma_prime
+from main import NeuralNet, GradientDescent, quadratic_per_example, quadratic_cost, back_propagation, sigma, sigma_prime
 import helpers
 
 
@@ -478,6 +478,58 @@ class BackpropagationTests(unittest.TestCase):
         self.assertIsInstance(b_grad, list)
         self.assertIsInstance(b_grad[0], np.ndarray)
         self.assertIsInstance(b_grad[1], np.ndarray)
+
+    def test_back_propagation_returns_correct_gradient_shape(self):
+        nnet = NeuralNet(layer_sizes=[3, 2, 2, 5])
+        x = np.array([5, 2, -0.5], float)
+        y = np.array([0.25, 0, 0, 0.7, 0.2], float)
+        examples = ([x], [y])
+        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+        self.assertEqual(len(w_grad), 3)
+        self.assertEqual(len(b_grad), 3)
+        self.assertTupleEqual(w_grad[0].shape, (2, 3))
+        self.assertTupleEqual(w_grad[1].shape, (2, 2))
+        self.assertTupleEqual(w_grad[2].shape, (5, 2))
+
+        self.assertTupleEqual(b_grad[0].shape, (2,))
+        self.assertTupleEqual(b_grad[1].shape, (2,))
+        self.assertTupleEqual(b_grad[2].shape, (5,))
+
+
+class GradientDescentTest(unittest.TestCase):
+    def setUp(self):
+        x = np.array([5, 2], float)
+        y = np.array([0.25, 0, 1], float)
+        self.examples = ([x], [y])
+        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        nnet.randomize_parameters()
+        self.nnet = nnet
+        self.grad_descent = GradientDescent(neural_net=nnet)
+
+    def test_init(self):
+        nnet = NeuralNet(layer_sizes=[2, 3, 5])
+        grad_descent = GradientDescent(neural_net=nnet)
+
+    def test_update_weights_decreases_cost(self):
+        cost_before = self.nnet.get_cost(self.examples)
+
+        for i in range(5):
+            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            self.grad_descent.update_weights(weight_gradient=w_grad)
+            self.grad_descent.update_biases(bias_gradient=b_grad)
+
+        cost_after = self.nnet.get_cost(self.examples)
+        self.assertLess(cost_after, cost_before)
+
+    def test_update_biases_decreases_cost(self):
+        cost_before = self.nnet.get_cost(self.examples)
+
+        for i in range(5):
+            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            self.grad_descent.update_biases(bias_gradient=b_grad)
+
+        cost_after = self.nnet.get_cost(self.examples)
+        self.assertLess(cost_after, cost_before)
 
 
 if __name__ == '__main__':
