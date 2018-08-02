@@ -143,7 +143,7 @@ def get_error_in_layer(nabla_next, w_next, z):
     return w_next.T.dot(nabla_next) * main.sigma_prime(z)
 
 
-def gradients_per_example(x, y, neural_net):
+def compute_activations_and_zsums(x, neural_net):
     net_layers = neural_net.number_of_layers() - 1
     activations = [x]
     zs = []
@@ -152,43 +152,56 @@ def gradients_per_example(x, y, neural_net):
         a, z = neural_net.feed_into_layer(a, layer=layer)
         activations.append(a)
         zs.append(z)
+    return activations, zs
+
+
+def compute_errors(neural_net, output_activations, expected_output, weighed_sums):
+    zs = list(weighed_sums)
 
     z_L = zs.pop()
-    a = activations.pop()
+    a = output_activations
+    y = expected_output
     nabla_L = get_final_layer_error(a, y, z_L)
 
-    nabla_next = nabla_L
-
-    weights_gradient = []
-    biases_gradient = []
-
-    previous_layer_activations = activations.pop()
-    wg = get_weights_gradient(layer_error=nabla_L,
-                              previous_layer_activations=previous_layer_activations)
-    weights_gradient.append(wg)
-
-    bg = get_bias_gradient(layer_error=nabla_L)
-    biases_gradient.append(bg)
-
-    wlist = neural_net.weights()
-    blist = neural_net.biases()
+    net_layers = neural_net.number_of_layers() - 1
     last_layer_index = net_layers - 1
+
+    errors = [nabla_L]
+
+    nabla_next = nabla_L
+    wlist = neural_net.weights()
 
     for layer in range(last_layer_index - 1, -1, -1):
         z = zs.pop()
         w_next = wlist[layer + 1]
-        previous_layer_activations = activations.pop()
         nabla = get_error_in_layer(nabla_next, w_next, z)
+        errors.append(nabla)
+        nabla_next = nabla
+
+    errors.reverse()
+    return errors
+
+
+def gradients_per_example(x, y, neural_net):
+    weights_gradient = []
+    biases_gradient = []
+    net_layers = neural_net.number_of_layers() - 1
+
+    activations, weighed_sums = compute_activations_and_zsums(x=x, neural_net=neural_net)
+
+    layer_errors = compute_errors(neural_net=neural_net, output_activations=activations[-1],
+                                  expected_output=y, weighed_sums=weighed_sums)
+
+    for layer in range(net_layers):
+        previous_layer_activations = activations[layer]
+        nabla = layer_errors[layer]
         wg = get_weights_gradient(layer_error=nabla,
                                   previous_layer_activations=previous_layer_activations)
         bg = get_bias_gradient(layer_error=nabla)
-        nabla_next = nabla
 
         weights_gradient.append(wg)
         biases_gradient.append(bg)
 
-    weights_gradient.reverse()
-    biases_gradient.reverse()
     return weights_gradient, biases_gradient
 
 
