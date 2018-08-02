@@ -133,7 +133,11 @@ class NeuralNet:
         w[row, col] = new_value
 
     def set_bias(self, layer, row, new_value):
-        """layer must be between 1 and number of layers inclusive"""
+        """layer must be between 1 and number of layers exclusive"""
+        if layer < 1 or layer >= self.number_of_layers():
+            raise self.LayerOutOfBound(
+                'layer must be between 1 and number of layers exclusive'
+            )
         b = self.biases()[layer-1]
         b[row] = new_value
 
