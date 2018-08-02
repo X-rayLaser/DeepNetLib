@@ -531,6 +531,33 @@ class GradientDescentTest(unittest.TestCase):
         cost_after = self.nnet.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
 
+    def test_update_with_multiple_examples(self):
+        cost_before = self.nnet.get_cost(self.examples)
+
+        self.examples = ([np.array([5, 2], float), np.array([5, 22], float)],
+                         [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+
+        for i in range(5):
+            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            self.grad_descent.update_weights(weight_gradient=w_grad)
+            self.grad_descent.update_biases(bias_gradient=b_grad)
+
+        cost_after = self.nnet.get_cost(self.examples)
+        self.assertLess(cost_after, cost_before)
+
+    def test_training_epoch_1_example(self):
+        cost_before = self.nnet.get_cost(self.examples)
+        self.grad_descent.training_epoch(examples=self.examples)
+        cost_after = self.nnet.get_cost(self.examples)
+        self.assertLess(cost_after, cost_before)
+
+    def test_training_epoch_2_examples(self):
+        self.examples = ([np.array([5, 2], float), np.array([5, 22], float)],
+                         [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+        cost_before = self.nnet.get_cost(self.examples)
+        self.grad_descent.training_epoch(examples=self.examples)
+        cost_after = self.nnet.get_cost(self.examples)
+        self.assertLess(cost_after, cost_before)
 
 if __name__ == '__main__':
     unittest.main()

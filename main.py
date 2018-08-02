@@ -171,7 +171,9 @@ class GradientDescent:
             biases[i] -= self._rate * bias_gradient[i]
 
     def training_epoch(self, examples):
-        pass
+        wgrad, bgrad = back_propagation(examples=examples, neural_net=self._nnet)
+        self.update_weights(weight_gradient=wgrad)
+        self.update_biases(bias_gradient=bgrad)
 
     def train(self, examples, nepochs):
         pass
