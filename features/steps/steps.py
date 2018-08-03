@@ -2,6 +2,7 @@ from main import NeuralNet, back_propagation
 import helpers
 import numpy as np
 import math
+import backprop_slow
 
 
 def squared_sin_data_set():
@@ -70,7 +71,7 @@ def step(context):
 
 @when('I compute the gradient for weights and biases by taking numerical derivatives')
 def step(context):
-    context.numerical_gradients = helpers.back_propagation_slow(
+    context.numerical_gradients = backprop_slow.back_propagation_slow(
         examples=context.training_data, neural_net=context.nnet
     )
 

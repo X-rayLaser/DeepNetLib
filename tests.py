@@ -4,6 +4,7 @@ from main import NeuralNet, GradientDescent, quadratic_per_example, quadratic_co
 from backprop import back_propagation
 import helpers
 import backprop
+import backprop_slow
 
 
 class NeuralNetInitialization(unittest.TestCase):
@@ -410,14 +411,14 @@ class BackpropagationTests(unittest.TestCase):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
     def back_propagation_slow(self, examples, neural_net):
-        return helpers.back_propagation_slow(examples=examples, neural_net=neural_net)
+        return backprop_slow.back_propagation_slow(examples=examples, neural_net=neural_net)
 
     def test_back_propagation_slow(self):
         nnet = NeuralNet(layer_sizes=[1, 1, 1])
         x = np.array([5], float)
         y = np.array([0.25], float)
         examples = ([x], [y])
-        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         w_grad_expected = [np.array([[0]], float), np.array([[1/32]], float)]
         b_grad_expected = [np.array([[0]], float), np.array([[1/16]], float)]
@@ -431,7 +432,7 @@ class BackpropagationTests(unittest.TestCase):
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
         self.assertIsInstance(w_grad, list)
         self.assertIsInstance(w_grad[0], np.ndarray)
         self.assertIsInstance(w_grad[1], np.ndarray)
@@ -445,7 +446,7 @@ class BackpropagationTests(unittest.TestCase):
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
         self.assertEqual(len(w_grad), 3)
         self.assertEqual(len(b_grad), 3)
         self.assertTupleEqual(w_grad[0].shape, (2, 3))
@@ -486,7 +487,7 @@ class BackpropagationTests(unittest.TestCase):
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        w_grad, b_grad = helpers.back_propagation_slow(examples=examples, neural_net=nnet)
+        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
         self.assertEqual(len(w_grad), 3)
         self.assertEqual(len(b_grad), 3)
         self.assertTupleEqual(w_grad[0].shape, (2, 3))
