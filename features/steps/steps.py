@@ -81,3 +81,73 @@ def step(context):
     wgrad2, bgrad2 = context.numerical_gradients
     assert helpers.gradients_equal(wgrad1, wgrad2)
     assert helpers.gradients_equal(bgrad1, bgrad2)
+
+
+def examples_drawn_from_distributions(number_of_examples, seq_len, create_example):
+    inputs = []
+    outputs = []
+    for n in range(number_of_examples):
+        x, y = create_example(seq_len)
+        inputs.append(x)
+        outputs.append(y)
+
+    return (inputs, outputs)
+
+
+def create_example(slen):
+    import random
+    sr = random.SystemRandom()
+
+    num_of_distrib = 3
+
+    rv = sr.randint(0, num_of_distrib - 1)
+    y = np.zeros((num_of_distrib,))
+    y[rv] = 1.0
+
+    if rv == 0:
+        x = np.random.rand(slen)
+    elif rv == 1:
+        x = np.random.randn(slen)
+    elif rv == 2:
+        x = np.random.geometric(p=0.25, size=slen)
+    return x, y
+
+
+@when('I generate a data set consisting of sequences of length {seq_len} drawn from different distributions')
+def step(context, seq_len):
+    slen = int(seq_len)
+
+    context.training_data = examples_drawn_from_distributions(
+        number_of_examples=200, seq_len=slen, create_example=create_example
+    )
+
+    context.test_data = examples_drawn_from_distributions(
+        number_of_examples=50, seq_len=slen, create_example=create_example
+    )
+
+
+@when('I initialize a neural net for binary classification with sizes {sizes_csv}')
+def step(context, sizes_csv):
+    sizes = [int(sz) for sz in sizes_csv.split(',')]
+
+    context.nnet = NeuralNet(layer_sizes=sizes)
+
+
+@then('neural net gives less than {classification_error}% classification error on test data set')
+def step(context, classification_error):
+    required_accuracy = 100 - int(classification_error)
+
+    (x_list, y_list) = context.test_data
+
+    num_of_examples = len(y_list)
+    matches = 0
+    for i in range(num_of_examples):
+        a = context.nnet.feed(x_list[i])
+        index = np.argmax(a)
+        expected_index = np.argmax(y_list[i])
+        if index == expected_index:
+            matches += 1
+
+    accuracy = float(matches) / num_of_examples * 100
+    print('accuracy:', accuracy)
+    assert accuracy >= required_accuracy
