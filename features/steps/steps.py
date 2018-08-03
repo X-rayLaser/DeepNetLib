@@ -1,4 +1,5 @@
-from main import NeuralNet, back_propagation
+from main import NeuralNet
+from backprop import back_propagation
 import helpers
 import numpy as np
 import math

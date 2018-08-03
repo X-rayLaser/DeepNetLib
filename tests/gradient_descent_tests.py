@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
-from main import NeuralNet, GradientDescent
+from main import NeuralNet
+from gradient_descent import GradientDescent
 from backprop import back_propagation
 
 
