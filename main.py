@@ -1,5 +1,6 @@
 import numpy as np
 import helpers
+from backprop import back_propagation
 
 
 def sigma(z):
@@ -30,27 +31,6 @@ def quadratic_cost(activations, outputs):
         s += quadratic_per_example(activation=activations[i],
                                    expected_output=outputs[i])
     return s / vector_len
-
-
-def back_propagation(examples, neural_net):
-    xes, ys = examples
-    examples_count = len(ys)
-
-    weights_grad, biases_grad = helpers.zero_gradients_list(neural_net)
-
-    for i in range(examples_count):
-        x = xes[i]
-        y = ys[i]
-        wgrad, bgrad = helpers.gradients_per_example(x, y, neural_net=neural_net)
-        weights_grad = helpers.update_total_gradients(summed_gradients_list=weights_grad,
-                                                      new_gradients_list=wgrad)
-        biases_grad = helpers.update_total_gradients(summed_gradients_list=biases_grad,
-                                                     new_gradients_list=bgrad)
-
-    weights_grad = helpers.average_gradient(weights_grad, examples_count)
-    biases_grad = helpers.average_gradient(biases_grad, examples_count)
-
-    return weights_grad, biases_grad
 
 
 class NeuralNet:

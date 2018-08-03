@@ -1,7 +1,9 @@
 import unittest
 import numpy as np
-from main import NeuralNet, GradientDescent, quadratic_per_example, quadratic_cost, back_propagation, sigma, sigma_prime
+from main import NeuralNet, GradientDescent, quadratic_per_example, quadratic_cost, sigma, sigma_prime
+from backprop import back_propagation
 import helpers
+import backprop
 
 
 class NeuralNetInitialization(unittest.TestCase):
@@ -212,20 +214,20 @@ class HelpersTests(unittest.TestCase):
         z_last = np.array([3], float)
         y = np.array([0], float)
         a_last = sigma(z_last)
-        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+        nabla = backprop.get_final_layer_error(a_last, y, z_last)
         self.assertAlmostEqual(nabla[0], 0.04, places=2)
 
         z_last = np.array([-1], float)
         y = np.array([0.5], float)
         a_last = sigma(z_last)
-        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+        nabla = backprop.get_final_layer_error(a_last, y, z_last)
         self.assertAlmostEqual(nabla[0], (a_last - y) * sigma_prime(z_last), places=2)
 
     def test_get_final_layer_error_for_arrays(self):
         z_last = np.array([3, -1], float)
         y = np.array([0, 0.5], float)
         a_last = sigma(z_last)
-        nabla = helpers.get_final_layer_error(a_last, y, z_last)
+        nabla = backprop.get_final_layer_error(a_last, y, z_last)
 
         self.assertAlmostEqual(nabla[0], 0.04, places=2)
         self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * sigma_prime(z_last[1]),
@@ -234,7 +236,7 @@ class HelpersTests(unittest.TestCase):
     def test_get_weights_gradient(self):
         layer_error = np.array([3, 5, 10], float)
         activations = np.array([0.5, 0.3], float)
-        grad = helpers.get_weights_gradient(layer_error=layer_error,
+        grad = backprop.get_weights_gradient(layer_error=layer_error,
                                             previous_layer_activations=activations)
 
         expected_grad = np.array([[1.5, 0.9], [2.5, 1.5], [5., 3.]], float)
@@ -244,14 +246,14 @@ class HelpersTests(unittest.TestCase):
 
     def test_get_bias_gradient(self):
         layer_error = np.array([2, 9, 12, 83])
-        grad = helpers.get_bias_gradient(layer_error=layer_error)
+        grad = backprop.get_bias_gradient(layer_error=layer_error)
         self.assertTrue(np.allclose(layer_error, grad))
 
     def test_get_error_in_layer(self):
         nabla_next = np.array([2, 9, 5], float)
         w_next = np.array([[3, 0], [0, 1], [4, 5]], float)
         z = np.array([2, -1])
-        nabla = helpers.get_error_in_layer(nabla_next, w_next, z)
+        nabla = backprop.get_error_in_layer(nabla_next, w_next, z)
 
         expected_nabla = np.array([2.72983, 6.6848])
         self.assertTrue(np.allclose(nabla, expected_nabla))
@@ -261,7 +263,7 @@ class HelpersTests(unittest.TestCase):
         x = np.array([0.5, 3], float)
         nnet.randomize_parameters()
 
-        a, zs = helpers.compute_activations_and_zsums(x=x, neural_net=nnet)
+        a, zs = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
         expected_activations = nnet.feed(x=x)
         self.assertTrue(np.allclose(a[-1], expected_activations))
 
@@ -278,13 +280,13 @@ class HelpersTests(unittest.TestCase):
 
         y = np.array([1], float)
 
-        a, zs = helpers.compute_activations_and_zsums(x=x, neural_net=nnet)
+        a, zs = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
 
-        errors_list = helpers.compute_errors(neural_net=nnet, output_activations=a[-1],
+        errors_list = backprop.compute_errors(neural_net=nnet, output_activations=a[-1],
                                              expected_output=y, weighed_sums=zs)
 
         expected_nabla2 = (a[-1] - y) * sigma_prime(zs[-1])
-        expected_nabla1 = helpers.get_error_in_layer(nabla_next=expected_nabla2,
+        expected_nabla1 = backprop.get_error_in_layer(nabla_next=expected_nabla2,
                                                      w_next=np.array([[0, 5]]), z=zs[0])
 
         self.assertTrue(np.allclose(errors_list[0], expected_nabla1))
