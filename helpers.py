@@ -59,3 +59,16 @@ def gradients_equal(grad1, grad2):
         if s > 0.001:
             return False
     return True
+
+
+def shuffle_pairwise(list_a, list_b):
+    a_shuf = []
+    b_shuf = []
+
+    shuffled_indices = [i for i in range(len(list_a))]
+    random.shuffle(shuffled_indices)
+    for i in shuffled_indices:
+        a_shuf.append(list_a[i])
+        b_shuf.append(list_b[i])
+
+    return a_shuf, b_shuf

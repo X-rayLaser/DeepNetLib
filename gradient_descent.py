@@ -1,3 +1,5 @@
+from random import shuffle
+import helpers
 from backprop import back_propagation
 
 
@@ -24,3 +26,15 @@ class GradientDescent:
     def train(self, examples, nepochs):
         for i in range(nepochs):
             self.training_epoch(examples=examples)
+
+
+class StochasticGradientDescent(GradientDescent):
+    def __init__(self, neural_net):
+        GradientDescent.__init__(self, neural_net)
+
+    def shuffle_examples(self, examples):
+        x_list, y_list = examples
+        return helpers.shuffle_pairwise(x_list, y_list)
+
+    def training_epoch(self, examples):
+        pass

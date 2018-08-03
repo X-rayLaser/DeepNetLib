@@ -3,6 +3,7 @@ import numpy as np
 import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
+from helpers import shuffle_pairwise
 
 
 class HelpersTests(unittest.TestCase):
@@ -154,3 +155,34 @@ class HelpersTests(unittest.TestCase):
 
         self.assertTrue(np.allclose(errors_list[0], expected_nabla1))
         self.assertTrue(np.allclose(errors_list[1], expected_nabla2))
+
+
+class ShufflePairwiseTests(unittest.TestCase):
+    def setUp(self):
+        self.list1 = [1, 2, 3, 4, 5]
+        self.list2 = [2, 4, 6, 8, 10]
+
+    def test_lenghts_are_preserved(self):
+        shuf1, shuf2 = shuffle_pairwise(self.list1, self.list2)
+        self.assertEqual(len(shuf1), len(self.list1))
+        self.assertEqual(len(shuf2), len(self.list1))
+
+    def test_shuffled_lists_contain_all_original_items(self):
+        shuf1, shuf2 = shuffle_pairwise(self.list1, self.list2)
+        for i in range(1, 6):
+            self.assertIn(i, shuf1)
+
+        for i in range(1, 6):
+            self.assertIn(i * 2, shuf2)
+
+    def test_lists_are_shuffled_pairwise(self):
+        shuf1, shuf2 = shuffle_pairwise(self.list1, self.list2)
+        for i in range(len(shuf1)):
+            x = shuf1[i]
+            y = shuf2[i]
+            self.assertEqual(y, 2 * x)
+
+    def test_original_lists_are_unchanged(self):
+        shuffle_pairwise(self.list1, self.list2)
+        self.assertSequenceEqual(self.list1, [1, 2, 3, 4, 5])
+        self.assertSequenceEqual(self.list2, [2, 4, 6, 8, 10])

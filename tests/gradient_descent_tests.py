@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from main import NeuralNet
-from gradient_descent import GradientDescent
+from gradient_descent import GradientDescent, StochasticGradientDescent
 from backprop import back_propagation
 
 
@@ -82,3 +82,14 @@ class GradientDescentTest(unittest.TestCase):
         self.grad_descent.train(examples=self.examples, nepochs=2)
         cost_after = self.nnet.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
+
+
+class StochasticGradientDescentTests(GradientDescentTest):
+    def setUp(self):
+        x = np.array([5, 2], float)
+        y = np.array([0.25, 0, 1], float)
+        self.examples = ([x], [y])
+        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        nnet.randomize_parameters()
+        self.nnet = nnet
+        self.grad_descent = StochasticGradientDescent(neural_net=nnet)

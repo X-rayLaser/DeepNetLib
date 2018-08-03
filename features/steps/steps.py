@@ -4,6 +4,7 @@ import helpers
 import numpy as np
 import math
 import backprop_slow
+import gradient_descent
 
 
 def squared_sin_data_set():
@@ -153,3 +154,8 @@ def step(context, classification_error):
     accuracy = float(matches) / num_of_examples * 100
     print('accuracy:', accuracy)
     assert accuracy >= required_accuracy
+
+
+@when('I choose stochastic gradient descent as a learning algorithm')
+def step(context):
+    context.nnet.set_learning_algorithm(gradient_descent.StochasticGradientDescent)
