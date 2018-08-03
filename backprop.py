@@ -1,5 +1,5 @@
 import numpy as np
-import main
+import activation_functions
 
 
 def back_propagation(examples, neural_net):
@@ -24,7 +24,7 @@ def back_propagation(examples, neural_net):
 
 
 def get_final_layer_error(a_last, y, z_last):
-    return (a_last - y) * main.sigma_prime(z_last)
+    return (a_last - y) * activation_functions.sigma_prime(z_last)
 
 
 def get_weights_gradient(layer_error, previous_layer_activations):
@@ -39,7 +39,7 @@ def get_bias_gradient(layer_error):
 
 
 def get_error_in_layer(nabla_next, w_next, z):
-    return w_next.T.dot(nabla_next) * main.sigma_prime(z)
+    return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
 
 
 def compute_activations_and_zsums(x, neural_net):

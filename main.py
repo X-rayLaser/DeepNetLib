@@ -1,7 +1,7 @@
 import numpy as np
 from backprop import back_propagation
 from cost_functions import quadratic_cost
-from activation_functions import sigma, sigma_prime
+from activation_functions import sigma
 
 
 def weighed_sum(weights, activations, biases):

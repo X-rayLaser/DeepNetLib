@@ -116,35 +116,6 @@ class NeuralNetTrain(unittest.TestCase):
         self.assertAlmostEqual(output[0], yval, places=1)
 
 
-class NeuralNetCost(unittest.TestCase):
-    def test_quadratic_cost(self):
-        activations = [np.array([0.7, 0.6], float), np.array([1, 0], float)]
-        outputs = [np.array([0.2, 0.5], float), np.array([0, 0], float)]
-        c = quadratic_cost(activations=activations, outputs=outputs)
-        self.assertAlmostEqual(c, 0.315, places=3)
-
-    def test_quadratic_per_example(self):
-        a = np.array([0.5, 0.7], float)
-        y = np.array([0.2, 0.1], float)
-        c = quadratic_per_example(activation=a, expected_output=y)
-        self.assertAlmostEqual(c, 0.225, places=3)
-
-        a = np.array([1, 0], float)
-        y = np.array([0, 1], float)
-        c = quadratic_per_example(activation=a, expected_output=y)
-        self.assertAlmostEqual(c, 1, places=1)
-
-    def test_get_cost_initial(self):
-        nnet = NeuralNet(layer_sizes=[1, 1, 1])
-
-        xes = [np.array([-10], float), np.array([100], float)]
-        ys = [np.array([0.5], float), np.array([0.75], float)]
-
-        examples = (xes, ys)
-        cost = nnet.get_cost(examples)
-        self.assertAlmostEqual(cost, 1.0/64, places=4)
-
-
 class HelpersTests(unittest.TestCase):
     def test_zero_gradients_list(self):
         nnet = NeuralNet(layer_sizes=[3, 5, 4, 1])
@@ -391,23 +362,6 @@ class SetBias(unittest.TestCase):
                           )
 
 
-class SigmoidTests(unittest.TestCase):
-    def test_sigma(self):
-        self.assertAlmostEqual(sigma(0), 0.5, places=2)
-        self.assertAlmostEqual(sigma(50), 1, places=2)
-        self.assertAlmostEqual(sigma(-50), 0, places=2)
-
-        self.assertAlmostEqual(sigma(1), 0.731, places=2)
-        self.assertAlmostEqual(sigma(-1), 0.2689, places=2)
-
-    def test_sigma_prime(self):
-        self.assertAlmostEqual(sigma_prime(0), 0.25, places=3)
-        self.assertAlmostEqual(sigma_prime(-50), 0, places=3)
-        self.assertAlmostEqual(sigma_prime(50), 0, places=3)
-
-        self.assertAlmostEqual(sigma_prime(50), sigma(50) * (1 - sigma(50)), places=3)
-
-
 class BackpropagationTests(unittest.TestCase):
     def compare_grads(self, grad1, grad2):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
@@ -578,6 +532,10 @@ class GradientDescentTest(unittest.TestCase):
         self.grad_descent.train(examples=self.examples, nepochs=2)
         cost_after = self.nnet.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
+
+
+from tests.activation_functions_tests import *
+from tests.cost_functions_tests import *
 
 
 if __name__ == '__main__':
