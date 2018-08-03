@@ -1,6 +1,6 @@
 import numpy as np
-import helpers
 from backprop import back_propagation
+from cost_functions import quadratic_cost
 
 
 def sigma(z):
@@ -16,21 +16,6 @@ def weighed_sum(weights, activations, biases):
 
 def sigma_prime(z):
     return sigma(z) * (1 - sigma(z))
-
-
-def quadratic_per_example(activation, expected_output):
-    v = activation - expected_output
-    return v.dot(v) / 2.0
-
-
-def quadratic_cost(activations, outputs):
-    vector_len = len(activations)
-
-    s = 0
-    for i in range(vector_len):
-        s += quadratic_per_example(activation=activations[i],
-                                   expected_output=outputs[i])
-    return s / vector_len
 
 
 class NeuralNet:
