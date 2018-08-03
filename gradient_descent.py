@@ -31,10 +31,19 @@ class GradientDescent:
 class StochasticGradientDescent(GradientDescent):
     def __init__(self, neural_net):
         GradientDescent.__init__(self, neural_net)
+        self._batch_size = 50
 
     def shuffle_examples(self, examples):
         x_list, y_list = examples
         return helpers.shuffle_pairwise(x_list, y_list)
 
     def training_epoch(self, examples):
-        pass
+        x_list, y_list = examples
+        x_batches = helpers.list_to_chunks(x_list,
+                                           chunk_size=self._batch_size)
+        y_batches = helpers.list_to_chunks(y_list,
+                                           chunk_size=self._batch_size)
+        batch_count = len(y_batches)
+        for i in range(batch_count):
+            mini_batch = (x_batches[i], y_batches[i])
+            GradientDescent.training_epoch(self, examples=mini_batch)

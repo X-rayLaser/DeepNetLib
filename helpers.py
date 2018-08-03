@@ -72,3 +72,26 @@ def shuffle_pairwise(list_a, list_b):
         b_shuf.append(list_b[i])
 
     return a_shuf, b_shuf
+
+
+def list_to_chunks(elem_list, chunk_size):
+    if chunk_size <= 0:
+        raise InvalidChunkSize('chunk_size should be a positive integer')
+    list_size = len(elem_list)
+
+    nchunks = list_size // chunk_size
+    chunks = []
+    for i in range(nchunks):
+        index = i * chunk_size
+        chunks.append(elem_list[index:index+chunk_size])
+
+    remainder = list_size % chunk_size
+    if remainder > 0:
+        index = nchunks * chunk_size
+        chunks.append(elem_list[index:])
+
+    return chunks
+
+
+class InvalidChunkSize(Exception):
+    pass

@@ -3,7 +3,7 @@ import numpy as np
 import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
-from helpers import shuffle_pairwise
+from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize
 
 
 class HelpersTests(unittest.TestCase):
@@ -186,3 +186,85 @@ class ShufflePairwiseTests(unittest.TestCase):
         shuffle_pairwise(self.list1, self.list2)
         self.assertSequenceEqual(self.list1, [1, 2, 3, 4, 5])
         self.assertSequenceEqual(self.list2, [2, 4, 6, 8, 10])
+
+
+class ListToChunksTests(unittest.TestCase):
+    def test_keeps_original_list_unmodified(self):
+        mylist = [i for i in range(1, 10)]
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        self.assertSequenceEqual(mylist, [i for i in range(1, 10)])
+
+    def test_correct_sum_of_number_of_elements_in_chunks(self):
+        nelem = 10
+        mylist = [i for i in range(1, nelem+1)]
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        counts = [len(chunk) for chunk in chunks]
+        self.assertEqual(sum(counts), nelem)
+
+    def test_split_into_1_chunk(self):
+        mylist = [1, 2]
+        chunks = list_to_chunks(mylist, chunk_size=2)
+        self.assertEqual(len(chunks), 1)
+        self.assertSequenceEqual(chunks[0], [1, 2])
+
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        self.assertEqual(len(chunks), 1)
+        self.assertSequenceEqual(chunks[0], [1, 2])
+
+    def test_split_into_2_chunks(self):
+        mylist = [1, 2, 3, 4, 5]
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        self.assertEqual(len(chunks), 2)
+        self.assertSequenceEqual(chunks[0], [1, 2, 3])
+        self.assertSequenceEqual(chunks[1], [4, 5])
+
+    def test_even_split(self):
+        mylist = [1, 2, 3, 4, 5, 6]
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        self.assertEqual(len(chunks), 2)
+        self.assertSequenceEqual(chunks[0], [1, 2, 3])
+        self.assertSequenceEqual(chunks[1], [4, 5, 6])
+
+        chunks = list_to_chunks(mylist, chunk_size=2)
+        self.assertEqual(len(chunks), 3)
+        self.assertSequenceEqual(chunks[0], [1, 2])
+        self.assertSequenceEqual(chunks[1], [3, 4])
+        self.assertSequenceEqual(chunks[2], [5, 6])
+
+    def test_uneven_split(self):
+        mylist = [1, 2, 3, 4, 5]
+        chunks = list_to_chunks(mylist, chunk_size=3)
+        self.assertEqual(len(chunks), 2)
+        self.assertSequenceEqual(chunks[0], [1, 2, 3])
+        self.assertSequenceEqual(chunks[1], [4, 5])
+
+        chunks = list_to_chunks(mylist, chunk_size=2)
+        self.assertEqual(len(chunks), 3)
+        self.assertSequenceEqual(chunks[0], [1, 2])
+        self.assertSequenceEqual(chunks[1], [3, 4])
+        self.assertSequenceEqual(chunks[2], [5])
+
+    def test_split_empty_list(self):
+        chunks = list_to_chunks([], chunk_size=1)
+        self.assertEqual(len(chunks), 0)
+        chunks = list_to_chunks([], chunk_size=2)
+        self.assertEqual(len(chunks), 0)
+        chunks = list_to_chunks([], chunk_size=12)
+        self.assertEqual(len(chunks), 0)
+
+    def test_split_one_element_list(self):
+        chunks = list_to_chunks([5], chunk_size=1)
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0], [5])
+
+        chunks = list_to_chunks([5], chunk_size=2)
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0], [5])
+
+        chunks = list_to_chunks([5], chunk_size=20)
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks[0], [5])
+
+    def test_split_into_0_size_chunks(self):
+        self.assertRaises(InvalidChunkSize, lambda: list_to_chunks([3, 2], chunk_size=0))
+        self.assertRaises(InvalidChunkSize, lambda: list_to_chunks([3, 2], chunk_size=-10))
