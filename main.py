@@ -1,10 +1,7 @@
 import numpy as np
 from backprop import back_propagation
 from cost_functions import quadratic_cost
-
-
-def sigma(z):
-    return 1.0 / (1.0 + np.exp(-z))
+from activation_functions import sigma, sigma_prime
 
 
 def weighed_sum(weights, activations, biases):
@@ -12,10 +9,6 @@ def weighed_sum(weights, activations, biases):
     a = activations
     b = biases
     return np.dot(w, a) + b
-
-
-def sigma_prime(z):
-    return sigma(z) * (1 - sigma(z))
 
 
 class NeuralNet:

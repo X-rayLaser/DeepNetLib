@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
-from main import NeuralNet, GradientDescent, sigma, sigma_prime
+from main import NeuralNet, GradientDescent
+from activation_functions import sigma, sigma_prime
 from cost_functions import quadratic_per_example, quadratic_cost
 from backprop import back_propagation
 import helpers
