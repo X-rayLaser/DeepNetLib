@@ -146,7 +146,7 @@ class NeuralNetCost(unittest.TestCase):
 class HelpersTests(unittest.TestCase):
     def test_zero_gradients_list(self):
         nnet = NeuralNet(layer_sizes=[3, 5, 4, 1])
-        weights_grads, biases_grads = helpers.zero_gradients_list(neural_net=nnet)
+        weights_grads, biases_grads = backprop.zero_gradients_list(neural_net=nnet)
         nmatrices = len(weights_grads)
         self.assertEqual(nmatrices, 3)
         self.assertEqual(nmatrices, len(biases_grads))
@@ -172,7 +172,7 @@ class HelpersTests(unittest.TestCase):
         grad_last = [np.array([[5, 10, 20], [10, 10, 10]], int),
                      np.array([[1, 1], [2, 4]], int)]
 
-        grad = helpers.update_total_gradients(summed_gradients_list=grad_total,
+        grad = backprop.update_total_gradients(summed_gradients_list=grad_total,
                                               new_gradients_list=grad_last)
 
         expected_grad = [np.array([[105, 130, 150], [60, 20, 70]], int),
@@ -202,7 +202,7 @@ class HelpersTests(unittest.TestCase):
         mtx2_expected = np.array([[0.2, 0.4, 0.8]], float)
 
         expected_gradient = [mtx1_expected, mtx2_expected]
-        grad = helpers.average_gradient(gradient_sum=gradient_sum, examples_count=5)
+        grad = backprop.average_gradient(gradient_sum=gradient_sum, examples_count=5)
 
         self.assertEqual(len(grad), 2)
         self.assertTupleEqual(grad[0].shape, (2, 2))

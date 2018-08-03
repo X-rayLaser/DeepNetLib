@@ -7,19 +7,19 @@ def back_propagation(examples, neural_net):
     xes, ys = examples
     examples_count = len(ys)
 
-    weights_grad, biases_grad = helpers.zero_gradients_list(neural_net)
+    weights_grad, biases_grad = zero_gradients_list(neural_net)
 
     for i in range(examples_count):
         x = xes[i]
         y = ys[i]
         wgrad, bgrad = gradients_per_example(x, y, neural_net=neural_net)
-        weights_grad = helpers.update_total_gradients(summed_gradients_list=weights_grad,
+        weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
                                                       new_gradients_list=wgrad)
-        biases_grad = helpers.update_total_gradients(summed_gradients_list=biases_grad,
+        biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
                                                      new_gradients_list=bgrad)
 
-    weights_grad = helpers.average_gradient(weights_grad, examples_count)
-    biases_grad = helpers.average_gradient(biases_grad, examples_count)
+    weights_grad = average_gradient(weights_grad, examples_count)
+    biases_grad = average_gradient(biases_grad, examples_count)
 
     return weights_grad, biases_grad
 
@@ -103,3 +103,38 @@ def gradients_per_example(x, y, neural_net):
         biases_gradient.append(bg)
 
     return weights_gradient, biases_gradient
+
+
+def zero_gradients_list(neural_net):
+    weights_grad = []
+    biases_grad = []
+    wlist = neural_net.weights()
+    blist = neural_net.biases()
+
+    for i in range(len(wlist)):
+        wshape = wlist[i].shape
+        weights_grad.append(np.zeros(wshape))
+
+        bshape = blist[i].shape
+        biases_grad.append(np.zeros(bshape))
+
+    return weights_grad, biases_grad
+
+
+def update_total_gradients(summed_gradients_list, new_gradients_list):
+    summed_len = len(summed_gradients_list)
+    new_len = len(new_gradients_list)
+    assert summed_len == new_len
+
+    res_list = []
+    for i in range(summed_len):
+        res_list.append(summed_gradients_list[i] + new_gradients_list[i])
+    return res_list
+
+
+def average_gradient(gradient_sum, examples_count):
+    res_list = []
+    for i in range(len(gradient_sum)):
+        res_list.append(gradient_sum[i] / float(examples_count))
+
+    return res_list
