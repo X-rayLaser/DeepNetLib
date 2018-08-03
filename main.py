@@ -31,6 +31,8 @@ class NeuralNet:
         self._weights = []
         self._biases = []
 
+        self._AlgorithmClass = GradientDescent
+
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
             shape = (sz, prev_sz)
@@ -66,7 +68,7 @@ class NeuralNet:
         return a, z
 
     def train(self, examples, nepochs=1):
-        descent = GradientDescent(neural_net=self)
+        descent = self._AlgorithmClass(neural_net=self)
         descent.train(examples=examples, nepochs=nepochs)
 
     def weights(self):
@@ -97,6 +99,9 @@ class NeuralNet:
             )
         b = self.biases()[layer-1]
         b[row] = new_value
+
+    def set_learning_algorithm(self, algorithm_class):
+        self._AlgorithmClass = algorithm_class
 
     def randomize_parameters(self):
         for i in range(len(self._weights)):

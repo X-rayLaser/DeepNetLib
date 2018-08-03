@@ -48,7 +48,7 @@ class GradientDescentTest(unittest.TestCase):
         self.examples = ([np.array([5, 2], float), np.array([5, 22], float)],
                          [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
 
-        for i in range(15):
+        for i in range(100):
             w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
             self.grad_descent.update_weights(weight_gradient=w_grad)
             self.grad_descent.update_biases(bias_gradient=b_grad)
