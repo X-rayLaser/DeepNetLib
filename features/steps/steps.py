@@ -5,6 +5,7 @@ import numpy as np
 import math
 import backprop_slow
 import gradient_descent
+import cost_functions
 
 
 def squared_sin_data_set():
@@ -159,3 +160,8 @@ def step(context, classification_error):
 @when('I choose stochastic gradient descent as a learning algorithm')
 def step(context):
     context.nnet.set_learning_algorithm(gradient_descent.StochasticGradientDescent)
+
+
+@when('I choose cross entropy cost function')
+def step(context):
+    context.nnet.set_cost_function(cost_functions.cross_entropy)

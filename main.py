@@ -1,6 +1,6 @@
 import numpy as np
+import cost_functions
 from gradient_descent import GradientDescent
-from cost_functions import quadratic_cost
 from activation_functions import sigma
 
 
@@ -32,6 +32,7 @@ class NeuralNet:
         self._biases = []
 
         self._AlgorithmClass = GradientDescent
+        self._cost_function = cost_functions.quadratic_cost
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
@@ -100,6 +101,9 @@ class NeuralNet:
         b = self.biases()[layer-1]
         b[row] = new_value
 
+    def set_cost_function(self, cost_function):
+        self._cost_function = cost_function
+
     def set_learning_algorithm(self, algorithm_class):
         self._AlgorithmClass = algorithm_class
 
@@ -114,4 +118,4 @@ class NeuralNet:
     def get_cost(self, data_set):
         xes, ys = data_set
         activations = [self.feed(x) for x in xes]
-        return quadratic_cost(activations=activations, outputs=ys)
+        return self._cost_function(activations=activations, outputs=ys)
