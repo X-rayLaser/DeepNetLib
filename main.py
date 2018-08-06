@@ -32,7 +32,7 @@ class NeuralNet:
         self._biases = []
 
         self._AlgorithmClass = GradientDescent
-        self._cost_function = cost_functions.quadratic_cost
+        self._cost_function = cost_functions.QuadraticCost()
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
@@ -118,4 +118,7 @@ class NeuralNet:
     def get_cost(self, data_set):
         xes, ys = data_set
         activations = [self.feed(x) for x in xes]
-        return self._cost_function(activations=activations, outputs=ys)
+        return self._cost_function.compute_cost(activations=activations, outputs=ys)
+
+    def get_cost_function(self):
+        return self._cost_function

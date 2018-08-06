@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+
 def quadratic_per_example(activation, expected_output):
     v = activation - expected_output
     return v.dot(v) / 2.0
@@ -46,3 +47,14 @@ def cross_entropy(activations, outputs):
         ce += cross_entropy_per_example(activations[i], outputs[i])
     return ce / num_of_examples
 
+
+class QuadraticCost:
+    def __init__(self):
+        pass
+
+    def compute_cost(self, activations, outputs):
+        return quadratic_cost(activations=activations, outputs=outputs)
+
+
+class CrossEntropyCost:
+    pass

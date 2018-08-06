@@ -8,7 +8,8 @@ class QuadraticCostTests(unittest.TestCase):
     def test_quadratic_cost(self):
         activations = [np.array([0.7, 0.6], float), np.array([1, 0], float)]
         outputs = [np.array([0.2, 0.5], float), np.array([0, 0], float)]
-        c = cost_functions.quadratic_cost(activations=activations, outputs=outputs)
+        quadracost = cost_functions.QuadraticCost()
+        c = quadracost.compute_cost(activations=activations, outputs=outputs)
         self.assertAlmostEqual(c, 0.315, places=3)
 
     def test_quadratic_per_example(self):
