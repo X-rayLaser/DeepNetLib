@@ -6,12 +6,9 @@ import backprop_slow
 from main import NeuralNet
 
 
-class BackpropagationTests(unittest.TestCase):
+class BackpropSlowTests(unittest.TestCase):
     def compare_grads(self, grad1, grad2):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
-
-    def back_propagation_slow(self, examples, neural_net):
-        return backprop_slow.back_propagation_slow(examples=examples, neural_net=neural_net)
 
     def test_back_propagation_slow(self):
         nnet = NeuralNet(layer_sizes=[1, 1, 1])
@@ -57,12 +54,17 @@ class BackpropagationTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[1].shape, (2,))
         self.assertTupleEqual(b_grad[2].shape, (5,))
 
+
+class BackpropagationTests(unittest.TestCase):
+    def compare_grads(self, grad1, grad2):
+        self.assertTrue(helpers.gradients_equal(grad1, grad2))
+
     def test_back_propagation(self):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
         examples = helpers.generate_random_examples(10, 4, 10)
 
         w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
-        w_grad2, b_grad2 = self.back_propagation_slow(examples=examples, neural_net=nnet)
+        w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
