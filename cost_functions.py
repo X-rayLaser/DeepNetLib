@@ -50,13 +50,20 @@ def cross_entropy(activations, outputs):
 
 
 class CostFunction:
-    pass
+    def get_error_in_layer(self, nabla_next, w_next, z):
+        return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
+
+    def get_weights_gradient(self, layer_error, previous_layer_activations):
+        nabla = layer_error
+        a = previous_layer_activations
+
+        return np.outer(nabla, a)
+
+    def get_bias_gradient(self, layer_error):
+        return layer_error
 
 
-class QuadraticCost:
-    def __init__(self):
-        pass
-
+class QuadraticCost(CostFunction):
     def compute_cost(self, activations, outputs):
         return quadratic_cost(activations=activations, outputs=outputs)
 
@@ -66,37 +73,12 @@ class QuadraticCost:
         z_last = weighted_sum_last
         return (a_last - y) * activation_functions.sigma_prime(z_last)
 
-    def get_error_in_layer(self, nabla_next, w_next, z):
-        return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
 
-    def get_weights_gradient(self, layer_error, previous_layer_activations):
-        nabla = layer_error
-        a = previous_layer_activations
-
-        return np.outer(nabla, a)
-
-    def get_bias_gradient(self, layer_error):
-        return layer_error
-
-
-class CrossEntropyCost:
+class CrossEntropyCost(CostFunction):
     def compute_cost(self, activations, outputs):
         return cross_entropy(activations=activations, outputs=outputs)
 
     def get_final_layer_error(self, activation_last, expected_output, weighted_sum_last):
         a_last = activation_last
         y = expected_output
-        z_last = weighted_sum_last
         return a_last - y
-
-    def get_error_in_layer(self, nabla_next, w_next, z):
-        return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
-
-    def get_weights_gradient(self, layer_error, previous_layer_activations):
-        nabla = layer_error
-        a = previous_layer_activations
-
-        return np.outer(nabla, a)
-
-    def get_bias_gradient(self, layer_error):
-        return layer_error
