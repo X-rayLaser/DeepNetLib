@@ -3,6 +3,7 @@ import os
 import numpy as np
 import requests
 import requests_mock
+from mnist import MNIST
 
 
 def generate_data(f, start_value, end_value, step_value):
@@ -177,8 +178,6 @@ def download_dataset():
 
 
 def get_training_data():
-    from mnist import MNIST
-
     mndata = MNIST('examples')
 
     X_train = []
@@ -187,11 +186,30 @@ def get_training_data():
     images, labels = mndata.load_training()
 
     for image in images:
-        X_train.append(np.array(image))
+        X_train.append(np.array(image, float))
 
     for label in labels:
-        y = np.zeros((10, ))
+        y = np.zeros((10, ), float)
         y[label] = 1.0
         Y_train.append(y)
 
     return X_train, Y_train
+
+
+def get_test_data():
+    mndata = MNIST('examples')
+
+    X = []
+    Y = []
+
+    images, labels = mndata.load_testing()
+
+    for image in images:
+        X.append(np.array(image, float))
+
+    for label in labels:
+        y = np.zeros((10,), float)
+        y[label] = 1.0
+        Y.append(y)
+
+    return X, Y

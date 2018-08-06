@@ -4,7 +4,7 @@ import numpy as np
 import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
-from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data
+from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data, get_test_data
 
 
 class HelpersTests(unittest.TestCase):
@@ -267,3 +267,18 @@ class MNISTLoadingTests(unittest.TestCase):
 
         self.assertTupleEqual(X_train[0].shape, (28*28, ))
         self.assertTupleEqual(Y_train[0].shape, (10, ))
+
+        self.assertEqual(X_train[0].dtype, 'float64')
+        self.assertEqual(Y_train[0].dtype, 'float64')
+
+    def test_get_test_data(self):
+        download_dataset()
+        X, Y = get_test_data()
+        self.assertEqual(len(X), 10000)
+        self.assertEqual(len(Y), 10000)
+
+        self.assertTupleEqual(X[0].shape, (28*28, ))
+        self.assertTupleEqual(Y[0].shape, (10, ))
+
+        self.assertEqual(X[0].dtype, 'float64')
+        self.assertEqual(Y[0].dtype, 'float64')
