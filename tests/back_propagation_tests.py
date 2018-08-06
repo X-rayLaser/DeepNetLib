@@ -62,6 +62,7 @@ class BackpropagationTests(unittest.TestCase):
 
     def test_back_propagation_with_quadratic_cost(self):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet.randomize_parameters()
         examples = helpers.generate_random_examples(10, 4, 10)
 
         w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
@@ -72,6 +73,7 @@ class BackpropagationTests(unittest.TestCase):
 
     def test_back_propagation_with_cross_entropy_cost(self):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet.randomize_parameters()
         nnet.set_cost_function(cost_function=cost_functions.CrossEntropyCost())
         examples = helpers.generate_random_examples(10, 4, 10)
 

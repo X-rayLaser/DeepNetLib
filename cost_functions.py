@@ -87,10 +87,10 @@ class CrossEntropyCost:
         a_last = activation_last
         y = expected_output
         z_last = weighted_sum_last
-        return (a_last - y)
+        return a_last - y
 
     def get_error_in_layer(self, nabla_next, w_next, z):
-        return w_next.T.dot(nabla_next)
+        return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
 
     def get_weights_gradient(self, layer_error, previous_layer_activations):
         nabla = layer_error
