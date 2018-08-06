@@ -1,9 +1,10 @@
 import unittest
+import os
 import numpy as np
 import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
-from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize
+from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset
 
 
 class HelpersTests(unittest.TestCase):
@@ -221,3 +222,31 @@ class ListToChunksTests(unittest.TestCase):
     def test_split_into_0_size_chunks(self):
         self.assertRaises(InvalidChunkSize, lambda: list_to_chunks([3, 2], chunk_size=0))
         self.assertRaises(InvalidChunkSize, lambda: list_to_chunks([3, 2], chunk_size=-10))
+
+
+class MNISTLoadingTests(unittest.TestCase):
+    def tearDown(self):
+        os.remove(os.path.join('examples', 'train-images-idx3-ubyte.gz'))
+        os.remove(os.path.join('examples', 'train-labels-idx1-ubyte.gz'))
+        os.remove(os.path.join('examples', 't10k-images-idx3-ubyte.gz'))
+        os.remove(os.path.join('examples', 't10k-labels-idx1-ubyte.gz'))
+
+    def file_exists(self, fname, expected_size):
+        file_path = os.path.join('examples', fname)
+        return os.path.isfile(file_path) and os.path.getsize(file_path) == expected_size
+
+    def test_downloading_will_create_train_images_file(self):
+        download_dataset()
+        self.assertTrue(self.file_exists('train-images-idx3-ubyte.gz', 9912422))
+
+    def test_downloading_will_create_train_labels_file(self):
+        download_dataset()
+        self.assertTrue(self.file_exists('train-labels-idx1-ubyte.gz', 28881))
+
+    def test_downloading_will_create_test_images_file(self):
+        download_dataset()
+        self.assertTrue(self.file_exists('t10k-images-idx3-ubyte.gz', 1648877))
+
+    def test_downloading_will_create_test_labels_file(self):
+        download_dataset()
+        self.assertTrue(self.file_exists('t10k-labels-idx1-ubyte.gz', 4542))

@@ -95,3 +95,35 @@ def list_to_chunks(elem_list, chunk_size):
 
 class InvalidChunkSize(Exception):
     pass
+
+
+def get_examples_from_csv():
+    return [], []
+
+
+def download_file(url, saved_fname):
+    import os
+    import requests
+    base_url = 'http://yann.lecun.com/exdb/mnist/'
+
+    r = requests.get(base_url + url)
+    f = open(os.path.join('examples', saved_fname), 'wb')
+    f.write(r.content)
+    f.close()
+
+
+def download_dataset():
+    import os
+    os.makedirs('examples', exist_ok=True)
+
+    download_file(url='train-images-idx3-ubyte.gz',
+                  saved_fname='train-images-idx3-ubyte.gz')
+
+    download_file(url='train-labels-idx1-ubyte.gz',
+                  saved_fname='train-labels-idx1-ubyte.gz')
+
+    download_file(url='t10k-images-idx3-ubyte.gz',
+                  saved_fname='t10k-images-idx3-ubyte.gz')
+
+    download_file(url='t10k-labels-idx1-ubyte.gz',
+                  saved_fname='t10k-labels-idx1-ubyte.gz')

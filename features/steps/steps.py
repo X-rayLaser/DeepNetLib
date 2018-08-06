@@ -165,3 +165,8 @@ def step(context):
 @when('I choose cross entropy cost function')
 def step(context):
     context.nnet.set_cost_function(cost_functions.CrossEntropyCost())
+
+
+@when('I create a training and testing data from MNIST data set')
+def step(context):
+    context.training_data, context.test_data = helpers.get_examples_from_csv()
