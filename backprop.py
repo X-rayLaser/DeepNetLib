@@ -23,25 +23,6 @@ def back_propagation(examples, neural_net):
     return weights_grad, biases_grad
 
 
-def get_final_layer_error(a_last, y, z_last):
-    return (a_last - y) * activation_functions.sigma_prime(z_last)
-
-
-def get_weights_gradient(layer_error, previous_layer_activations):
-    nabla = layer_error
-    a = previous_layer_activations
-
-    return np.outer(nabla, a)
-
-
-def get_bias_gradient(layer_error):
-    return layer_error
-
-
-def get_error_in_layer(nabla_next, w_next, z):
-    return w_next.T.dot(nabla_next) * activation_functions.sigma_prime(z)
-
-
 def compute_activations_and_zsums(x, neural_net):
     net_layers = neural_net.number_of_layers() - 1
     activations = [x]
@@ -55,12 +36,13 @@ def compute_activations_and_zsums(x, neural_net):
 
 
 def compute_errors(neural_net, output_activations, expected_output, weighed_sums):
+    cost_func = neural_net.get_cost_function()
     zs = list(weighed_sums)
 
     z_L = zs.pop()
     a = output_activations
     y = expected_output
-    nabla_L = get_final_layer_error(a, y, z_L)
+    nabla_L = cost_func.get_final_layer_error(a, y, z_L)
 
     net_layers = neural_net.number_of_layers() - 1
     last_layer_index = net_layers - 1
@@ -73,7 +55,7 @@ def compute_errors(neural_net, output_activations, expected_output, weighed_sums
     for layer in range(last_layer_index - 1, -1, -1):
         z = zs.pop()
         w_next = wlist[layer + 1]
-        nabla = get_error_in_layer(nabla_next, w_next, z)
+        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z)
         errors.append(nabla)
         nabla_next = nabla
 
@@ -82,6 +64,8 @@ def compute_errors(neural_net, output_activations, expected_output, weighed_sums
 
 
 def gradients_per_example(x, y, neural_net):
+    cost_func = neural_net.get_cost_function()
+
     weights_gradient = []
     biases_gradient = []
     net_layers = neural_net.number_of_layers() - 1
@@ -94,9 +78,9 @@ def gradients_per_example(x, y, neural_net):
     for layer in range(net_layers):
         previous_layer_activations = activations[layer]
         nabla = layer_errors[layer]
-        wg = get_weights_gradient(layer_error=nabla,
+        wg = cost_func.get_weights_gradient(layer_error=nabla,
                                   previous_layer_activations=previous_layer_activations)
-        bg = get_bias_gradient(layer_error=nabla)
+        bg = cost_func.get_bias_gradient(layer_error=nabla)
 
         weights_gradient.append(wg)
         biases_gradient.append(bg)

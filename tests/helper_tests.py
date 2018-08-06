@@ -85,6 +85,7 @@ class HelpersTests(unittest.TestCase):
 
     def test_compute_errors(self):
         nnet = NeuralNet(layer_sizes=[1, 2, 1])
+        cost_func = nnet.get_cost_function()
         nnet.set_weight(layer=1, row=0, col=0, new_value=-0.5)
         nnet.set_weight(layer=1, row=1, col=0, new_value=1.5)
         nnet.set_weight(layer=2, row=0, col=1, new_value=5)
@@ -102,7 +103,7 @@ class HelpersTests(unittest.TestCase):
                                              expected_output=y, weighed_sums=zs)
 
         expected_nabla2 = (a[-1] - y) * sigma_prime(zs[-1])
-        expected_nabla1 = backprop.get_error_in_layer(nabla_next=expected_nabla2,
+        expected_nabla1 = cost_func.get_error_in_layer(nabla_next=expected_nabla2,
                                                      w_next=np.array([[0, 5]]), z=zs[0])
 
         self.assertTrue(np.allclose(errors_list[0], expected_nabla1))

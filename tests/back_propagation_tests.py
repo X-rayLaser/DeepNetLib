@@ -4,6 +4,7 @@ import helpers
 from backprop import back_propagation
 import backprop_slow
 from main import NeuralNet
+import cost_functions
 
 
 class BackpropSlowTests(unittest.TestCase):
@@ -59,8 +60,19 @@ class BackpropagationTests(unittest.TestCase):
     def compare_grads(self, grad1, grad2):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
-    def test_back_propagation(self):
+    def test_back_propagation_with_quadratic_cost(self):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        examples = helpers.generate_random_examples(10, 4, 10)
+
+        w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
+        w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
+
+        self.compare_grads(grad1=w_grad1, grad2=w_grad2)
+        self.compare_grads(grad1=b_grad1, grad2=b_grad2)
+
+    def test_back_propagation_with_cross_entropy_cost(self):
+        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet.set_cost_function(cost_function=cost_functions.CrossEntropyCost())
         examples = helpers.generate_random_examples(10, 4, 10)
 
         w_grad1, b_grad1 = back_propagation(examples=examples, neural_net=nnet)
