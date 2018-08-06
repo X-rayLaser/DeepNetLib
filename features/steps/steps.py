@@ -164,4 +164,4 @@ def step(context):
 
 @when('I choose cross entropy cost function')
 def step(context):
-    context.nnet.set_cost_function(cost_functions.cross_entropy)
+    context.nnet.set_cost_function(cost_functions.CrossEntropyCost())

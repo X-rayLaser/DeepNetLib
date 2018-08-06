@@ -57,4 +57,5 @@ class QuadraticCost:
 
 
 class CrossEntropyCost:
-    pass
+    def compute_cost(self, activations, outputs):
+        return cross_entropy(activations=activations, outputs=outputs)
