@@ -169,4 +169,6 @@ def step(context):
 
 @when('I create a training and testing data from MNIST data set')
 def step(context):
-    context.training_data, context.test_data = helpers.get_examples_from_csv()
+    helpers.download_dataset()
+    context.training_data = helpers.get_training_data()
+    context.test_data = helpers.get_test_data()
