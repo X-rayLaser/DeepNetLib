@@ -4,7 +4,7 @@ import numpy as np
 import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
-from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset
+from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data
 
 
 class HelpersTests(unittest.TestCase):
@@ -225,11 +225,19 @@ class ListToChunksTests(unittest.TestCase):
 
 
 class MNISTLoadingTests(unittest.TestCase):
+    def setUp(self):
+        os.environ['testing'] = "true"
+
     def tearDown(self):
         os.remove(os.path.join('examples', 'train-images-idx3-ubyte.gz'))
         os.remove(os.path.join('examples', 'train-labels-idx1-ubyte.gz'))
         os.remove(os.path.join('examples', 't10k-images-idx3-ubyte.gz'))
         os.remove(os.path.join('examples', 't10k-labels-idx1-ubyte.gz'))
+
+        os.remove(os.path.join('examples', 'train-images-idx3-ubyte'))
+        os.remove(os.path.join('examples', 'train-labels-idx1-ubyte'))
+        os.remove(os.path.join('examples', 't10k-images-idx3-ubyte'))
+        os.remove(os.path.join('examples', 't10k-labels-idx1-ubyte'))
 
     def file_exists(self, fname, expected_size):
         file_path = os.path.join('examples', fname)
@@ -250,3 +258,12 @@ class MNISTLoadingTests(unittest.TestCase):
     def test_downloading_will_create_test_labels_file(self):
         download_dataset()
         self.assertTrue(self.file_exists('t10k-labels-idx1-ubyte.gz', 4542))
+
+    def test_get_training_data(self):
+        download_dataset()
+        X_train, Y_train = get_training_data()
+        self.assertEqual(len(X_train), 60000)
+        self.assertEqual(len(Y_train), 60000)
+
+        self.assertTupleEqual(X_train[0].shape, (28*28, ))
+        self.assertTupleEqual(Y_train[0].shape, (10, ))

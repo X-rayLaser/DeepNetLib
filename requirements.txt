@@ -2,3 +2,4 @@ numpy
 behave
 python-mnist
 requests
+requests_mock
