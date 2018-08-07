@@ -30,9 +30,9 @@ Scenario: Net is trained to infer distribution generating x using stochastic gra
 @general @stochastic @mnist @long
 Scenario: Net is trained to classify MNIST hand-written digits
     When I create a training and testing data from MNIST data set
-    And I initialize a neural net for binary classification with sizes 784,10,10
+    And I initialize a neural net for binary classification with sizes 784,30,10
     And I choose stochastic gradient descent as a learning algorithm
     And I choose cross entropy cost function
     And I randomly initialize net's parameters
-    And I train neural network on that data set for 10 epochs
+    And I train neural network on that data set for 30 epochs
     Then neural net gives less than 10% classification error on test data set

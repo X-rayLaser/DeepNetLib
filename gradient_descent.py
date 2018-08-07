@@ -32,6 +32,7 @@ class StochasticGradientDescent(GradientDescent):
     def __init__(self, neural_net):
         GradientDescent.__init__(self, neural_net)
         self._batch_size = 50
+        self._rate = 0.1
 
     def shuffle_examples(self, examples):
         x_list, y_list = examples
