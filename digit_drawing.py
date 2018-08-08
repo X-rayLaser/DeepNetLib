@@ -31,7 +31,9 @@ class DigitGenerator:
         self._nnet.train(examples=examples, nepochs=nepochs)
 
     def generate(self, seeding_vector):
-        pass
+        x = seeding_vector
+        a = self._nnet.feed(x)
+        return np.array((a * 255).tolist(), dtype=np.uint8)
 
     def generate_digit(self, digit):
         if type(digit) != int or digit < 0 or digit > 9:
