@@ -1,4 +1,3 @@
-import math
 import numpy as np
 import helpers
 from main import NeuralNet
