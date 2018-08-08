@@ -1,4 +1,6 @@
+import math
 import numpy as np
+import helpers
 from main import NeuralNet
 
 
@@ -18,10 +20,11 @@ class DigitGenerator:
         return X_swapped, Y_swapped
 
     def __init__(self):
-        self._nnet = NeuralNet(layer_sizes=[10, 10, 784])
+        self._nnet = NeuralNet(layer_sizes=[10, 30, 784])
 
-    def train(self):
-        pass
+    def train(self, pixels_to_categories):
+        examples = self.prepare_train_examples(pixels_to_categories)
+        self._nnet.train(examples=examples, nepochs=10)
 
     def generate(self, seeding_vector):
         pass
@@ -31,9 +34,10 @@ class DigitGenerator:
             raise self.InvalidDigitError(
                 'Digit must be an integer from 0 to 9. Got'.format(digit)
             )
-        res = np.zeros(784, dtype=np.uint8)
-        res.fill(128)
-        return res
+
+        x = helpers.category_to_vector(cat_index=digit, cat_number=10)
+        a = self._nnet.feed(x)
+        return np.array((a * 255).tolist(), dtype=np.uint8)
 
     def save_as_json(self, fname):
         pass

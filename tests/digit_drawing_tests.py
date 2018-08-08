@@ -46,15 +46,19 @@ class GenerateDigitTests(unittest.TestCase):
         diggen = DigitGenerator()
         pixels = diggen.generate_digit(digit=1)
         expected_pixels = np.zeros(784, dtype=np.uint8)
-        expected_pixels.fill(128)
+        expected_pixels.fill(127)
         self.assertEqual(pixels.tolist(), expected_pixels.tolist())
 
     def test_returns_non_uniform_array_after_training(self):
+        x = [np.array([0]*784, float)]
+        y = [np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0], float)]
+        pixels_to_categories = (x, y)
+
         diggen = DigitGenerator()
-        diggen.train()
+        diggen.train(pixels_to_categories=pixels_to_categories)
         pixels = diggen.generate_digit(digit=1)
         expected_pixels = np.zeros(784, dtype=np.uint8)
-        expected_pixels.fill(128)
+        expected_pixels.fill(127)
         self.assertNotEqual(pixels.tolist(), expected_pixels.tolist())
 
 
@@ -97,9 +101,3 @@ class PrepareExamplesTests(unittest.TestCase):
 
         self.assertEqual(X[1].tolist(), y[1].tolist())
         self.assertEqual(Y[1].tolist(), [55 / 255.0, 2 / 255.0])
-
-
-class TrainTests(unittest.TestCase):
-    def test_method_outputs_numpy_array_of_integers(self):
-        diggen = DigitGenerator()
-        diggen.train()
