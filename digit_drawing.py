@@ -2,6 +2,8 @@ import math
 import numpy as np
 import helpers
 from main import NeuralNet
+import cost_functions
+import gradient_descent
 
 
 class DigitGenerator:
@@ -22,9 +24,12 @@ class DigitGenerator:
     def __init__(self):
         self._nnet = NeuralNet(layer_sizes=[10, 30, 784])
 
-    def train(self, pixels_to_categories):
+    def train(self, pixels_to_categories, nepochs=10):
         examples = self.prepare_train_examples(pixels_to_categories)
-        self._nnet.train(examples=examples, nepochs=10)
+        self._nnet.randomize_parameters()
+        self._nnet.set_cost_function(cost_functions.CrossEntropyCost())
+        self._nnet.set_learning_algorithm(gradient_descent.StochasticGradientDescent)
+        self._nnet.train(examples=examples, nepochs=nepochs)
 
     def generate(self, seeding_vector):
         pass
