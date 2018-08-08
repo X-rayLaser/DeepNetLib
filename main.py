@@ -82,6 +82,15 @@ class NeuralNet:
         """Returns total number of layers, including input and output layers"""
         return len(self._biases) + 1
 
+    def layer_sizes(self):
+        sizes = []
+        weights = self.weights()
+        for i in range(len(weights)):
+            sizes.append(weights[i].shape[1])
+
+        sizes.append(weights[-1].shape[0])
+        return sizes
+
     def set_weight(self, layer, row, col, new_value):
         """layer must be between 1 and number of layers exclusive"""
         if layer < 1 or layer >= self.number_of_layers():
