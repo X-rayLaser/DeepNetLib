@@ -1,11 +1,13 @@
+from random import SystemRandom
+import numpy as np
+import math
 from main import NeuralNet
 from backprop import back_propagation
 import helpers
-import numpy as np
-import math
 import backprop_slow
 import gradient_descent
 import cost_functions
+from digit_drawing import DigitGenerator
 
 
 def squared_sin_data_set():
@@ -178,20 +180,17 @@ def step(context):
 def step(context):
     helpers.download_dataset()
     pixels_to_categories = helpers.get_training_data()
-    #context.test_data = helpers.get_test_data()
-    from digit_drawing import DigitGenerator
     generator = DigitGenerator()
-    generator.train(data_set=pixels_to_categories)
+    generator.train(pixels_to_categories=pixels_to_categories)
     context.generator = generator
 
 
 @then('out of {n} generated digits {accuracy}% or more are indeed digits')
 def step(context, n, accuracy):
-    from random import SystemRandom
     sr = SystemRandom()
 
     matches = 0
-    for i in range(1000):
+    for i in range(int(n)):
         digit = sr.randint(0, 9)
         pixels = context.generator.generate_digit(digit)
         output = context.nnet.feed(x=pixels)
@@ -199,4 +198,4 @@ def step(context, n, accuracy):
         if index == digit:
             matches += 1
 
-    assert matches / float(n) * 100 >= 90
+    assert matches / float(n) * 100 >= int(accuracy)

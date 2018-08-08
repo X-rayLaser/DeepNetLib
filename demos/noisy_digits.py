@@ -28,7 +28,7 @@ def draw_noisy(digit, trials):
 dest_folder = 'generated_digits'
 image_width = 28
 image_height = 28
-nepochs = 5
+nepochs = 10
 
 gen = DigitGenerator()
 

@@ -23,7 +23,7 @@ class DigitGenerator:
     def __init__(self):
         self._nnet = NeuralNet(layer_sizes=[10, 30, 784])
 
-    def train(self, pixels_to_categories, nepochs=10):
+    def train(self, pixels_to_categories, nepochs=1):
         examples = self.prepare_train_examples(pixels_to_categories)
         self._nnet.randomize_parameters()
         self._nnet.set_cost_function(cost_functions.CrossEntropyCost())
