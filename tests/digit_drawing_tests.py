@@ -64,7 +64,39 @@ class ConstructorTests(unittest.TestCase):
         sizes = gen.net_layer_sizes()
         self.assertEqual(len(sizes), 3)
         self.assertEqual(sizes[0], 10)
-        self.assertEqual(sizes[2], 784)
+        self.assertEqual(sizes[-1], 784)
+
+
+class PrepareExamplesTests(unittest.TestCase):
+    def test_for_single_example(self):
+        x = [np.array([9, 124, 203], float)]
+        y = [np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0], float)]
+        pixels_to_categories = (x, y)
+        X, Y = DigitGenerator.prepare_train_examples(pixels_to_categories)
+        self.assertEqual(X[0].tolist(), y[0].tolist())
+        self.assertEqual(Y[0].tolist(), [9 / 255.0, 124 / 255.0, 203 / 255.0])
+
+        x = [np.array([55, 2], float)]
+        y = [np.array([0.1, 0.8, 0, 0, 0, 0, 0, 0, 0, 0], float)]
+        pixels_to_categories = (x, y)
+        X, Y = DigitGenerator.prepare_train_examples(pixels_to_categories)
+        self.assertEqual(X[0].tolist(), y[0].tolist())
+        self.assertEqual(Y[0].tolist(), [55 / 255.0, 2 / 255.0])
+
+    def test_for_multiple_examples(self):
+        x = [np.array([9, 124, 203], float),
+             np.array([55, 2], float)]
+        y = [np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0], float),
+             np.array([0.1, 0.8, 0, 0, 0, 0, 0, 0, 0, 0], float)]
+        pixels_to_categories = (x, y)
+        X, Y = DigitGenerator.prepare_train_examples(pixels_to_categories)
+        self.assertEqual(len(X), 2)
+
+        self.assertEqual(X[0].tolist(), y[0].tolist())
+        self.assertEqual(Y[0].tolist(), [9 / 255.0, 124 / 255.0, 203 / 255.0])
+
+        self.assertEqual(X[1].tolist(), y[1].tolist())
+        self.assertEqual(Y[1].tolist(), [55 / 255.0, 2 / 255.0])
 
 
 class TrainTests(unittest.TestCase):

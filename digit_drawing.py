@@ -6,6 +6,17 @@ class DigitGenerator:
     class InvalidDigitError(Exception):
         pass
 
+    @staticmethod
+    def prepare_train_examples(pixels_to_categories):
+        X, Y = pixels_to_categories
+        nexamples = len(Y)
+        X_swapped = []
+        Y_swapped = []
+        for i in range(nexamples):
+            X_swapped.append(np.array(Y[i].tolist(), float))
+            Y_swapped.append(np.array(X[i].tolist(), float) / 255.0)
+        return X_swapped, Y_swapped
+
     def __init__(self):
         self._nnet = NeuralNet(layer_sizes=[10, 10, 784])
 
@@ -31,8 +42,4 @@ class DigitGenerator:
         pass
 
     def net_layer_sizes(self):
-        sizes = []
-        sizes.append(self._nnet.weights()[0].shape[1])
-        sizes.append(self._nnet.weights()[0].shape[0])
-        sizes.append(self._nnet.weights()[1].shape[0])
-        return sizes
+        return self._nnet.layer_sizes()

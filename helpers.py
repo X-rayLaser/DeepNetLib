@@ -213,3 +213,23 @@ def get_test_data():
         Y.append(y)
 
     return X, Y
+
+
+def category_to_vector(cat_index, cat_number):
+    if cat_number <= 0:
+        raise InvalidNumberOfCategories('Number of categories must be positive integer')
+
+    if cat_index >= cat_number or cat_index < 0:
+        raise CategoryIndexOutOfBounds('Category index out of bounds: {}'.format(cat_index))
+
+    res = np.zeros(cat_number)
+    res[cat_index] = 1.0
+    return res
+
+
+class InvalidNumberOfCategories(Exception):
+    pass
+
+
+class CategoryIndexOutOfBounds(Exception):
+    pass

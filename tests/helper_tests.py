@@ -5,6 +5,7 @@ import backprop
 from activation_functions import sigma, sigma_prime
 from main import NeuralNet
 from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data, get_test_data
+import helpers
 
 
 class HelpersTests(unittest.TestCase):
@@ -281,3 +282,36 @@ class MNISTLoadingTests(unittest.TestCase):
 
         self.assertEqual(X[0].dtype, 'float64')
         self.assertEqual(Y[0].dtype, 'float64')
+
+
+class CategoryToVectorTests(unittest.TestCase):
+    def test_with_invalid_number_of_categories(self):
+        self.assertRaises(helpers.InvalidNumberOfCategories,
+                          lambda: helpers.category_to_vector(cat_index=1, cat_number=-50))
+        self.assertRaises(helpers.InvalidNumberOfCategories,
+                          lambda: helpers.category_to_vector(cat_index=1, cat_number=0))
+
+    def test_with_invalid_category_index(self):
+        self.assertRaises(helpers.CategoryIndexOutOfBounds,
+                          lambda: helpers.category_to_vector(cat_index=5, cat_number=5))
+
+        self.assertRaises(helpers.CategoryIndexOutOfBounds,
+                          lambda: helpers.category_to_vector(cat_index=25, cat_number=5))
+
+        self.assertRaises(helpers.CategoryIndexOutOfBounds,
+                          lambda: helpers.category_to_vector(cat_index=-5, cat_number=1))
+
+    def test_returns_numpy_array_of_floats(self):
+        v = helpers.category_to_vector(2, cat_number=4)
+        self.assertIsInstance(v, np.ndarray)
+        self.assertTrue(v.dtype in [np.float32, np.float64])
+
+    def test_returns_correct_array(self):
+        v = helpers.category_to_vector(0, cat_number=3)
+        self.assertEqual(v.tolist(), [1.0, 0, 0])
+
+        v = helpers.category_to_vector(1, cat_number=3)
+        self.assertEqual(v.tolist(), [0, 1.0, 0])
+
+        v = helpers.category_to_vector(2, cat_number=3)
+        self.assertEqual(v.tolist(), [0, 0, 1])
