@@ -172,3 +172,31 @@ def step(context):
     helpers.download_dataset()
     context.training_data = helpers.get_training_data()
     context.test_data = helpers.get_test_data()
+
+
+@when('I train a digit generator')
+def step(context):
+    helpers.download_dataset()
+    pixels_to_categories = helpers.get_training_data()
+    #context.test_data = helpers.get_test_data()
+    from digit_drawing import DigitGenerator
+    generator = DigitGenerator()
+    generator.train(data_set=pixels_to_categories)
+    context.generator = generator
+
+
+@then('out of {n} generated digits {accuracy}% or more are indeed digits')
+def step(context, n, accuracy):
+    from random import SystemRandom
+    sr = SystemRandom()
+
+    matches = 0
+    for i in range(1000):
+        digit = sr.randint(0, 9)
+        pixels = context.generator.generate_digit(digit)
+        output = context.nnet.feed(x=pixels)
+        index = np.argmax(output)
+        if index == digit:
+            matches += 1
+
+    assert matches / float(n) * 100 >= 90
