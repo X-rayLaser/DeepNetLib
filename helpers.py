@@ -233,3 +233,32 @@ class InvalidNumberOfCategories(Exception):
 
 class CategoryIndexOutOfBounds(Exception):
     pass
+
+
+class WrongImageDimensions(Exception):
+    pass
+
+
+class WrongDigitVector(Exception):
+    pass
+
+
+def create_image(dest_fname, pixel_vector, width, height):
+    if not isinstance(pixel_vector, np.ndarray) or pixel_vector.dtype != np.uint8:
+        raise WrongDigitVector('digit_vector must be of ndarray of numpy.uint8 elements')
+
+    num_of_pixels = pixel_vector.shape[0]
+
+    if num_of_pixels != width * height:
+        raise WrongImageDimensions('Total number of pixels must be = width * height')
+
+    dest_fname.split()
+    dirname, fname = os.path.split(dest_fname)
+    os.makedirs(dirname, exist_ok=True)
+
+    from PIL import Image
+
+    pixels = pixel_vector.reshape((height, width))
+    im = Image.fromarray(pixels.astype('uint8'), mode='L')
+    im.save(dest_fname)
+

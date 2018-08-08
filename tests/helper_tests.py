@@ -315,3 +315,40 @@ class CategoryToVectorTests(unittest.TestCase):
 
         v = helpers.category_to_vector(2, cat_number=3)
         self.assertEqual(v.tolist(), [0, 0, 1])
+
+
+class MakeDigitImage(unittest.TestCase):
+    def test_with_invalid_arguments(self):
+        vector = np.array([2, 9, 10, 0, 254, 0], dtype=np.uint8)
+        self.assertRaises(
+            helpers.WrongImageDimensions,
+            lambda: helpers.create_image(dest_fname='digit.png',
+                                             pixel_vector=vector, width=1, height=2)
+        )
+
+        self.assertRaises(
+            helpers.WrongDigitVector,
+            lambda: helpers.create_image(dest_fname='digit.png',
+                                             pixel_vector=[3, 9], width=1, height=2)
+        )
+
+    def test_creates_a_file(self):
+        dest_file = os.path.join('generated_digits', 'digit.png')
+        vector = np.array([2, 9, 10, 0, 254, 0], dtype=np.uint8)
+        helpers.create_image(dest_fname=dest_file,
+                                 pixel_vector=vector, width=2, height=3)
+        self.assertTrue(os.path.isfile(dest_file))
+
+    def test_created_file_is_correct_image(self):
+        dest_file = os.path.join('generated_digits', 'digit.png')
+        vector = np.array([2, 9, 10, 0, 254, 0], dtype=np.uint8)
+        helpers.create_image(dest_fname=dest_file,
+                             pixel_vector=vector, width=2, height=3)
+        from PIL import Image
+        try:
+            im = Image.open(dest_file)
+            self.assertEqual(im.width, 2)
+            self.assertEqual(im.height, 3)
+        except Exception as e:
+            print (repr(e))
+            assert False

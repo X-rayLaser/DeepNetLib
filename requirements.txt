@@ -3,3 +3,4 @@ behave
 python-mnist
 requests
 requests_mock
+Pillow >= 5.2.0
