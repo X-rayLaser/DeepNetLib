@@ -1,4 +1,10 @@
+import numpy as np
+
+
 class DigitGenerator:
+    class InvalidDigitError(Exception):
+        pass
+
     def __init__(self):
         pass
 
@@ -9,7 +15,11 @@ class DigitGenerator:
         pass
 
     def generate_digit(self, digit):
-        pass
+        if type(digit) != int or digit < 0 or digit > 9:
+            raise self.InvalidDigitError(
+                'Digit must be an integer from 0 to 9. Got'.format(digit)
+            )
+        return np.zeros(784, dtype=np.uint8)
 
     def save_as_json(self, fname):
         pass
