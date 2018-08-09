@@ -18,6 +18,9 @@ class NeuralNet:
     class LayerOutOfBound(Exception):
         pass
 
+    class InvalidMatrixDimensions(Exception):
+        pass
+
     def __init__(self, layer_sizes):
         if len(layer_sizes) < 3:
             raise self.BadArchitecture('Must be at least 3 layers')
@@ -151,10 +154,25 @@ class NeuralNet:
 
     def set_layer_weights(self, layer, weights):
         """layer must be between 1 and number of layers exclusive"""
+        if layer < 1 or layer >= self.number_of_layers():
+            raise self.LayerOutOfBound(
+                'layer must be between 1 and number of layers exclusive'
+            )
+
+        if weights.shape != self.weights()[layer - 1].shape:
+            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
+
         self._weights[layer - 1] = np.copy(weights)
 
     def set_layer_biases(self, layer, bias_vector):
         """layer must be between 1 and number of layers exclusive"""
+        if layer < 1 or layer >= self.number_of_layers():
+            raise self.LayerOutOfBound(
+                'layer must be between 1 and number of layers exclusive'
+            )
+
+        if bias_vector.shape != self.biases()[layer - 1].shape:
+            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._biases[layer - 1] = np.copy(bias_vector)
 
 

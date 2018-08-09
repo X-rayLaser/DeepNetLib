@@ -212,11 +212,17 @@ def step(context, fname):
     context.nnet.save(fname)
 
 
-@when('I initialize neural net parameters from a file "{fname}.json"')
+@when('I initialize neural net parameters from a file "{fname}"')
 def step(context, fname):
     context.new_net = NeuralNet.create_from_file(fname)
 
 
 @then('new net parameters match the parameters of old neural net')
 def step(context):
-    assert context.new_net == context.nnet
+    num_of_layers = len(context.new_net.weights())
+    assert num_of_layers == len(context.nnet.weights())
+    assert len(context.new_net.biases()) == len(context.nnet.biases())
+
+    for i in range(num_of_layers):
+        assert np.allclose(context.new_net.weights()[i], context.nnet.weights()[i])
+        assert np.allclose(context.new_net.biases()[i], context.nnet.biases()[i])
