@@ -199,3 +199,24 @@ def step(context, n, accuracy):
             matches += 1
 
     assert matches / float(n) * 100 >= int(accuracy)
+
+
+@when('I memorize weights and biases')
+def step(context):
+    context.weights = context.nnet.weights()
+    context.biases = context.nnet.biases()
+
+
+@when('I save neural net weights and biases to file "{fname}"')
+def step(context, fname):
+    context.nnet.save(fname)
+
+
+@when('I initialize neural net parameters from a file "{fname}.json"')
+def step(context, fname):
+    context.new_net = NeuralNet.create_from_file(fname)
+
+
+@then('new net parameters match the parameters of old neural net')
+def step(context):
+    assert context.new_net == context.nnet
