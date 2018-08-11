@@ -37,12 +37,14 @@ def compute_activations_and_zsums(x, neural_net):
 
 def compute_errors(neural_net, output_activations, expected_output, weighed_sums):
     cost_func = neural_net.get_cost_function()
+    activation_function = neural_net.get_activation_function()
+
     zs = list(weighed_sums)
 
     z_L = zs.pop()
     a = output_activations
     y = expected_output
-    nabla_L = cost_func.get_final_layer_error(a, y, z_L)
+    nabla_L = cost_func.get_final_layer_error(a, y, z_L, activation_function=activation_function)
 
     net_layers = neural_net.number_of_layers() - 1
     last_layer_index = net_layers - 1
@@ -55,7 +57,8 @@ def compute_errors(neural_net, output_activations, expected_output, weighed_sums
     for layer in range(last_layer_index - 1, -1, -1):
         z = zs.pop()
         w_next = wlist[layer + 1]
-        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z)
+        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z,
+                                             activation_function=activation_function)
         errors.append(nabla)
         nabla_next = nabla
 

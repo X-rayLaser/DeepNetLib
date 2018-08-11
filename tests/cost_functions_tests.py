@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import cost_functions
 from main import NeuralNet
-from activation_functions import sigma, sigma_prime
+from activation_functions import sigma, sigma_prime, Rectifier
 import backprop
 
 
@@ -63,6 +63,14 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * sigma_prime(z_last[1]),
                                places=2)
 
+    def test_get_final_layer_error_for_rectifier_activation(self):
+        quadratic = cost_functions.QuadraticCost()
+        z_last = np.array([-1], float)
+        y = np.array([0.5], float)
+        a_last = sigma(z_last)
+        nabla = quadratic.get_final_layer_error(a_last, y, z_last, activation_function=Rectifier)
+        self.assertAlmostEqual(nabla[0], (a_last - y) * Rectifier.gradient(z_last), places=2)
+
     def test_get_weights_gradient(self):
         quadratic = cost_functions.QuadraticCost()
 
@@ -92,6 +100,17 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         nabla = quadratic.get_error_in_layer(nabla_next, w_next, z)
 
         expected_nabla = np.array([2.72983, 6.6848])
+        self.assertTrue(np.allclose(nabla, expected_nabla))
+
+    def test_get_error_in_layer_using_rectified_activation(self):
+        quadratic = cost_functions.QuadraticCost()
+
+        nabla_next = np.array([2, 9, 5], float)
+        w_next = np.array([[3, 0], [0, 1], [4, 5]], float)
+        z = np.array([-0.01, -10])
+        nabla = quadratic.get_error_in_layer(nabla_next, w_next, z, activation_function=Rectifier)
+
+        expected_nabla = np.array([0, 0])
         self.assertTrue(np.allclose(nabla, expected_nabla))
 
 
