@@ -9,6 +9,16 @@ def sigma_prime(z):
     return sigma(z) * (1 - sigma(z))
 
 
+class Sigmoid:
+    @staticmethod
+    def activation(z):
+        return sigma(z)
+
+    @staticmethod
+    def gradient(z):
+        return sigma_prime(z)
+
+
 class Rectifier:
     @staticmethod
     def activation(z_vector):

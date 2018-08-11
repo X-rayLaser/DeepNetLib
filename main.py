@@ -1,7 +1,7 @@
 import numpy as np
 import cost_functions
 from gradient_descent import GradientDescent
-from activation_functions import sigma
+from activation_functions import sigma, Rectifier, Sigmoid
 
 
 def weighed_sum(weights, activations, biases):
@@ -36,6 +36,7 @@ class NeuralNet:
 
         self._AlgorithmClass = GradientDescent
         self._cost_function = cost_functions.QuadraticCost()
+        self._activation_function = Sigmoid
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
@@ -55,7 +56,7 @@ class NeuralNet:
         z = weighed_sum(weights=self._weights[layer], activations=activations,
                         biases=self._biases[layer])
 
-        a = sigma(z)
+        a = self._activation_function.activation(z)
         return self._feed_next(activations=a, layer=layer+1)
 
     def feed(self, x):
@@ -68,7 +69,7 @@ class NeuralNet:
         """count starts from first hidden layer"""
         z = weighed_sum(weights=self._weights[layer], activations=x,
                         biases=self._biases[layer])
-        a = sigma(z)
+        a = self._activation_function.activation(z)
         return a, z
 
     def train(self, examples, nepochs=1):
@@ -115,6 +116,9 @@ class NeuralNet:
 
     def set_cost_function(self, cost_function):
         self._cost_function = cost_function
+
+    def set_activation_function(self, activation):
+        self._activation_function = activation
 
     def set_learning_algorithm(self, algorithm_class):
         self._AlgorithmClass = algorithm_class

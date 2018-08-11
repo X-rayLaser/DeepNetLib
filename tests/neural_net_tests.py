@@ -334,6 +334,15 @@ class SetLayerBiases(unittest.TestCase):
         )
 
 
+class SetActivationFunctionTests(unittest.TestCase):
+    def test_feed_outputs_correct_vector(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Rectifier
+        nnet.set_activation_function(activation=Rectifier)
+        a = nnet.feed(np.array([2, 10], float))
+        self.assertEqual(a.tolist(), [0, 0, 0])
+
+
 class CreateFromFileTests(unittest.TestCase):
     def make_temp_params_file(self, net_params):
         self.net_params = net_params

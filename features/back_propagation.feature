@@ -18,3 +18,13 @@ Scenario: Back propagation outputs correct gradients when using cross entropy co
     And I compute the gradient for weights and biases by running back propagation
     And I compute the gradient for weights and biases by taking numerical derivatives
     Then these two sets of gradients are the same
+
+@backprop @quadratic @rectifier
+Scenario: Back propagation outputs correct gradients when using rectifier activation function
+    When I initialize simple neural net with default parameters
+    And I randomly initialize net's parameters
+    And I choose rectifier activation function
+    And I generate a data set from a function "sin(x)^2"
+    And I compute the gradient for weights and biases by running back propagation
+    And I compute the gradient for weights and biases by taking numerical derivatives
+    Then these two sets of gradients are the same

@@ -226,3 +226,9 @@ def step(context):
     for i in range(num_of_layers):
         assert np.allclose(context.new_net.weights()[i], context.nnet.weights()[i])
         assert np.allclose(context.new_net.biases()[i], context.nnet.biases()[i])
+
+
+@when('I choose rectifier activation function')
+def step(context):
+    from activation_functions import Rectifier
+    context.nnet.set_activation_function(Rectifier)
