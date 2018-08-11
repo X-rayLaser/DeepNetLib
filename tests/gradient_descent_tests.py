@@ -84,6 +84,39 @@ class GradientDescentTest(unittest.TestCase):
         self.assertLess(cost_after, cost_before)
 
 
+class GradientLearningRateTests(unittest.TestCase):
+    def setUp(self):
+        x = np.array([5, 2], float)
+        y = np.array([0.25, 0, 1], float)
+        self.examples = ([x], [y])
+        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        self.nnet = nnet
+        self.Descent = GradientDescent
+
+    def test_learning_rate_is_set(self):
+        gd = self.Descent(neural_net=self.nnet, learning_rate=2)
+        self.assertEqual(gd._rate, 2)
+        gd = self.Descent(neural_net=self.nnet, learning_rate=0.1)
+        self.assertEqual(gd._rate, 0.1)
+
+    def test_forbid_weird_learning_rates(self):
+        self.assertRaises(
+            GradientDescent.InvalidLearningRate,
+            lambda: self.Descent(neural_net=self.nnet, learning_rate=0)
+        )
+
+        self.assertRaises(
+            GradientDescent.InvalidLearningRate,
+            lambda: self.Descent(neural_net=self.nnet, learning_rate=-20)
+        )
+
+
+class StochasticGradientLearningRateTests(GradientLearningRateTests):
+    def setUp(self):
+        GradientLearningRateTests.setUp(self)
+        self.Descent = StochasticGradientDescent
+
+
 class StochasticGradientDescentTests(GradientDescentTest):
     def setUp(self):
         x = np.array([5, 2], float)
@@ -93,3 +126,28 @@ class StochasticGradientDescentTests(GradientDescentTest):
         nnet.randomize_parameters()
         self.nnet = nnet
         self.grad_descent = StochasticGradientDescent(neural_net=nnet)
+
+    def test_mini_batch_is_set(self):
+        gd = StochasticGradientDescent(neural_net=self.nnet, batch_size=20)
+        self.assertEqual(gd._batch_size, 20)
+        gd = StochasticGradientDescent(neural_net=self.nnet, batch_size=1)
+        self.assertEqual(gd._batch_size, 1)
+
+    def test_with_wrong_batch_size(self):
+        self.assertRaises(
+            StochasticGradientDescent.InvalidBatchSize,
+            lambda: StochasticGradientDescent(neural_net=self.nnet, batch_size=0)
+        )
+        self.assertRaises(
+            StochasticGradientDescent.InvalidBatchSize,
+            lambda: StochasticGradientDescent(neural_net=self.nnet, batch_size=-1)
+        )
+        self.assertRaises(
+            StochasticGradientDescent.InvalidBatchSize,
+            lambda: StochasticGradientDescent(neural_net=self.nnet, batch_size=-10)
+        )
+
+        self.assertRaises(
+            StochasticGradientDescent.InvalidBatchSize,
+            lambda: StochasticGradientDescent(neural_net=self.nnet, batch_size=3.5)
+        )

@@ -4,7 +4,12 @@ from backprop import back_propagation
 
 
 class GradientDescent:
+    class InvalidLearningRate(Exception):
+        pass
+
     def __init__(self, neural_net, learning_rate=3.0):
+        if learning_rate <= 0:
+            raise self.InvalidLearningRate('Learning rate must be a positive number')
         self._nnet= neural_net
         self._rate = learning_rate
 
@@ -29,9 +34,14 @@ class GradientDescent:
 
 
 class StochasticGradientDescent(GradientDescent):
-    def __init__(self, neural_net):
-        GradientDescent.__init__(self, neural_net, learning_rate=0.1)
-        self._batch_size = 50
+    class InvalidBatchSize(Exception):
+        pass
+
+    def __init__(self, neural_net, learning_rate=0.1, batch_size=50):
+        if not (type(batch_size) is int) or batch_size <= 0:
+            raise self.InvalidBatchSize('Batch size must be a positive integer')
+        GradientDescent.__init__(self, neural_net, learning_rate=learning_rate)
+        self._batch_size = batch_size
 
     def shuffle_examples(self, examples):
         x_list, y_list = examples
