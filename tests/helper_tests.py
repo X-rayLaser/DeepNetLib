@@ -2,7 +2,7 @@ import unittest
 import os
 import numpy as np
 import backprop
-from activation_functions import sigma, sigma_prime
+from activation_functions import sigma, sigma_prime, Sigmoid
 from main import NeuralNet
 from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data, get_test_data
 import helpers
@@ -106,7 +106,8 @@ class HelpersTests(unittest.TestCase):
 
         expected_nabla2 = (a[-1] - y) * sigma_prime(zs[-1])
         expected_nabla1 = cost_func.get_error_in_layer(nabla_next=expected_nabla2,
-                                                     w_next=np.array([[0, 5]]), z=zs[0])
+                                                       w_next=np.array([[0, 5]]), z=zs[0],
+                                                       activation_function=Sigmoid)
 
         self.assertTrue(np.allclose(errors_list[0], expected_nabla1))
         self.assertTrue(np.allclose(errors_list[1], expected_nabla2))

@@ -51,7 +51,7 @@ def cross_entropy(activations, outputs):
 
 class CostFunction:
     def get_error_in_layer(self, nabla_next, w_next, z,
-                           activation_function=activation_functions.Sigmoid):
+                           activation_function):
         return w_next.T.dot(nabla_next) * activation_function.gradient(z)
 
     def get_weights_gradient(self, layer_error, previous_layer_activations):
@@ -69,7 +69,7 @@ class QuadraticCost(CostFunction):
         return quadratic_cost(activations=activations, outputs=outputs)
 
     def get_final_layer_error(self, activation_last, expected_output, weighted_sum_last,
-                              activation_function=activation_functions.Sigmoid):
+                              activation_function):
         a_last = activation_last
         y = expected_output
         z_last = weighted_sum_last
@@ -81,7 +81,7 @@ class CrossEntropyCost(CostFunction):
         return cross_entropy(activations=activations, outputs=outputs)
 
     def get_final_layer_error(self, activation_last, expected_output, weighted_sum_last,
-                              activation_function=activation_functions.Sigmoid):
+                              activation_function):
         a_last = activation_last
         y = expected_output
         return a_last - y

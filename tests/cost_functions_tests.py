@@ -2,8 +2,7 @@ import unittest
 import numpy as np
 import cost_functions
 from main import NeuralNet
-from activation_functions import sigma, sigma_prime, Rectifier
-import backprop
+from activation_functions import sigma, sigma_prime, Sigmoid, Rectifier
 
 
 class QuadraticCostTests(unittest.TestCase):
@@ -42,13 +41,13 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         z_last = np.array([3], float)
         y = np.array([0], float)
         a_last = sigma(z_last)
-        nabla = quadratic.get_final_layer_error(a_last, y, z_last)
+        nabla = quadratic.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
         self.assertAlmostEqual(nabla[0], 0.04, places=2)
 
         z_last = np.array([-1], float)
         y = np.array([0.5], float)
         a_last = sigma(z_last)
-        nabla = quadratic.get_final_layer_error(a_last, y, z_last)
+        nabla = quadratic.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
         self.assertAlmostEqual(nabla[0], (a_last - y) * sigma_prime(z_last), places=2)
 
     def test_get_final_layer_error_for_arrays(self):
@@ -57,7 +56,7 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         z_last = np.array([3, -1], float)
         y = np.array([0, 0.5], float)
         a_last = sigma(z_last)
-        nabla = quadratic.get_final_layer_error(a_last, y, z_last)
+        nabla = quadratic.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
 
         self.assertAlmostEqual(nabla[0], 0.04, places=2)
         self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * sigma_prime(z_last[1]),
@@ -97,7 +96,7 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         nabla_next = np.array([2, 9, 5], float)
         w_next = np.array([[3, 0], [0, 1], [4, 5]], float)
         z = np.array([2, -1])
-        nabla = quadratic.get_error_in_layer(nabla_next, w_next, z)
+        nabla = quadratic.get_error_in_layer(nabla_next, w_next, z, activation_function=Sigmoid)
 
         expected_nabla = np.array([2.72983, 6.6848])
         self.assertTrue(np.allclose(nabla, expected_nabla))
@@ -213,13 +212,13 @@ class CrossEntropyGradientsTests(unittest.TestCase):
         z_last = np.array([3], float)
         y = np.array([0], float)
         a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last)
+        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
         self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
 
         z_last = np.array([-1], float)
         y = np.array([0.5], float)
         a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last)
+        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
         self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
 
     def test_get_final_layer_error_for_arrays(self):
@@ -228,7 +227,7 @@ class CrossEntropyGradientsTests(unittest.TestCase):
         z_last = np.array([3, -1], float)
         y = np.array([0, 0.5], float)
         a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last)
+        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
 
         self.assertAlmostEqual(nabla[0], a_last[0] - y[0], places=2)
         self.assertAlmostEqual(nabla[1], a_last[1] - y[1],
