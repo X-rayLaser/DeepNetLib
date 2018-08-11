@@ -335,12 +335,46 @@ class SetLayerBiases(unittest.TestCase):
 
 
 class SetActivationFunctionTests(unittest.TestCase):
-    def test_feed_outputs_correct_vector(self):
+    def test_feed_outputs_vector_of_zeros(self):
         nnet = NeuralNet(layer_sizes=[2, 4, 3])
         from activation_functions import Rectifier
         nnet.set_activation_function(activation=Rectifier)
         a = nnet.feed(np.array([2, 10], float))
         self.assertEqual(a.tolist(), [0, 0, 0])
+
+    def test_feed_outputs_correct_vector(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 4])
+        nnet.set_layer_biases(layer=2, bias_vector=np.array([-2, -1, 1, 10], float))
+
+        from activation_functions import Rectifier
+        nnet.set_activation_function(activation=Rectifier)
+        a = nnet.feed(np.array([2, 10], float))
+        self.assertEqual(a.tolist(), [0, 0, 1, 10])
+
+
+class GetActivationFunctionTests(unittest.TestCase):
+    def test_for_default_activation(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        activation_object = nnet.get_activation_function()
+        from activation_functions import Sigmoid, Rectifier
+
+        self.assertEqual(activation_object.__class__, Sigmoid.__class__)
+
+    def test_for_sigmoid(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Sigmoid, Rectifier
+        nnet.set_activation_function(Sigmoid)
+        activation_object = nnet.get_activation_function()
+
+        self.assertEqual(activation_object, Sigmoid)
+
+    def test_for_rectifier(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Sigmoid, Rectifier
+        nnet.set_activation_function(Rectifier)
+        activation_object = nnet.get_activation_function()
+
+        self.assertEqual(activation_object, Rectifier)
 
 
 class CreateFromFileTests(unittest.TestCase):

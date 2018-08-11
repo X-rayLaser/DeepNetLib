@@ -139,6 +139,9 @@ class NeuralNet:
     def get_cost_function(self):
         return self._cost_function
 
+    def get_activation_function(self):
+        return self._activation_function
+
     def save(self, dest_fname):
         import json
         layers = []
