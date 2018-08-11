@@ -4,9 +4,9 @@ from backprop import back_propagation
 
 
 class GradientDescent:
-    def __init__(self, neural_net):
+    def __init__(self, neural_net, learning_rate=3.0):
         self._nnet= neural_net
-        self._rate = 3
+        self._rate = learning_rate
 
     def update_weights(self, weight_gradient):
         weights = self._nnet.weights()
@@ -30,9 +30,8 @@ class GradientDescent:
 
 class StochasticGradientDescent(GradientDescent):
     def __init__(self, neural_net):
-        GradientDescent.__init__(self, neural_net)
+        GradientDescent.__init__(self, neural_net, learning_rate=0.1)
         self._batch_size = 50
-        self._rate = 0.1
 
     def shuffle_examples(self, examples):
         x_list, y_list = examples
