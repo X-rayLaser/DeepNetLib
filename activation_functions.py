@@ -49,3 +49,21 @@ class Softmax:
         vf = np.vectorize(f)
         a = vf(z_vector)
         return a
+
+    @staticmethod
+    def gradient(z_vector):
+        vectorlen = z_vector.shape[0]
+        jacobian = np.zeros((vectorlen, vectorlen))
+
+        softmax = Softmax.activation(z_vector)
+
+        for i in range(vectorlen):
+            for j in range(vectorlen):
+                si = softmax[i]
+                sj = softmax[j]
+                if i == j:
+                    jacobian[i, j] = si * (1 - sj)
+                else:
+                    jacobian[i, j] = si * sj
+
+        return jacobian

@@ -104,3 +104,34 @@ class SoftmaxTests(unittest.TestCase):
         self.assertTrue(
             np.allclose(a, np.array([0.1192029, 0.880797], float), )
         )
+
+
+class SoftmaxGradientTests(unittest.TestCase):
+    def test_returns_jacobian_matrix_of_valid_shape(self):
+        z = np.array([1, 2, -2], float)
+        j = Softmax.gradient(z)
+        self.assertTupleEqual(j.shape, (3, 3))
+
+        z = np.array([1, 2], float)
+        j = Softmax.gradient(z)
+        self.assertTupleEqual(j.shape, (2, 2))
+
+    def test_derivatives_with_equal_indices_in_jacobian_matrix(self):
+        z = np.array([1, -1.5], float)
+        j = Softmax.gradient(z)
+
+        s = Softmax.activation(z)
+        self.assertEqual(j[0, 0], s[0] * (1 - s[0]))
+
+        s = Softmax.activation(z)
+        self.assertEqual(j[1, 1], s[1] * (1 - s[1]))
+
+    def test_derivatives_with_different_indices_in_jacobian_matrix(self):
+        z = np.array([1, -1.5], float)
+        j = Softmax.gradient(z)
+
+        s = Softmax.activation(z)
+        self.assertEqual(j[0, 1], s[0] * s[1])
+
+        s = Softmax.activation(z)
+        self.assertEqual(j[1, 0], s[1] * s[0])
