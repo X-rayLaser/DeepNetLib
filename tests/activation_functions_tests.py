@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from activation_functions import sigma, sigma_prime, Rectifier, Sigmoid
+from activation_functions import sigma, sigma_prime, Rectifier, Sigmoid, Softmax
 
 
 class SigmoidTests(unittest.TestCase):
@@ -73,3 +73,34 @@ class RectifierGradientTests(unittest.TestCase):
         mylist = [-10, 0, 2, 10**20]
         a = Rectifier.gradient(np.array(mylist, float))
         self.assertEqual(a.tolist(), [0, 0, 1, 1])
+
+
+class SoftmaxTests(unittest.TestCase):
+    def test_returns_array_of_valid_shape(self):
+        z = np.array([1, 2], float)
+        a = Softmax.activation(z)
+        self.assertTupleEqual(a.shape, z.shape)
+
+    def test_activations_in_correct_range(self):
+        z = np.array([-1000, 0.1, 2, 200], float)
+        a = Softmax.activation(z)
+
+        self.assertTrue(np.all(0 <= a) and np.all(a <= 1))
+
+    def test_results_add_to_1(self):
+        z = np.array([-3, 0.1, 1, 20], float)
+        a = Softmax.activation(z)
+        self.assertAlmostEqual(a.sum(), 1)
+
+    def test_for_2_element_vectors(self):
+        z = np.array([1, 2], float)
+        a = Softmax.activation(z)
+        self.assertTrue(
+            np.allclose(a, np.array([0.268941, 0.731058], float), )
+        )
+
+        z = np.array([0, 2], float)
+        a = Softmax.activation(z)
+        self.assertTrue(
+            np.allclose(a, np.array([0.1192029, 0.880797], float), )
+        )

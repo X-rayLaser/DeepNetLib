@@ -1,3 +1,4 @@
+import math
 import numpy as np
 
 
@@ -33,3 +34,18 @@ class Rectifier:
 
         vf = np.vectorize(f)
         return vf(z_vector)
+
+
+class Softmax:
+    @staticmethod
+    def activation(z_vector):
+        denominator = 0
+        for z in z_vector:
+            denominator += math.exp(z)
+
+        def f(n):
+            return math.exp(n) / denominator
+
+        vf = np.vectorize(f)
+        a = vf(z_vector)
+        return a
