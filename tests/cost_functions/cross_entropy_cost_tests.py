@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 import cost_functions
-from activation_functions import sigma, sigma_prime, Sigmoid, Rectifier
 
 
 class CrossEntropyCostTests(unittest.TestCase):
@@ -95,31 +94,3 @@ class CrossEntropyCostTests(unittest.TestCase):
         y = [np.array([0.5, 0], float), np.array([0, 0.5], float), np.array([0, 0], float)]
         c = self.cross_entropy_cost(activations=a, outputs=y)
         self.assertAlmostEqual(c, 0.6931 * 2 / 3, places=3)
-
-
-class CrossEntropyGradientsTests(unittest.TestCase):
-    def test_get_final_layer_error_for_1_element_vectors(self):
-        cross_entropy = cost_functions.CrossEntropyCost()
-        z_last = np.array([3], float)
-        y = np.array([0], float)
-        a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
-        self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
-
-        z_last = np.array([-1], float)
-        y = np.array([0.5], float)
-        a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
-        self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
-
-    def test_get_final_layer_error_for_arrays(self):
-        cross_entropy = cost_functions.CrossEntropyCost()
-
-        z_last = np.array([3, -1], float)
-        y = np.array([0, 0.5], float)
-        a_last = sigma(z_last)
-        nabla = cross_entropy.get_final_layer_error(a_last, y, z_last, activation_function=Sigmoid)
-
-        self.assertAlmostEqual(nabla[0], a_last[0] - y[0], places=2)
-        self.assertAlmostEqual(nabla[1], a_last[1] - y[1],
-                               places=2)
