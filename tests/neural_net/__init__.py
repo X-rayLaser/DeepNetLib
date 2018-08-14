@@ -11,3 +11,5 @@ from .set_activation_function_tests import *
 from .set_output_activation_function_tests import *
 from .get_activation_function_tests import *
 from .get_output_activation_function_tests import *
+from .create_from_file_tests import *
+from .save_tests import *

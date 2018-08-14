@@ -4,7 +4,6 @@ from tests.gradient_descent_tests import *
 from tests.back_propagation_tests import *
 from tests.helper_tests import *
 from tests.digit_drawing_tests import *
-from tests.neural_net_tests import *
 from tests.neural_net import *
 
 
