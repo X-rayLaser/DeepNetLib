@@ -8,6 +8,7 @@ import backprop_slow
 import gradient_descent
 import cost_functions
 from digit_drawing import DigitGenerator
+from activation_functions import Rectifier, Softmax
 
 
 def squared_sin_data_set():
@@ -230,5 +231,14 @@ def step(context):
 
 @when('I choose rectifier activation function')
 def step(context):
-    from activation_functions import Rectifier
     context.nnet.set_activation_function(Rectifier)
+
+
+@when('I choose rectifier activation function for hidden layer(s)')
+def step(context):
+    context.nnet.set_activation_function(Rectifier)
+
+
+@when('I choose softmax activation function for output layer')
+def step(context):
+    context.nnet.set_output_layer_activation(Softmax)

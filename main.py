@@ -1,7 +1,7 @@
 import numpy as np
 import cost_functions
 from gradient_descent import GradientDescent
-from activation_functions import sigma, Rectifier, Sigmoid
+from activation_functions import sigma, Rectifier, Sigmoid, Softmax
 
 
 def weighed_sum(weights, activations, biases):
@@ -37,6 +37,7 @@ class NeuralNet:
         self._AlgorithmClass = GradientDescent
         self._cost_function = cost_functions.QuadraticCost()
         self._activation_function = Sigmoid
+        self._output_activation_function = Sigmoid
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
@@ -56,7 +57,12 @@ class NeuralNet:
         z = weighed_sum(weights=self._weights[layer], activations=activations,
                         biases=self._biases[layer])
 
-        a = self._activation_function.activation(z)
+        if layer == effective_layers_count - 1:
+            activ_object = self._output_activation_function
+        else:
+            activ_object = self._activation_function
+
+        a = activ_object.activation(z)
         return self._feed_next(activations=a, layer=layer+1)
 
     def feed(self, x):
@@ -69,7 +75,13 @@ class NeuralNet:
         """count starts from first hidden layer"""
         z = weighed_sum(weights=self._weights[layer], activations=x,
                         biases=self._biases[layer])
-        a = self._activation_function.activation(z)
+
+        effective_layers_count = len(self._sizes) - 1
+        if layer == effective_layers_count - 1:
+            activ_object = self._output_activation_function
+        else:
+            activ_object = self._activation_function
+        a = activ_object.activation(z)
         return a, z
 
     def train(self, examples, nepochs=1):
@@ -119,6 +131,10 @@ class NeuralNet:
 
     def set_activation_function(self, activation):
         self._activation_function = activation
+        self._output_activation_function = activation
+
+    def set_output_activation_function(self, activation):
+        self._output_activation_function = activation
 
     def set_learning_algorithm(self, algorithm_class):
         self._AlgorithmClass = algorithm_class
@@ -141,6 +157,9 @@ class NeuralNet:
 
     def get_activation_function(self):
         return self._activation_function
+
+    def get_output_activation_function(self):
+        return self._output_activation_function
 
     def save(self, dest_fname):
         import json

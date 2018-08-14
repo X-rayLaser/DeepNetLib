@@ -352,6 +352,17 @@ class SetActivationFunctionTests(unittest.TestCase):
         self.assertEqual(a.tolist(), [0, 0, 1, 10])
 
 
+class SetOutputActivationFunctionTests(unittest.TestCase):
+    def test_set_output_layer_activation(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 2])
+        from activation_functions import Softmax
+
+        nnet.set_layer_biases(layer=2, bias_vector=np.array([3, 3], float))
+        nnet.set_output_activation_function(activation=Softmax)
+        a = nnet.feed(np.array([2, 10], float))
+        self.assertEqual(a.tolist(), [0.5, 0.5])
+
+
 class GetActivationFunctionTests(unittest.TestCase):
     def test_for_default_activation(self):
         nnet = NeuralNet(layer_sizes=[2, 4, 3])
@@ -375,6 +386,31 @@ class GetActivationFunctionTests(unittest.TestCase):
         activation_object = nnet.get_activation_function()
 
         self.assertEqual(activation_object, Rectifier)
+
+
+class GetOutputLayerActivationFunctionTests(unittest.TestCase):
+    def test_for_sigmoid(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Sigmoid
+        nnet.set_output_activation_function(Sigmoid)
+        activation_object = nnet.get_output_activation_function()
+
+        self.assertEqual(activation_object, Sigmoid)
+
+    def test_for_rectifier(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Rectifier
+        nnet.set_output_activation_function(Rectifier)
+        activation_object = nnet.get_output_activation_function()
+
+        self.assertEqual(activation_object, Rectifier)
+
+    def test_for_softmax(self):
+        nnet = NeuralNet(layer_sizes=[2, 4, 3])
+        from activation_functions import Softmax
+        nnet.set_output_activation_function(Softmax)
+        activation_object = nnet.get_output_activation_function()
+        self.assertEqual(activation_object, Softmax)
 
 
 class CreateFromFileTests(unittest.TestCase):
