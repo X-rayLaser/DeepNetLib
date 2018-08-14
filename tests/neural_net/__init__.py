@@ -5,3 +5,5 @@ from .set_weight_tests import *
 from .set_bias_tests import *
 from .get_cost_function_tests import *
 from .layer_sizes_tests import *
+from .set_layer_biases_tests import *
+from .set_layer_weights_tests import *
