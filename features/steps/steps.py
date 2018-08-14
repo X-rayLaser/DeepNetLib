@@ -241,4 +241,4 @@ def step(context):
 
 @when('I choose softmax activation function for output layer')
 def step(context):
-    context.nnet.set_output_layer_activation(Softmax)
+    context.nnet.set_output_activation_function(Softmax)
