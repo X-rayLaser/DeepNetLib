@@ -201,7 +201,6 @@ class NeuralNet:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._biases[layer - 1] = np.copy(bias_vector)
 
-
     @staticmethod
     def create_from_file(fname):
         import json
