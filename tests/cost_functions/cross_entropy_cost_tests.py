@@ -94,3 +94,7 @@ class CrossEntropyCostTests(unittest.TestCase):
         y = [np.array([0.5, 0], float), np.array([0, 0.5], float), np.array([0, 0], float)]
         c = self.cross_entropy_cost(activations=a, outputs=y)
         self.assertAlmostEqual(c, 0.6931 * 2 / 3, places=3)
+
+    def test_get_lambda(self):
+        cost_func = cost_functions.CrossEntropyCost()
+        self.assertEqual(cost_func.get_lambda(), 0)

@@ -32,3 +32,7 @@ class QuadraticCostTests(unittest.TestCase):
         examples = (xes, ys)
         cost = nnet.get_cost(examples)
         self.assertAlmostEqual(cost, 1.0/64, places=4)
+
+    def test_get_lambda(self):
+        quadracost = cost_functions.QuadraticCost()
+        self.assertEqual(quadracost.get_lambda(), 0)

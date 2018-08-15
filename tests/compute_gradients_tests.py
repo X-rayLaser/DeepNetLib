@@ -77,3 +77,15 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[0].shape, (2,))
         self.assertTupleEqual(b_grad[1].shape, (2,))
         self.assertTupleEqual(b_grad[2].shape, (5,))
+
+    def test_with_regularization(self):
+        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet.randomize_parameters()
+        nnet.set_regularization(reg_lambda=2)
+        examples = helpers.generate_random_examples(10, 4, 10)
+
+        w_grad1, b_grad1 = compute_gradients(examples=examples, neural_net=nnet)
+        w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
+
+        self.compare_grads(grad1=w_grad1, grad2=w_grad2)
+        self.compare_grads(grad1=b_grad1, grad2=b_grad2)

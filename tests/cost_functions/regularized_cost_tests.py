@@ -56,3 +56,12 @@ class RegularizedCostTests(unittest.TestCase):
 
         self.check_case(cost_function=CrossEntropyCost(), activations=activations,
                         outputs=outputs, reglambda=1, weights=weights)
+
+    def test_get_lambda(self):
+        weights = [np.array([[3, -1]])]
+
+        regcost = RegularizedCost(cost_function=QuadraticCost(),
+                                  regularization_parameter=2,
+                                  weights=weights)
+
+        self.assertEqual(regcost.get_lambda(), 2)

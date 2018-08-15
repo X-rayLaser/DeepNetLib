@@ -60,20 +60,23 @@ class CostFunction:
 
         return np.outer(nabla, a)
 
-    def get_bias_gradient(self, layer_error):
-        return layer_error
-
-
-class QuadraticCost(CostFunction):
-    def compute_cost(self, activations, outputs):
-        return quadratic_cost(activations=activations, outputs=outputs)
-
     def get_final_layer_error(self, activation_last, expected_output, weighted_sum_last,
                               activation_function):
         a_last = activation_last
         y = expected_output
         z_last = weighted_sum_last
         return (a_last - y) * activation_function.gradient(z_last)
+
+    def get_bias_gradient(self, layer_error):
+        return layer_error
+
+    def get_lambda(self):
+        return 0
+
+
+class QuadraticCost(CostFunction):
+    def compute_cost(self, activations, outputs):
+        return quadratic_cost(activations=activations, outputs=outputs)
 
 
 class CrossEntropyCost(CostFunction):
@@ -113,3 +116,6 @@ class RegularizedCost(CostFunction):
         if weights is None:
             return grad
         return grad + self._reglambda / float(n) * weights
+
+    def get_lambda(self):
+        return self._reglambda

@@ -129,6 +129,15 @@ class NeuralNet:
     def set_cost_function(self, cost_function):
         self._cost_function = cost_function
 
+    def set_regularization(self, reg_lambda=0):
+        if reg_lambda > 0 and not isinstance(self._cost_function,
+                                             cost_functions.RegularizedCost):
+            self._cost_function = cost_functions.RegularizedCost(
+                self._cost_function,
+                regularization_parameter=reg_lambda,
+                weights=self.weights()
+            )
+
     def set_activation_function(self, activation):
         self._activation_function = activation
         self._output_activation_function = activation
