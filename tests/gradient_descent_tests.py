@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from main import NeuralNet
 from gradient_descent import GradientDescent, StochasticGradientDescent
-from backprop import back_propagation
+from backprop import back_propagation, compute_gradients
 
 
 class GradientDescentTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class GradientDescentTest(unittest.TestCase):
         cost_before = self.nnet.get_cost(self.examples)
 
         for i in range(5):
-            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            w_grad, b_grad = compute_gradients(examples=self.examples, neural_net=self.nnet)
             self.grad_descent.update_weights(weight_gradient=w_grad)
             self.grad_descent.update_biases(bias_gradient=b_grad)
 
@@ -34,7 +34,7 @@ class GradientDescentTest(unittest.TestCase):
         cost_before = self.nnet.get_cost(self.examples)
 
         for i in range(5):
-            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            w_grad, b_grad = compute_gradients(examples=self.examples, neural_net=self.nnet)
             self.grad_descent.update_biases(bias_gradient=b_grad)
 
         cost_after = self.nnet.get_cost(self.examples)
@@ -49,7 +49,7 @@ class GradientDescentTest(unittest.TestCase):
         cost_before = self.nnet.get_cost(self.examples)
 
         for i in range(10):
-            w_grad, b_grad = back_propagation(examples=self.examples, neural_net=self.nnet)
+            w_grad, b_grad = compute_gradients(examples=self.examples, neural_net=self.nnet)
             self.grad_descent.update_weights(weight_gradient=w_grad)
             self.grad_descent.update_biases(bias_gradient=b_grad)
 

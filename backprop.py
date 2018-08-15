@@ -2,7 +2,7 @@ import numpy as np
 import activation_functions
 
 
-def back_propagation(examples, neural_net):
+def compute_gradients(examples, neural_net):
     xes, ys = examples
     examples_count = len(ys)
 
@@ -11,7 +11,7 @@ def back_propagation(examples, neural_net):
     for i in range(examples_count):
         x = xes[i]
         y = ys[i]
-        wgrad, bgrad = gradients_per_example(x, y, neural_net=neural_net)
+        wgrad, bgrad = back_propagation(x, y, neural_net=neural_net)
         weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
                                                       new_gradients_list=wgrad)
         biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
@@ -66,7 +66,7 @@ def compute_errors(neural_net, output_activations, expected_output, weighed_sums
     return errors
 
 
-def gradients_per_example(x, y, neural_net):
+def back_propagation(x, y, neural_net):
     cost_func = neural_net.get_cost_function()
 
     weights_gradient = []

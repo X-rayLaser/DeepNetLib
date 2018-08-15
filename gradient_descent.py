@@ -1,6 +1,6 @@
 from random import shuffle
 import helpers
-from backprop import back_propagation
+from backprop import back_propagation, compute_gradients
 
 
 class GradientDescent:
@@ -24,7 +24,7 @@ class GradientDescent:
             biases[i] -= self._rate * bias_gradient[i]
 
     def training_epoch(self, examples):
-        wgrad, bgrad = back_propagation(examples=examples, neural_net=self._nnet)
+        wgrad, bgrad = compute_gradients(examples=examples, neural_net=self._nnet)
         self.update_weights(weight_gradient=wgrad)
         self.update_biases(bias_gradient=bgrad)
 
