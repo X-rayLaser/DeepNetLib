@@ -54,7 +54,7 @@ class CostFunction:
                            activation_function):
         return w_next.T.dot(nabla_next) * activation_function.gradient(z)
 
-    def get_weights_gradient(self, layer_error, previous_layer_activations):
+    def get_weights_gradient(self, layer_error, previous_layer_activations, weights=None, nexamples=1):
         nabla = layer_error
         a = previous_layer_activations
 
@@ -95,7 +95,21 @@ class RegularizedCost(CostFunction):
 
     def compute_cost(self, activations, outputs):
         n = len(outputs)
-        reg_term = self._reglambda / float(2 * n) * (self._weights ** 2).sum()
+
+        square_sum = sum([(w ** 2).sum() for w in self._weights])
+
+        reg_term = self._reglambda / float(2 * n) * square_sum
         old_cost = self._cost_function.compute_cost(activations=activations,
                                                     outputs=outputs)
         return old_cost + reg_term
+
+    def get_weights_gradient(self, layer_error, previous_layer_activations, weights=None, nexamples=1):
+        # todo correct this, regularized gradient should be summed with gradient avaraged over all examples
+        grad = self._cost_function.get_weights_gradient(
+            layer_error=layer_error, previous_layer_activations=previous_layer_activations
+        )
+
+        n = nexamples
+        if weights is None:
+            return grad
+        return grad + self._reglambda / float(n) * weights
