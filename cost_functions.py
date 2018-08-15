@@ -85,3 +85,17 @@ class CrossEntropyCost(CostFunction):
         a_last = activation_last
         y = expected_output
         return a_last - y
+
+
+class RegularizedCost(CostFunction):
+    def __init__(self, cost_function, regularization_parameter, weights):
+        self._cost_function = cost_function
+        self._reglambda = regularization_parameter
+        self._weights = weights
+
+    def compute_cost(self, activations, outputs):
+        n = len(outputs)
+        reg_term = self._reglambda / float(2 * n) * (self._weights ** 2).sum()
+        old_cost = self._cost_function.compute_cost(activations=activations,
+                                                    outputs=outputs)
+        return old_cost + reg_term
