@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from backprop import back_propagation, zero_gradients_list, update_total_gradients, average_gradient
 import activation_functions
 
 
@@ -54,7 +55,7 @@ class CostFunction:
                            activation_function):
         return w_next.T.dot(nabla_next) * activation_function.gradient(z)
 
-    def get_weights_gradient(self, layer_error, previous_layer_activations, weights=None, nexamples=1):
+    def get_weights_gradient(self, layer_error, previous_layer_activations):
         nabla = layer_error
         a = previous_layer_activations
 
@@ -69,6 +70,32 @@ class CostFunction:
 
     def get_bias_gradient(self, layer_error):
         return layer_error
+
+    def compute_gradients(self, examples, neural_net):
+        xes, ys = examples
+        examples_count = len(ys)
+
+        weights_grad, biases_grad = zero_gradients_list(neural_net)
+
+        for i in range(examples_count):
+            x = xes[i]
+            y = ys[i]
+            wgrad, bgrad = back_propagation(x, y, neural_net=neural_net)
+            weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
+                                                  new_gradients_list=wgrad)
+            biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
+                                                 new_gradients_list=bgrad)
+
+        weights_grad = average_gradient(weights_grad, examples_count)
+        biases_grad = average_gradient(biases_grad, examples_count)
+
+        reglambda = self.get_lambda()
+
+        weights = neural_net.weights()
+        for i in range(len(weights_grad)):
+            weights_grad[i] = weights_grad[i] + reglambda / float(examples_count) * weights[i]
+
+        return weights_grad, biases_grad
 
     def get_lambda(self):
         return 0
@@ -105,17 +132,6 @@ class RegularizedCost(CostFunction):
         old_cost = self._cost_function.compute_cost(activations=activations,
                                                     outputs=outputs)
         return old_cost + reg_term
-
-    def get_weights_gradient(self, layer_error, previous_layer_activations, weights=None, nexamples=1):
-        # todo correct this, regularized gradient should be summed with gradient avaraged over all examples
-        grad = self._cost_function.get_weights_gradient(
-            layer_error=layer_error, previous_layer_activations=previous_layer_activations
-        )
-
-        n = nexamples
-        if weights is None:
-            return grad
-        return grad + self._reglambda / float(n) * weights
 
     def get_lambda(self):
         return self._reglambda

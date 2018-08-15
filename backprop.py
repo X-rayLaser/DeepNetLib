@@ -1,34 +1,4 @@
 import numpy as np
-import activation_functions
-
-
-def compute_gradients(examples, neural_net):
-    cost_func = neural_net.get_cost_function()
-
-    xes, ys = examples
-    examples_count = len(ys)
-
-    weights_grad, biases_grad = zero_gradients_list(neural_net)
-
-    for i in range(examples_count):
-        x = xes[i]
-        y = ys[i]
-        wgrad, bgrad = back_propagation(x, y, neural_net=neural_net)
-        weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
-                                                      new_gradients_list=wgrad)
-        biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
-                                                     new_gradients_list=bgrad)
-
-    weights_grad = average_gradient(weights_grad, examples_count)
-    biases_grad = average_gradient(biases_grad, examples_count)
-
-    reglambda = cost_func.get_lambda()
-
-    weights = neural_net.weights()
-    for i in range(len(weights_grad)):
-        weights_grad[i] = weights_grad[i] + reglambda / float(examples_count) * weights[i]
-
-    return weights_grad, biases_grad
 
 
 def compute_activations_and_zsums(x, neural_net):

@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 import helpers
-from backprop import compute_gradients
 import backprop_slow
 from main import NeuralNet
 import cost_functions
@@ -16,8 +15,9 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet = NeuralNet(layer_sizes=[4, 15, 10])
         nnet.randomize_parameters()
         examples = helpers.generate_random_examples(10, 4, 10)
+        cost_function = nnet.get_cost_function()
 
-        w_grad1, b_grad1 = compute_gradients(examples=examples, neural_net=nnet)
+        w_grad1, b_grad1 = cost_function.compute_gradients(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)
@@ -28,8 +28,9 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet.randomize_parameters()
         nnet.set_cost_function(cost_function=cost_functions.CrossEntropyCost())
         examples = helpers.generate_random_examples(10, 4, 10)
+        cost_function = nnet.get_cost_function()
 
-        w_grad1, b_grad1 = compute_gradients(examples=examples, neural_net=nnet)
+        w_grad1, b_grad1 = cost_function.compute_gradients(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)
@@ -40,8 +41,9 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet.randomize_parameters()
         nnet.set_activation_function(activation=activation_functions.Rectifier)
         examples = helpers.generate_random_examples(10, 4, 10)
+        cost_function = nnet.get_cost_function()
 
-        w_grad1, b_grad1 = compute_gradients(examples=examples, neural_net=nnet)
+        w_grad1, b_grad1 = cost_function.compute_gradients(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)
@@ -53,7 +55,9 @@ class ComputeGradientsTests(unittest.TestCase):
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        w_grad, b_grad = compute_gradients(examples=examples, neural_net=nnet)
+        cost_function = nnet.get_cost_function()
+
+        w_grad, b_grad = cost_function.compute_gradients(examples=examples, neural_net=nnet)
         self.assertIsInstance(w_grad, list)
         self.assertIsInstance(w_grad[0], np.ndarray)
         self.assertIsInstance(w_grad[1], np.ndarray)
@@ -83,8 +87,9 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet.randomize_parameters()
         nnet.set_regularization(reg_lambda=2)
         examples = helpers.generate_random_examples(10, 4, 10)
+        cost_function = nnet.get_cost_function()
 
-        w_grad1, b_grad1 = compute_gradients(examples=examples, neural_net=nnet)
+        w_grad1, b_grad1 = cost_function.compute_gradients(examples=examples, neural_net=nnet)
         w_grad2, b_grad2 = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)

@@ -2,7 +2,6 @@ from random import SystemRandom
 import numpy as np
 import math
 from main import NeuralNet
-from backprop import back_propagation, compute_gradients
 import helpers
 import backprop_slow
 import gradient_descent
@@ -71,8 +70,9 @@ def step(context):
 
 @when('I compute the gradient for weights and biases by running back propagation')
 def step(context):
-    context.back_prop_gradients = compute_gradients(examples=context.training_data,
-                                                    neural_net=context.nnet)
+    loss = context.nnet.get_cost_function()
+    context.back_prop_gradients = loss.compute_gradients(examples=context.training_data,
+                                                         neural_net=context.nnet)
 
 
 @when('I compute the gradient for weights and biases by taking numerical derivatives')
