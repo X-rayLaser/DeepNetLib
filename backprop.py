@@ -1,4 +1,5 @@
 import numpy as np
+import main
 
 
 def compute_activations_and_zsums(x, neural_net):
@@ -15,31 +16,84 @@ def compute_activations_and_zsums(x, neural_net):
     return activations, zs, zs_prime
 
 
-def compute_errors(neural_net, output_activations, expected_output, zs_prime):
+class LinkedList:
+    class Node:
+        def __init__(self, item, next):
+            self.next = next
+            self.item = item
+
+    class EndOfListError(Exception):
+        pass
+
+    def __init__(self, root=None):
+        self._root = root
+
+    def prepend(self, item):
+        self._root = self.Node(item=item, next=self._root)
+
+    def get_item(self):
+        if self.is_empty():
+            raise self.EndOfListError('')
+        return self._root.item
+
+    def tail(self):
+        if self.is_empty():
+            raise self.EndOfListError('')
+        return LinkedList(root=self._root.next)
+
+    def is_empty(self):
+        return self._root is None
+
+
+class ActivatedLayerList:
+    def __init__(self, layers, x):
+        self._linked_list = LinkedList()
+
+        activated_layers = []
+        a = x
+        for layer in layers:
+            a_in = a
+            a, z, z_prime = layer.feed_rich(a_in)
+            activated_layer = main.ActivatedLayer(weights=layer.weights(),
+                                                  biases=layer.biases(),
+                                                  incoming_activation=a_in,
+                                                  activation=a,
+                                                  weighted_sum=z,
+                                                  weighted_sum_gradient=z_prime)
+            activated_layers.append(activated_layer)
+
+        while len(activated_layers) > 0:
+            layer = activated_layers.pop()
+            self._linked_list.prepend(layer)
+
+    def get_list(self):
+        return self._linked_list
+
+
+def compute_errors(x, y, neural_net):
+    def find(layer_list, errors):
+        layer = layer_list.get_item()
+        z_grad = layer.weighted_sum_gradient
+        a = layer.activation
+
+        if layer_list.tail().is_empty():
+            nabla = cost_func.get_final_layer_error(a, y, z_grad)
+            errors.append(nabla)
+            return layer.weights, nabla
+
+        w_next, nabla_next = find(layer_list.tail(), errors)
+        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_grad)
+        errors.append(nabla)
+
+        return layer.weights, nabla
+
     cost_func = neural_net.get_cost_function()
 
-    zs_prime = list(zs_prime)
+    layer_list = ActivatedLayerList(neural_net.layers(), x=x)
+    mylist = layer_list.get_list()
 
-    z_L_prime = zs_prime.pop()
-    a = output_activations
-    y = expected_output
-    nabla_L = cost_func.get_final_layer_error(a, y, z_L_prime)
-
-    net_layers = neural_net.number_of_layers() - 1
-    last_layer_index = net_layers - 1
-
-    errors = [nabla_L]
-
-    nabla_next = nabla_L
-    wlist = neural_net.weights()
-
-    for layer in range(last_layer_index - 1, -1, -1):
-        z_prime = zs_prime.pop()
-        w_next = wlist[layer + 1]
-        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_prime)
-        errors.append(nabla)
-        nabla_next = nabla
-
+    errors = []
+    find(mylist, errors)
     errors.reverse()
     return errors
 
@@ -53,8 +107,7 @@ def back_propagation(x, y, neural_net):
 
     activations, weighed_sums, zs_prime = compute_activations_and_zsums(x=x, neural_net=neural_net)
 
-    layer_errors = compute_errors(neural_net=neural_net, output_activations=activations[-1],
-                                  expected_output=y, zs_prime=zs_prime)
+    layer_errors = compute_errors(x, y, neural_net=neural_net)
 
     for layer in range(net_layers):
         previous_layer_activations = activations[layer]

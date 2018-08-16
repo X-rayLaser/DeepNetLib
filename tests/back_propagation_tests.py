@@ -52,3 +52,40 @@ class BackpropSlowTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[0].shape, (2,))
         self.assertTupleEqual(b_grad[1].shape, (2,))
         self.assertTupleEqual(b_grad[2].shape, (5,))
+
+
+from backprop import LinkedList
+
+
+class LinkedListTests(unittest.TestCase):
+    def test_empty(self):
+        mylist = LinkedList()
+        self.assertRaises(LinkedList.EndOfListError, lambda: mylist.tail())
+        self.assertRaises(LinkedList.EndOfListError, lambda: mylist.get_item())
+
+        self.assertTrue(mylist.is_empty())
+
+    def test_with_one_element(self):
+        mylist = LinkedList()
+        s = 'hello'
+        mylist.prepend(s)
+        self.assertFalse(mylist.is_empty())
+        item = mylist.get_item()
+        self.assertEqual(item, s)
+        newlist = mylist.tail()
+        self.assertTrue(newlist.is_empty())
+
+    def test_recurrent_tail(self):
+        mylist = LinkedList()
+        mylist.prepend(1)
+        mylist.prepend(2)
+        mylist.prepend(3)
+        self.assertEqual(mylist.get_item(), 3)
+
+        mylist = mylist.tail()
+        self.assertEqual(mylist.get_item(), 2)
+
+        mylist = mylist.tail()
+        self.assertEqual(mylist.get_item(), 1)
+        mylist = mylist.tail()
+        self.assertTrue(mylist.is_empty())

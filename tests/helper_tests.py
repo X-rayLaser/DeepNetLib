@@ -101,8 +101,7 @@ class HelpersTests(unittest.TestCase):
 
         a, zs, zs_prime = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
 
-        errors_list = backprop.compute_errors(neural_net=nnet, output_activations=a[-1],
-                                              expected_output=y, zs_prime=zs_prime)
+        errors_list = backprop.compute_errors(x, y, neural_net=nnet)
 
         expected_nabla2 = (a[-1] - y) * zs_prime[-1]
         expected_nabla1 = cost_func.get_error_in_layer(nabla_next=expected_nabla2,
