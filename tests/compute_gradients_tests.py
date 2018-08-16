@@ -12,7 +12,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
     def test_compute_gradients_with_quadratic_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet = NeuralNet(layer_sizes=[4, 2, 10])
         nnet.randomize_parameters()
         examples = helpers.generate_random_examples(10, 4, 10)
         cost_function = nnet.get_cost_function()
@@ -24,7 +24,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_compute_gradients_with_cross_entropy_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet = NeuralNet(layer_sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_cost_function(cost_function=cost_functions.CrossEntropyCost())
         examples = helpers.generate_random_examples(10, 4, 10)
@@ -37,7 +37,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_with_rectifer_activation_and_quadratic_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet = NeuralNet(layer_sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_activation_function(activation=activation_functions.Rectifier)
         examples = helpers.generate_random_examples(10, 4, 10)
@@ -83,7 +83,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[2].shape, (5,))
 
     def test_with_regularization(self):
-        nnet = NeuralNet(layer_sizes=[4, 15, 10])
+        nnet = NeuralNet(layer_sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_regularization(reg_lambda=2)
         examples = helpers.generate_random_examples(10, 4, 10)

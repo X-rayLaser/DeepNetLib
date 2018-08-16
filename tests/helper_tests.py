@@ -249,6 +249,8 @@ class MNISTLoadingTests(unittest.TestCase):
         return os.path.isfile(file_path) and os.path.getsize(file_path) == expected_size
 
     def test_downloading_will_create_necessary_files(self):
+        if not os.environ.get('run_slow', None):
+            return
         download_dataset()
         self.assertTrue(self.file_exists('train-images-idx3-ubyte.gz', 9912422))
         self.assertTrue(self.file_exists('train-labels-idx1-ubyte.gz', 28881))
