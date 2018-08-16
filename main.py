@@ -11,6 +11,35 @@ def weighed_sum(weights, activations, biases):
     return np.dot(w, a) + b
 
 
+class Layer:
+    def __init__(self, size, prev_size, activation):
+        self._weights = np.zeros((size, prev_size), dtype=float)
+        self._biases = np.zeros((size, ), dtype=float)
+        self._activation_function = activation
+
+    def feed(self, x):
+        z = weighed_sum(weights=self._weights, activations=x,
+                        biases=self._biases)
+        a = self._activation_function.activation(z)
+        return a, z
+
+    def weights(self):
+        return self._weights
+
+    def biases(self):
+        return self._biases
+
+    def randomize(self):
+        rows, cols = self._weights.shape
+        self._weights = np.random.randn(rows, cols)
+
+        rows, = self._biases.shape
+        self._biases = np.random.randn(rows)
+
+    def set_activation(self, activation):
+        self._activation_function = activation
+
+
 class NeuralNet:
     class BadArchitecture(Exception):
         pass
@@ -28,9 +57,9 @@ class NeuralNet:
         if layer_sizes[0] <= 0 or layer_sizes[1] <= 0:
             raise self.BadArchitecture('Must have at least 1 node per layer')
 
-        self.x_to_y = {}
         self._sizes = layer_sizes
 
+        self._layers = []
         self._weights = []
         self._biases = []
 
@@ -42,12 +71,19 @@ class NeuralNet:
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
             shape = (sz, prev_sz)
+            self._layers.append(Layer(size=sz, prev_size=prev_sz, activation=Sigmoid))
             w = np.zeros(shape, dtype=float)
             self._weights.append(w)
 
             b = np.zeros((sz,), dtype=float)
             self._biases.append(b)
             prev_sz = sz
+        self._set_layers_activations()
+
+    def _set_layers_activations(self):
+        for layer in self._layers:
+            layer.set_activation(activation=self._activation_function)
+        self._layers[-1].set_activation(activation=self._output_activation_function)
 
     def _feed_next(self, activations, layer):
         effective_layers_count = len(self._sizes) - 1
@@ -65,10 +101,10 @@ class NeuralNet:
         a = activ_object.activation(z)
         return self._feed_next(activations=a, layer=layer+1)
 
-    def feed(self, x):
-        if self.x_to_y  and str(x) in self.x_to_y:
-            return self.x_to_y[str(x)]
+    def layers(self):
+        return self._layers
 
+    def feed(self, x):
         return self._feed_next(activations=x, layer=0)
 
     def feed_into_layer(self, x, layer):
