@@ -5,24 +5,25 @@ def compute_activations_and_zsums(x, neural_net):
     activations = [x]
     zs = []
     a = x
+    zs_prime = []
     for layer in neural_net.layers():
-        a, z = layer.feed(a)
+        a, z, z_prime = layer.feed_rich(a)
         activations.append(a)
         zs.append(z)
+        zs_prime.append(z_prime)
 
-    return activations, zs
+    return activations, zs, zs_prime
 
 
-def compute_errors(neural_net, output_activations, expected_output, weighed_sums):
+def compute_errors(neural_net, output_activations, expected_output, zs_prime):
     cost_func = neural_net.get_cost_function()
-    activation_function = neural_net.get_activation_function()
 
-    zs = list(weighed_sums)
+    zs_prime = list(zs_prime)
 
-    z_L = zs.pop()
+    z_L_prime = zs_prime.pop()
     a = output_activations
     y = expected_output
-    nabla_L = cost_func.get_final_layer_error(a, y, z_L, activation_function=activation_function)
+    nabla_L = cost_func.get_final_layer_error(a, y, z_L_prime)
 
     net_layers = neural_net.number_of_layers() - 1
     last_layer_index = net_layers - 1
@@ -33,10 +34,9 @@ def compute_errors(neural_net, output_activations, expected_output, weighed_sums
     wlist = neural_net.weights()
 
     for layer in range(last_layer_index - 1, -1, -1):
-        z = zs.pop()
+        z_prime = zs_prime.pop()
         w_next = wlist[layer + 1]
-        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z,
-                                             activation_function=activation_function)
+        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_prime)
         errors.append(nabla)
         nabla_next = nabla
 
@@ -51,10 +51,10 @@ def back_propagation(x, y, neural_net):
     biases_gradient = []
     net_layers = neural_net.number_of_layers() - 1
 
-    activations, weighed_sums = compute_activations_and_zsums(x=x, neural_net=neural_net)
+    activations, weighed_sums, zs_prime = compute_activations_and_zsums(x=x, neural_net=neural_net)
 
     layer_errors = compute_errors(neural_net=neural_net, output_activations=activations[-1],
-                                  expected_output=y, weighed_sums=weighed_sums)
+                                  expected_output=y, zs_prime=zs_prime)
 
     for layer in range(net_layers):
         previous_layer_activations = activations[layer]

@@ -23,6 +23,11 @@ class Layer:
         a = self._activation_function.activation(z)
         return a, z
 
+    def feed_rich(self, x):
+        a, z = self.feed(x)
+        z_prime = self._activation_function.gradient(z)
+        return a, z, z_prime
+
     def weights(self):
         return self._weights
 
@@ -44,6 +49,20 @@ class Layer:
 
     def set_biases(self, biases):
         self._biases = np.copy(biases)
+
+
+class BackwardLayerIterator:
+    def __init__(self):
+        pass
+
+    def step_back(self):
+        pass
+
+    def get_current_layer(self):
+        pass
+
+    def get_next_layer(self):
+        pass
 
 
 class NeuralNet:

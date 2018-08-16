@@ -81,7 +81,7 @@ class HelpersTests(unittest.TestCase):
         x = np.array([0.5, 3], float)
         nnet.randomize_parameters()
 
-        a, zs = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
+        a, zs, zs_prime = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
         expected_activations = nnet.feed(x=x)
         self.assertTrue(np.allclose(a[-1], expected_activations))
 
@@ -99,17 +99,17 @@ class HelpersTests(unittest.TestCase):
 
         y = np.array([1], float)
 
-        a, zs = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
+        a, zs, zs_prime = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
 
         errors_list = backprop.compute_errors(neural_net=nnet, output_activations=a[-1],
-                                             expected_output=y, weighed_sums=zs)
+                                              expected_output=y, zs_prime=zs_prime)
 
-        expected_nabla2 = (a[-1] - y) * sigma_prime(zs[-1])
+        expected_nabla2 = (a[-1] - y) * zs_prime[-1]
         expected_nabla1 = cost_func.get_error_in_layer(nabla_next=expected_nabla2,
-                                                       w_next=np.array([[0, 5]]), z=zs[0],
-                                                       activation_function=Sigmoid)
+                                                       w_next=np.array([[0, 5]]),
+                                                       z_gradient=zs_prime[0])
 
-        self.assertTrue(np.allclose(errors_list[0], expected_nabla1))
+        self.assertEqual(errors_list[0].tolist(), expected_nabla1.tolist())
         self.assertTrue(np.allclose(errors_list[1], expected_nabla2))
 
 
