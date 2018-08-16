@@ -88,15 +88,7 @@ class NeuralNet:
         if layer >= effective_layers_count:
             return activations
 
-        z = weighed_sum(weights=self.weights()[layer], activations=activations,
-                        biases=self.biases()[layer])
-
-        if layer == effective_layers_count - 1:
-            activ_object = self._output_activation_function
-        else:
-            activ_object = self._activation_function
-
-        a = activ_object.activation(z)
+        a, z = self.layers()[layer].feed(activations)
         return self._feed_next(activations=a, layer=layer+1)
 
     def layers(self):
@@ -107,16 +99,7 @@ class NeuralNet:
 
     def feed_into_layer(self, x, layer):
         """count starts from first hidden layer"""
-        z = weighed_sum(weights=self.weights()[layer], activations=x,
-                        biases=self.biases()[layer])
-
-        effective_layers_count = len(self._sizes) - 1
-        if layer == effective_layers_count - 1:
-            activ_object = self._output_activation_function
-        else:
-            activ_object = self._activation_function
-        a = activ_object.activation(z)
-        return a, z
+        return self.layers()[layer].feed(x)
 
     def train(self, examples, nepochs=1):
         descent = self._AlgorithmClass(neural_net=self)
