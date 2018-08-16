@@ -18,8 +18,8 @@ class Layer:
         self._activation_function = activation
 
     def feed(self, x):
-        z = weighed_sum(weights=self._weights, activations=x,
-                        biases=self._biases)
+        z = weighed_sum(weights=self.weights(), activations=x,
+                        biases=self.biases())
         a = self._activation_function.activation(z)
         return a, z
 
@@ -30,14 +30,20 @@ class Layer:
         return self._biases
 
     def randomize(self):
-        rows, cols = self._weights.shape
+        rows, cols = self.weights().shape
         self._weights = np.random.randn(rows, cols)
 
-        rows, = self._biases.shape
+        rows, = self.biases().shape
         self._biases = np.random.randn(rows)
 
     def set_activation(self, activation):
         self._activation_function = activation
+
+    def set_weights(self, weights):
+        self._weights = np.copy(weights)
+
+    def set_biases(self, biases):
+        self._biases = np.copy(biases)
 
 
 class NeuralNet:
@@ -60,8 +66,6 @@ class NeuralNet:
         self._sizes = layer_sizes
 
         self._layers = []
-        self._weights = []
-        self._biases = []
 
         self._AlgorithmClass = GradientDescent
         self._cost_function = cost_functions.QuadraticCost()
@@ -70,13 +74,7 @@ class NeuralNet:
 
         prev_sz = self._sizes[0]
         for sz in self._sizes[1:]:
-            shape = (sz, prev_sz)
             self._layers.append(Layer(size=sz, prev_size=prev_sz, activation=Sigmoid))
-            w = np.zeros(shape, dtype=float)
-            self._weights.append(w)
-
-            b = np.zeros((sz,), dtype=float)
-            self._biases.append(b)
             prev_sz = sz
         self._set_layers_activations()
 
@@ -90,8 +88,8 @@ class NeuralNet:
         if layer >= effective_layers_count:
             return activations
 
-        z = weighed_sum(weights=self._weights[layer], activations=activations,
-                        biases=self._biases[layer])
+        z = weighed_sum(weights=self.weights()[layer], activations=activations,
+                        biases=self.biases()[layer])
 
         if layer == effective_layers_count - 1:
             activ_object = self._output_activation_function
@@ -109,8 +107,8 @@ class NeuralNet:
 
     def feed_into_layer(self, x, layer):
         """count starts from first hidden layer"""
-        z = weighed_sum(weights=self._weights[layer], activations=x,
-                        biases=self._biases[layer])
+        z = weighed_sum(weights=self.weights()[layer], activations=x,
+                        biases=self.biases()[layer])
 
         effective_layers_count = len(self._sizes) - 1
         if layer == effective_layers_count - 1:
@@ -125,14 +123,14 @@ class NeuralNet:
         descent.train(examples=examples, nepochs=nepochs)
 
     def weights(self):
-        return self._weights
+        return [layer.weights() for layer in self._layers]
 
     def biases(self):
-        return self._biases
+        return [layer.biases() for layer in self._layers]
 
     def number_of_layers(self):
         """Returns total number of layers, including input and output layers"""
-        return len(self._biases) + 1
+        return len(self._layers) + 1
 
     def layer_sizes(self):
         sizes = []
@@ -150,8 +148,7 @@ class NeuralNet:
                 'layer must be between 1 and number of layers exclusive'
             )
 
-        w = self.weights()[layer-1]
-        w[row, col] = new_value
+        self._layers[layer-1].weights()[row, col] = new_value
 
     def set_bias(self, layer, row, new_value):
         """layer must be between 1 and number of layers exclusive"""
@@ -159,8 +156,8 @@ class NeuralNet:
             raise self.LayerOutOfBound(
                 'layer must be between 1 and number of layers exclusive'
             )
-        b = self.biases()[layer-1]
-        b[row] = new_value
+
+        self._layers[layer-1].biases()[row] = new_value
 
     def set_cost_function(self, cost_function):
         self._cost_function = cost_function
@@ -177,20 +174,18 @@ class NeuralNet:
     def set_activation_function(self, activation):
         self._activation_function = activation
         self._output_activation_function = activation
+        self._set_layers_activations()
 
     def set_output_activation_function(self, activation):
         self._output_activation_function = activation
+        self._set_layers_activations()
 
     def set_learning_algorithm(self, algorithm_class):
         self._AlgorithmClass = algorithm_class
 
     def randomize_parameters(self):
-        for i in range(len(self._weights)):
-            rows, cols = self._weights[i].shape
-            self._weights[i] = np.random.randn(rows, cols)
-
-            rows, = self._biases[i].shape
-            self._biases[i] = np.random.randn(rows)
+        for i in range(len(self.layers())):
+            self._layers[i].randomize()
 
     def get_cost(self, data_set):
         xes, ys = data_set
@@ -233,7 +228,7 @@ class NeuralNet:
         if weights.shape != self.weights()[layer - 1].shape:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
 
-        self._weights[layer - 1] = np.copy(weights)
+        self._layers[layer - 1].set_weights(weights)
 
     def set_layer_biases(self, layer, bias_vector):
         """layer must be between 1 and number of layers exclusive"""
@@ -244,7 +239,8 @@ class NeuralNet:
 
         if bias_vector.shape != self.biases()[layer - 1].shape:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
-        self._biases[layer - 1] = np.copy(bias_vector)
+
+        self._layers[layer - 1].set_biases(bias_vector)
 
     @staticmethod
     def create_from_file(fname):

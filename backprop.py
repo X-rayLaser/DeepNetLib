@@ -2,14 +2,14 @@ import numpy as np
 
 
 def compute_activations_and_zsums(x, neural_net):
-    net_layers = neural_net.number_of_layers() - 1
     activations = [x]
     zs = []
     a = x
-    for layer in range(net_layers):
-        a, z = neural_net.feed_into_layer(a, layer=layer)
+    for layer in neural_net.layers():
+        a, z = layer.feed(a)
         activations.append(a)
         zs.append(z)
+
     return activations, zs
 
 
