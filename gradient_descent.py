@@ -1,4 +1,5 @@
 import helpers
+from gradient_calculator import BackPropagationBasedCalculator
 
 
 class GradientDescent:
@@ -23,8 +24,9 @@ class GradientDescent:
             biases[i] -= self._rate * bias_gradient[i]
 
     def training_epoch(self, examples):
-        cost_func = self._nnet.get_cost_function()
-        wgrad, bgrad = cost_func.compute_gradients(examples=examples, neural_net=self._nnet)
+        gradient_calculator = BackPropagationBasedCalculator(examples=examples,
+                                                             neural_net=self._nnet)
+        wgrad, bgrad = gradient_calculator.compute_gradients()
         self.update_weights(weight_gradient=wgrad)
         self.update_biases(bias_gradient=bgrad)
 

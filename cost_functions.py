@@ -68,33 +68,6 @@ class CostFunction:
     def get_bias_gradient(self, layer_error):
         return layer_error
 
-    def compute_gradients(self, examples, neural_net):
-        xes, ys = examples
-        examples_count = len(ys)
-
-        weights_grad, biases_grad = zero_gradients_list(neural_net)
-
-        for i in range(examples_count):
-            x = xes[i]
-            y = ys[i]
-            backprop = BackPropagation(x, y, neural_net=neural_net)
-            wgrad, bgrad = backprop.back_propagate()
-            weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
-                                                  new_gradients_list=wgrad)
-            biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
-                                                 new_gradients_list=bgrad)
-
-        weights_grad = average_gradient(weights_grad, examples_count)
-        biases_grad = average_gradient(biases_grad, examples_count)
-
-        reglambda = self.get_lambda()
-
-        weights = neural_net.weights()
-        for i in range(len(weights_grad)):
-            weights_grad[i] = weights_grad[i] + reglambda / float(examples_count) * weights[i]
-
-        return weights_grad, biases_grad
-
     def get_lambda(self):
         return 0
 

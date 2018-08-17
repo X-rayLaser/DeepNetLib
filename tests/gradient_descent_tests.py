@@ -3,6 +3,7 @@ import numpy as np
 from main import NeuralNet
 from gradient_descent import GradientDescent, StochasticGradientDescent
 from backprop import BackPropagation
+from gradient_calculator import BackPropagationBasedCalculator
 
 
 class GradientDescentTest(unittest.TestCase):
@@ -21,11 +22,11 @@ class GradientDescentTest(unittest.TestCase):
 
     def test_update_weights_decreases_cost(self):
         cost_before = self.nnet.get_cost(self.examples)
-        cost_function = self.nnet.get_cost_function()
+        calculator = BackPropagationBasedCalculator(examples=self.examples,
+                                                    neural_net=self.nnet)
 
         for i in range(5):
-            w_grad, b_grad = cost_function.compute_gradients(examples=self.examples,
-                                                             neural_net=self.nnet)
+            w_grad, b_grad = calculator.compute_gradients()
             self.grad_descent.update_weights(weight_gradient=w_grad)
             self.grad_descent.update_biases(bias_gradient=b_grad)
 
@@ -34,11 +35,11 @@ class GradientDescentTest(unittest.TestCase):
 
     def test_update_biases_decreases_cost(self):
         cost_before = self.nnet.get_cost(self.examples)
-        cost_function = self.nnet.get_cost_function()
+        calculator = BackPropagationBasedCalculator(examples=self.examples,
+                                                    neural_net=self.nnet)
 
         for i in range(5):
-            w_grad, b_grad = cost_function.compute_gradients(examples=self.examples,
-                                                             neural_net=self.nnet)
+            w_grad, b_grad = calculator.compute_gradients()
             self.grad_descent.update_biases(bias_gradient=b_grad)
 
         cost_after = self.nnet.get_cost(self.examples)
@@ -51,11 +52,10 @@ class GradientDescentTest(unittest.TestCase):
                          [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
 
         cost_before = self.nnet.get_cost(self.examples)
-        cost_function = self.nnet.get_cost_function()
-
+        calculator = BackPropagationBasedCalculator(examples=self.examples,
+                                                    neural_net=self.nnet)
         for i in range(10):
-            w_grad, b_grad = cost_function.compute_gradients(examples=self.examples,
-                                                             neural_net=self.nnet)
+            w_grad, b_grad = calculator.compute_gradients()
             self.grad_descent.update_weights(weight_gradient=w_grad)
             self.grad_descent.update_biases(bias_gradient=b_grad)
 

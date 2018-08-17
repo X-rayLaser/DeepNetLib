@@ -3,11 +3,11 @@ import numpy as np
 import math
 from main import NeuralNet
 import helpers
-import backprop_slow
 import gradient_descent
 import cost_functions
 from digit_drawing import DigitGenerator
 from activation_functions import Rectifier, Softmax
+from gradient_calculator import NumericalCalculator, BackPropagationBasedCalculator
 
 
 def squared_sin_data_set():
@@ -70,16 +70,18 @@ def step(context):
 
 @when('I compute the gradient for weights and biases by running back propagation')
 def step(context):
-    loss = context.nnet.get_cost_function()
-    context.back_prop_gradients = loss.compute_gradients(examples=context.training_data,
-                                                         neural_net=context.nnet)
+    calculator = BackPropagationBasedCalculator(
+        examples=context.training_data, neural_net=context.nnet
+    )
+    context.back_prop_gradients = calculator.compute_gradients()
 
 
 @when('I compute the gradient for weights and biases by taking numerical derivatives')
 def step(context):
-    context.numerical_gradients = backprop_slow.back_propagation_slow(
+    calculator = NumericalCalculator(
         examples=context.training_data, neural_net=context.nnet
     )
+    context.numerical_gradients = calculator.compute_gradients()
 
 
 @then('these two sets of gradients are the same')

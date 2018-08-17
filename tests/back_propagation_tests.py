@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 import helpers
-import backprop_slow
 from main import NeuralNet
+from gradient_calculator import NumericalCalculator
 
 
 class BackpropSlowTests(unittest.TestCase):
@@ -14,7 +14,9 @@ class BackpropSlowTests(unittest.TestCase):
         x = np.array([5], float)
         y = np.array([0.25], float)
         examples = ([x], [y])
-        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
+
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+        w_grad, b_grad = numerical.compute_gradients()
 
         w_grad_expected = [np.array([[0]], float), np.array([[1/32]], float)]
         b_grad_expected = [np.array([[0]], float), np.array([[1/16]], float)]
@@ -28,7 +30,9 @@ class BackpropSlowTests(unittest.TestCase):
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+
+        w_grad, b_grad = numerical.compute_gradients()
         self.assertIsInstance(w_grad, list)
         self.assertIsInstance(w_grad[0], np.ndarray)
         self.assertIsInstance(w_grad[1], np.ndarray)
@@ -42,7 +46,9 @@ class BackpropSlowTests(unittest.TestCase):
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        w_grad, b_grad = backprop_slow.back_propagation_slow(examples=examples, neural_net=nnet)
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+        w_grad, b_grad = numerical.compute_gradients()
+
         self.assertEqual(len(w_grad), 3)
         self.assertEqual(len(b_grad), 3)
         self.assertTupleEqual(w_grad[0].shape, (2, 3))
