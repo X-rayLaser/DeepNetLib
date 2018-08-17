@@ -1,6 +1,5 @@
 import numpy as np
 from backprop import BackPropagation
-from helpers import zero_gradients_list, update_total_gradients, average_gradient
 
 
 class GradientCalculator:
@@ -87,23 +86,55 @@ class BackPropagationBasedCalculator:
         examples_count = len(ys)
         reglambda = self._neural_net.get_cost_function().get_lambda()
 
-        weights_grad, biases_grad = zero_gradients_list(self._neural_net)
+        weights_grad, biases_grad = self._zero_gradients_list(self._neural_net)
 
         for i in range(examples_count):
             x = xes[i]
             y = ys[i]
             backprop = BackPropagation(x, y, neural_net=self._neural_net)
             wgrad, bgrad = backprop.back_propagate()
-            weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
-                                                  new_gradients_list=wgrad)
-            biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
-                                                 new_gradients_list=bgrad)
+            weights_grad = self._update_total_gradients(summed_gradients_list=weights_grad,
+                                                        new_gradients_list=wgrad)
+            biases_grad = self._update_total_gradients(summed_gradients_list=biases_grad,
+                                                       new_gradients_list=bgrad)
 
-        weights_grad = average_gradient(weights_grad, examples_count)
-        biases_grad = average_gradient(biases_grad, examples_count)
+        weights_grad = self._average_gradient(weights_grad, examples_count)
+        biases_grad = self._average_gradient(biases_grad, examples_count)
 
         weights = self._neural_net.weights()
         for i in range(len(weights_grad)):
             weights_grad[i] = weights_grad[i] + reglambda / float(examples_count) * weights[i]
 
         return weights_grad, biases_grad
+
+    def _zero_gradients_list(self, neural_net):
+        weights_grad = []
+        biases_grad = []
+        wlist = neural_net.weights()
+        blist = neural_net.biases()
+
+        for i in range(len(wlist)):
+            wshape = wlist[i].shape
+            weights_grad.append(np.zeros(wshape))
+
+            bshape = blist[i].shape
+            biases_grad.append(np.zeros(bshape))
+
+        return weights_grad, biases_grad
+
+    def _update_total_gradients(self, summed_gradients_list, new_gradients_list):
+        summed_len = len(summed_gradients_list)
+        new_len = len(new_gradients_list)
+        assert summed_len == new_len
+
+        res_list = []
+        for i in range(summed_len):
+            res_list.append(summed_gradients_list[i] + new_gradients_list[i])
+        return res_list
+
+    def _average_gradient(self, gradient_sum, examples_count):
+        res_list = []
+        for i in range(len(gradient_sum)):
+            res_list.append(gradient_sum[i] / float(examples_count))
+
+        return res_list
