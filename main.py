@@ -1,7 +1,7 @@
 import numpy as np
 import cost_functions
 from gradient_descent import GradientDescent
-from activation_functions import sigma, Rectifier, Sigmoid, Softmax
+from activation_functions import Sigmoid
 
 
 def weighed_sum(weights, activations, biases):

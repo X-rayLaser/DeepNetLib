@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from activation_functions import sigma, sigma_prime, Rectifier, Sigmoid, Softmax
+from activation_functions import Rectifier, Sigmoid, Softmax
 
 
 class SigmoidTests(unittest.TestCase):

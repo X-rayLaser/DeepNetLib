@@ -2,22 +2,14 @@ import math
 import numpy as np
 
 
-def sigma(z):
-    return 1.0 / (1.0 + np.exp(-z))
-
-
-def sigma_prime(z):
-    return sigma(z) * (1 - sigma(z))
-
-
 class Sigmoid:
     @staticmethod
     def activation(z):
-        return sigma(z)
+        return 1.0 / (1.0 + np.exp(-z))
 
     @staticmethod
     def gradient(z):
-        return sigma_prime(z)
+        return Sigmoid.activation(z) * (1 - Sigmoid.activation(z))
 
 
 class Rectifier:

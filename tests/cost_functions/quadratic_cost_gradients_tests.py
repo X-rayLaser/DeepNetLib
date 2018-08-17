@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import cost_functions
-from activation_functions import sigma, sigma_prime, Sigmoid, Rectifier
+from activation_functions import Sigmoid, Rectifier
 
 
 class QuadraticCostGradientsTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         nabla = quadratic.get_final_layer_error(a_last, y, z_last_prime)
 
         self.assertAlmostEqual(nabla[0], (a_last[0] - y[0]) * z_last_prime[0], places=2)
-        self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * sigma_prime(z_last[1]),
+        self.assertAlmostEqual(nabla[1], (a_last[1] - y[1]) * Sigmoid.gradient(z_last[1]),
                                places=2)
 
     def test_get_weights_gradient(self):

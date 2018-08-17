@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import cost_functions
-from activation_functions import sigma, Softmax, Sigmoid, Rectifier
+from activation_functions import Softmax, Sigmoid, Rectifier
 
 
 class CrossEntropyGradientsTests(unittest.TestCase):
@@ -11,14 +11,14 @@ class CrossEntropyGradientsTests(unittest.TestCase):
         z_last_prime = Sigmoid.gradient(z_last)
 
         y = np.array([0], float)
-        a_last = sigma(z_last)
+        a_last = Sigmoid.activation(z_last)
         nabla = cross_entropy.get_final_layer_error(a_last, y, z_last_prime)
         self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
 
         z_last = np.array([-1], float)
         z_last_prime = Rectifier.gradient(z_last)
         y = np.array([0.5], float)
-        a_last = sigma(z_last)
+        a_last = Sigmoid.activation(z_last)
         nabla = cross_entropy.get_final_layer_error(a_last, y, z_last_prime)
         self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
 
@@ -29,7 +29,7 @@ class CrossEntropyGradientsTests(unittest.TestCase):
         z_last_prime = Softmax.gradient(z_last)
 
         y = np.array([0, 0.5], float)
-        a_last = sigma(z_last)
+        a_last = Softmax.activation(z_last)
         nabla = cross_entropy.get_final_layer_error(a_last, y, z_last_prime)
 
         self.assertAlmostEqual(nabla[0], a_last[0] - y[0], places=2)

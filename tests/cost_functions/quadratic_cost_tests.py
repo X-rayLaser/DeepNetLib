@@ -13,14 +13,16 @@ class QuadraticCostTests(unittest.TestCase):
         self.assertAlmostEqual(c, 0.315, places=3)
 
     def test_quadratic_per_example(self):
-        a = np.array([0.5, 0.7], float)
-        y = np.array([0.2, 0.1], float)
-        c = cost_functions.quadratic_per_example(activation=a, expected_output=y)
+        quadracost = cost_functions.QuadraticCost()
+
+        a = [np.array([0.5, 0.7], float)]
+        y = [np.array([0.2, 0.1], float)]
+        c = quadracost.compute_cost(activations=a, outputs=y)
         self.assertAlmostEqual(c, 0.225, places=3)
 
-        a = np.array([1, 0], float)
-        y = np.array([0, 1], float)
-        c = cost_functions.quadratic_per_example(activation=a, expected_output=y)
+        a = [np.array([1, 0], float)]
+        y = [np.array([0, 1], float)]
+        c = quadracost.compute_cost(activations=a, outputs=y)
         self.assertAlmostEqual(c, 1, places=1)
 
     def test_get_cost_initial(self):
