@@ -35,7 +35,7 @@ class QuadraticCost(CostFunction):
         s = 0
         for i in range(vector_len):
             s += self._quadratic_per_example(activation=activations[i],
-                                            expected_output=outputs[i])
+                                             expected_output=outputs[i])
         return s / vector_len
 
     def compute_cost(self, activations, outputs):

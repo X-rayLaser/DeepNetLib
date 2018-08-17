@@ -8,6 +8,7 @@ import cost_functions
 from digit_drawing import DigitGenerator
 from activation_functions import Rectifier, Softmax
 from gradient_calculator import NumericalCalculator, BackPropagationBasedCalculator
+from datasets import mnist
 
 
 def squared_sin_data_set():
@@ -174,15 +175,15 @@ def step(context):
 
 @when('I create a training and testing data from MNIST data set')
 def step(context):
-    helpers.download_dataset()
-    context.training_data = helpers.get_training_data()
-    context.test_data = helpers.get_test_data()
+    mnist.download_dataset()
+    context.training_data = mnist.get_training_data()
+    context.test_data = mnist.get_test_data()
 
 
 @when('I train a digit generator')
 def step(context):
-    helpers.download_dataset()
-    pixels_to_categories = helpers.get_training_data()
+    mnist.download_dataset()
+    pixels_to_categories = mnist.get_training_data()
     generator = DigitGenerator()
     generator.train(pixels_to_categories=pixels_to_categories)
     context.generator = generator
