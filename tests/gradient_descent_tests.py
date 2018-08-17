@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 from main import NeuralNet
 from gradient_descent import GradientDescent, StochasticGradientDescent
-from backprop import back_propagation
+from backprop import BackPropagation
 
 
 class GradientDescentTest(unittest.TestCase):

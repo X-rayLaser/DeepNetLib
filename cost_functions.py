@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from backprop import back_propagation, zero_gradients_list, update_total_gradients, average_gradient
+from backprop import BackPropagation, zero_gradients_list, update_total_gradients, average_gradient
 
 
 def quadratic_per_example(activation, expected_output):
@@ -76,7 +76,8 @@ class CostFunction:
         for i in range(examples_count):
             x = xes[i]
             y = ys[i]
-            wgrad, bgrad = back_propagation(x, y, neural_net=neural_net)
+            backprop = BackPropagation(x, y, neural_net=neural_net)
+            wgrad, bgrad = backprop.back_propagate()
             weights_grad = update_total_gradients(summed_gradients_list=weights_grad,
                                                   new_gradients_list=wgrad)
             biases_grad = update_total_gradients(summed_gradients_list=biases_grad,
