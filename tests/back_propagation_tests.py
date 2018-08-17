@@ -89,3 +89,16 @@ class LinkedListTests(unittest.TestCase):
         self.assertEqual(mylist.get_item(), 1)
         mylist = mylist.tail()
         self.assertTrue(mylist.is_empty())
+
+    def test_to_pylist(self):
+        mylist = LinkedList()
+        mylist.prepend(11)
+        mylist.prepend(22)
+        mylist.prepend(33)
+        pylist = mylist.to_pylist()
+        self.assertEqual(pylist, [33, 22, 11])
+
+        mylist = LinkedList()
+        mylist.prepend('s')
+        pylist = mylist.to_pylist()
+        self.assertEqual(pylist, ['s'])

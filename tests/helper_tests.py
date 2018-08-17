@@ -6,6 +6,7 @@ from activation_functions import sigma, sigma_prime, Sigmoid
 from main import NeuralNet
 from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize, download_dataset, get_training_data, get_test_data
 import helpers
+from backprop import propagate_forward
 
 
 class HelpersTests(unittest.TestCase):
@@ -76,12 +77,13 @@ class HelpersTests(unittest.TestCase):
         self.assertTrue(np.all(grad[0] == expected_gradient[0]))
         self.assertTrue(np.all(grad[1] == expected_gradient[1]))
 
-    def test_compute_activations_and_zsums(self):
+    def test_compute_propagate_forward(self):
         nnet = NeuralNet(layer_sizes=[2, 3, 2])
         x = np.array([0.5, 3], float)
         nnet.randomize_parameters()
 
-        a, zs, zs_prime = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
+        activated = propagate_forward(nnet.layers(), x)
+        a = [item.activation for item in activated.to_pylist()]
         expected_activations = nnet.feed(x=x)
         self.assertTrue(np.allclose(a[-1], expected_activations))
 
@@ -99,9 +101,12 @@ class HelpersTests(unittest.TestCase):
 
         y = np.array([1], float)
 
-        a, zs, zs_prime = backprop.compute_activations_and_zsums(x=x, neural_net=nnet)
+        activated = propagate_forward(nnet.layers(), x)
+        a = [item.activation for item in activated.to_pylist()]
+        zs = [item.weighted_sum for item in activated.to_pylist()]
+        zs_prime = [item.weighted_sum_gradient for item in activated.to_pylist()]
 
-        errors_list = backprop.compute_errors(x, y, neural_net=nnet)
+        errors_list = backprop.compute_errors(x, y, neural_net=nnet, activated_list=activated)
 
         expected_nabla2 = (a[-1] - y) * zs_prime[-1]
         expected_nabla1 = cost_func.get_error_in_layer(nabla_next=expected_nabla2,
