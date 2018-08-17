@@ -1,3 +1,4 @@
+from tests.structures_tests import *
 from tests.activation_functions_tests import *
 from tests.cost_functions import *
 from tests.gradient_descent_tests import *

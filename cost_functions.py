@@ -1,6 +1,7 @@
 import numpy as np
 import math
-from backprop import BackPropagation, zero_gradients_list, update_total_gradients, average_gradient
+from backprop import BackPropagation
+from helpers import zero_gradients_list, update_total_gradients, average_gradient
 
 
 def quadratic_per_example(activation, expected_output):

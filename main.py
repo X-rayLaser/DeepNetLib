@@ -51,17 +51,6 @@ class Layer:
         self._biases = np.copy(biases)
 
 
-class ActivatedLayer:
-    def __init__(self, weights, biases, incoming_activation,
-                 activation, weighted_sum, weighted_sum_gradient):
-        self.weights = weights
-        self.biases = biases
-        self.incoming_activation = incoming_activation
-        self.activation = activation
-        self.weighted_sum = weighted_sum
-        self.weighted_sum_gradient = weighted_sum_gradient
-
-
 class NeuralNet:
     class BadArchitecture(Exception):
         pass

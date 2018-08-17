@@ -262,3 +262,37 @@ def create_image(dest_fname, pixel_vector, width, height):
     im = Image.fromarray(pixels.astype('uint8'), mode='L')
     im.save(dest_fname)
 
+
+def zero_gradients_list(neural_net):
+    weights_grad = []
+    biases_grad = []
+    wlist = neural_net.weights()
+    blist = neural_net.biases()
+
+    for i in range(len(wlist)):
+        wshape = wlist[i].shape
+        weights_grad.append(np.zeros(wshape))
+
+        bshape = blist[i].shape
+        biases_grad.append(np.zeros(bshape))
+
+    return weights_grad, biases_grad
+
+
+def update_total_gradients(summed_gradients_list, new_gradients_list):
+    summed_len = len(summed_gradients_list)
+    new_len = len(new_gradients_list)
+    assert summed_len == new_len
+
+    res_list = []
+    for i in range(summed_len):
+        res_list.append(summed_gradients_list[i] + new_gradients_list[i])
+    return res_list
+
+
+def average_gradient(gradient_sum, examples_count):
+    res_list = []
+    for i in range(len(gradient_sum)):
+        res_list.append(gradient_sum[i] / float(examples_count))
+
+    return res_list
