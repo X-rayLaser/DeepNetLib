@@ -57,28 +57,26 @@ class BackPropagation:
         return linked_list
 
     def _compute_errors(self, activated_list):
+        errors = LinkedList()
+        self._compute(activated_list, errors)
+        return errors.to_pylist()
+
+    def _compute(self, layer_list, errors):
         y = self._y
         neural_net = self._neural_net
-
-        def find(layer_list, errors):
-            layer = layer_list.get_item()
-            z_grad = layer.weighted_sum_gradient
-            a = layer.activation
-
-            if layer_list.tail().is_empty():
-                nabla = cost_func.get_final_layer_error(a, y, z_grad)
-                errors.append(nabla)
-                return layer.weights, nabla
-
-            w_next, nabla_next = find(layer_list.tail(), errors)
-            nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_grad)
-            errors.append(nabla)
-
-            return layer.weights, nabla
-
         cost_func = neural_net.get_cost_function()
 
-        errors = []
-        find(activated_list, errors)
-        errors.reverse()
-        return errors
+        layer = layer_list.get_item()
+        z_grad = layer.weighted_sum_gradient
+        a = layer.activation
+
+        if layer_list.tail().is_empty():
+            nabla = cost_func.get_final_layer_error(a, y, z_grad)
+            errors.prepend(nabla)
+            return layer.weights, nabla
+
+        w_next, nabla_next = self._compute(layer_list.tail(), errors)
+        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_grad)
+        errors.prepend(nabla)
+
+        return layer.weights, nabla
