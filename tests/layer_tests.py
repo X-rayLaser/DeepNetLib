@@ -188,3 +188,28 @@ class LayerFeedTests(unittest.TestCase):
         self.assertEqual(z[1], 0)
         self.assertEqual(a[0], 0.5)
         self.assertEqual(a[1], 0.5)
+
+
+class LayerCreateNextLayer(unittest.TestCase):
+    def test_returns_layer(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Rectifier)
+        next_layer = layer.create_next_layer(size=5, activation=activation_functions.Rectifier)
+        self.assertIsInstance(next_layer, Layer)
+
+    def test_created_layer_has_correct_parameters(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Rectifier)
+        next_layer = layer.create_next_layer(size=5, activation=activation_functions.Rectifier)
+        self.assertTupleEqual(next_layer.biases().shape, (5,))
+        self.assertTupleEqual(next_layer.weights().shape, (5, 3))
+
+        next_layer = next_layer.create_next_layer(size=4, activation=activation_functions.Rectifier)
+        self.assertTupleEqual(next_layer.biases().shape, (4,))
+        self.assertTupleEqual(next_layer.weights().shape, (4, 5))
+
+    def test_created_layer_has_correct_activation_function(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Rectifier)
+        next_layer = layer.create_next_layer(size=5, activation=activation_functions.Rectifier)
+        self.assertEquals(next_layer.get_activation(), activation_functions.Rectifier)
+
+        next_layer = next_layer.create_next_layer(size=5, activation=activation_functions.Sigmoid)
+        self.assertEquals(next_layer.get_activation(), activation_functions.Sigmoid)

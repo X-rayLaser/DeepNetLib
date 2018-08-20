@@ -71,6 +71,10 @@ class Layer:
     def set_bias(self, row, new_value):
         self.biases()[row] = new_value
 
+    def create_next_layer(self, size, activation):
+        prev_size = self.biases().shape[0]
+        return Layer(size, prev_size, activation)
+
 
 class NetFactory:
     @staticmethod
@@ -180,15 +184,6 @@ class NeuralNet:
                 regularization_parameter=reg_lambda,
                 weights=self.weights()
             )
-
-    def set_activation_function(self, activation):
-        self._activation_function = activation
-        self._output_activation_function = activation
-        self._set_layers_activations()
-
-    def set_output_activation_function(self, activation):
-        self._output_activation_function = activation
-        self._set_layers_activations()
 
     def set_learning_algorithm(self, algorithm_class):
         self._AlgorithmClass = algorithm_class

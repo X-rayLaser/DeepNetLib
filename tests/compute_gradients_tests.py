@@ -42,9 +42,12 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_with_rectifer_activation_and_quadratic_cost(self):
-        nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
+        nnet = NetFactory.create_neural_net(
+            sizes=[4, 2, 10],
+            hidden_layer_activation=activation_functions.Rectifier,
+            output_layer_activation=activation_functions.Rectifier
+        )
         nnet.randomize_parameters()
-        nnet.set_activation_function(activation=activation_functions.Rectifier)
         examples = helpers.generate_random_examples(10, 4, 10)
         calculator = BackPropagationBasedCalculator(examples=examples,
                                                     neural_net=nnet)

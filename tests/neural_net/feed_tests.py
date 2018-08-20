@@ -36,7 +36,7 @@ class NeuralNetFeedforward(unittest.TestCase):
 
     def test_feed_into_with_rectified_unit(self):
         nnet = NetFactory.create_neural_net(sizes=[3, 1, 2])
-        nnet.set_output_activation_function(activation=Rectifier)
+        nnet.layers()[-1].set_activation(Rectifier)
         nnet.layers()[1].set_biases(np.array([-1, 2], float))
         nnet.layers()[1].set_weights(np.array([[0.1], [0]], float))
 
