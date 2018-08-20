@@ -6,6 +6,61 @@ class GradientCalculator:
     pass
 
 
+class NumericalDerivative:
+    def __init__(self, neural_net, examples, epsilon=0.00001):
+        self._neural_net = neural_net
+        self._examples = examples
+        self._epsilon = epsilon
+
+    def _derivative(self, cost_minus, cost_plus):
+        derivative = (cost_plus - cost_minus) / (2 * self._epsilon)
+        return derivative
+
+    def _increment(self, layer, i, j, epsilon):
+        raise Exception('Not implemented')
+
+    def increment_parameter(self, layer, i, j):
+        self._increment(layer, i, j, self._epsilon)
+
+    def decrement_parameter(self, layer, i, j):
+        self._increment(layer, i, j, -self._epsilon)
+
+    def evaluate_function(self):
+        return self._neural_net.get_cost(self._examples)
+
+    def partial_derivative(self, layer, i, j):
+        self.decrement_parameter(layer, i, j)
+        cost_minus = self.evaluate_function()
+
+        self.increment_parameter(layer, i, j)
+        self.increment_parameter(layer, i, j)
+        cost_plus = self.evaluate_function()
+
+        derivative = self._derivative(cost_minus, cost_plus)
+
+        self.decrement_parameter(layer, i, j)
+        return derivative
+
+
+class WeightDerivative(NumericalDerivative):
+    def _increment(self, layer, i, j, epsilon):
+        neural_net = self._neural_net
+        wlist = neural_net.weights()
+        weights = wlist[layer]
+        self._neural_net.set_weight(layer=layer + 1, row=i, col=j,
+                                    new_value=weights[i, j] + epsilon)
+
+
+class BiasDerivative(NumericalDerivative):
+    def _increment(self, layer, i, j, epsilon):
+        neural_net = self._neural_net
+        blist = neural_net.biases()
+        biases = blist[layer]
+
+        row = i
+        neural_net.set_bias(layer=layer + 1, row=row, new_value=biases[row] + epsilon)
+
+
 class NumericalCalculator:
     def __init__(self, examples, neural_net):
         self._examples = examples
@@ -20,60 +75,26 @@ class NumericalCalculator:
         weight_grad = []
         bias_grad = []
 
+        weight_der = WeightDerivative(neural_net=self._neural_net,
+                                      examples=self._examples)
+        biase_der = BiasDerivative(neural_net=self._neural_net,
+                                   examples=self._examples)
         for layer in range(nmatrices):
             weight_grad.append(np.zeros(wlist[layer].shape))
 
             rows, cols = wlist[layer].shape
             for i in range(rows):
                 for j in range(cols):
-                    weight_grad[layer][i][j] = self._weight_gradient(layer, i, j)
+                    weight_grad[layer][i][j] = weight_der.partial_derivative(layer, i, j)
 
         for layer in range(nmatrices):
             bias_grad.append(np.zeros(blist[layer].shape))
 
             rows, = blist[layer].shape
             for row in range(rows):
-                bias_grad[layer][row] = self._bias_gradient(layer, row)
+                bias_grad[layer][row] = biase_der.partial_derivative(layer, row, 0)
 
         return weight_grad, bias_grad
-
-    def _weight_gradient(self, layer, i, j):
-        neural_net = self._neural_net
-        examples = self._examples
-
-        epsilon = 10 ** (-5)
-        wlist = neural_net.weights()
-        weights = wlist[layer]
-
-        neural_net.set_weight(layer=layer + 1, row=i, col=j,
-                              new_value=weights[i, j] - epsilon)
-        cost_minus = neural_net.get_cost(examples)
-        neural_net.set_weight(layer=layer + 1, row=i, col=j,
-                              new_value=weights[i, j] + 2 * epsilon)
-        cost_plus = neural_net.get_cost(examples)
-
-        derivative = (cost_plus - cost_minus) / (2 * epsilon)
-
-        neural_net.set_weight(layer=layer + 1, row=i, col=j,
-                              new_value=weights[i, j] - epsilon)
-
-        return derivative
-
-    def _bias_gradient(self, layer, row):
-        neural_net = self._neural_net
-        examples = self._examples
-        epsilon = 10 ** (-5)
-        blist = neural_net.biases()
-
-        biases = blist[layer]
-
-        neural_net.set_bias(layer=layer + 1, row=row, new_value=biases[row] - epsilon)
-        cost_minus = neural_net.get_cost(examples)
-        neural_net.set_bias(layer=layer + 1, row=row, new_value=biases[row] + 2 * epsilon)
-        cost_plus = neural_net.get_cost(examples)
-        derivative = (cost_plus - cost_minus) / (2 * epsilon)
-        neural_net.set_bias(layer=layer + 1, row=row, new_value=biases[row] - epsilon)
-        return derivative
 
 
 class BackPropagationBasedCalculator:
