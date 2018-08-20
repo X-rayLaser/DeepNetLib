@@ -1,6 +1,6 @@
 import numpy as np
 import helpers
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 import cost_functions
 import gradient_descent
 
@@ -21,7 +21,7 @@ class DigitGenerator:
         return X_swapped, Y_swapped
 
     def __init__(self):
-        self._nnet = NeuralNet(layer_sizes=[10, 30, 784])
+        self._nnet = NetFactory.create_neural_net(sizes=[10, 30, 784])
 
     def train(self, pixels_to_categories, nepochs=1):
         examples = self.prepare_train_examples(pixels_to_categories)

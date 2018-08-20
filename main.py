@@ -92,9 +92,13 @@ class InputLayer(CreateLayerMixin):
 class NetFactory:
     @staticmethod
     def create_neural_net(sizes, hidden_layer_activation=Sigmoid, output_layer_activation=Sigmoid):
-        nnet = NeuralNet(layer_sizes=sizes)
-        for layer in nnet.layers():
-            layer.set_activation(hidden_layer_activation)
+        input_size = sizes[0]
+        nnet = NeuralNet(input_size=input_size)
+
+        layer = InputLayer(size=input_size)
+        for size in sizes[1:]:
+            layer = layer.create_next_layer(size, activation=hidden_layer_activation)
+            nnet.add_layer(layer)
 
         nnet.layers()[-1].set_activation(output_layer_activation)
         return nnet
@@ -113,44 +117,25 @@ class NeuralNet:
     class BadLayerSize(Exception):
         pass
 
-    def __init__(self, layer_sizes):
-        if len(layer_sizes) < 3:
-            raise self.BadArchitecture('Must be at least 3 layers')
-
-        if layer_sizes[0] <= 0 or layer_sizes[1] <= 0:
-            raise self.BadArchitecture('Must have at least 1 node per layer')
-
-        self._sizes = layer_sizes
+    def __init__(self, input_size):
+        if input_size < 1:
+            raise self.BadArchitecture('Must have at least 1 node in input layer')
 
         self._layers = []
 
         self._AlgorithmClass = GradientDescent
         self._cost_function = cost_functions.QuadraticCost()
-        self._activation_function = Sigmoid
-        self._output_activation_function = Sigmoid
-
-        prev_sz = self._sizes[0]
-        for sz in self._sizes[1:]:
-            self._layers.append(Layer(size=sz, prev_size=prev_sz, activation=Sigmoid))
-            prev_sz = sz
-        self._set_layers_activations()
-
-    def _set_layers_activations(self):
-        for layer in self._layers:
-            layer.set_activation(activation=self._activation_function)
-        self._layers[-1].set_activation(activation=self._output_activation_function)
 
     def _feed_next(self, activations, layer):
-        effective_layers_count = len(self._sizes) - 1
-        if layer >= effective_layers_count:
+        if layer >= len(self._layers):
             return activations
 
         a, z = self.layers()[layer].feed(activations)
         return self._feed_next(activations=a, layer=layer+1)
 
     def add_layer(self, layer):
-        if layer.weights().shape[1] != self.layers()[-1].weights().shape[0]:
-            raise self.BadArchitecture('Incorrect layer')
+        if len(self.layers()) > 0 and layer.weights().shape[1] != self.layers()[-1].weights().shape[0]:
+            raise self.BadArchitecture('Incompatible layers')
         self._layers.append(layer)
 
     def layers(self):
@@ -237,7 +222,8 @@ class NeuralNet:
             s = f.read()
 
         net_params = json.loads(s)
-        nnet = NeuralNet(layer_sizes=net_params['layer_sizes'])
+        layer_sizes = net_params['layer_sizes']
+        nnet = NetFactory.create_neural_net(sizes=layer_sizes)
         for layer in range(len(nnet.layers())):
             weights = net_params['layers'][layer]['weights']
             biases = net_params['layers'][layer]['biases']

@@ -209,10 +209,10 @@ class LayerCreateNextLayer(unittest.TestCase):
     def test_created_layer_has_correct_activation_function(self):
         layer = Layer(size=3, prev_size=2, activation=activation_functions.Rectifier)
         next_layer = layer.create_next_layer(size=5, activation=activation_functions.Rectifier)
-        self.assertEquals(next_layer.get_activation(), activation_functions.Rectifier)
+        self.assertEqual(next_layer.get_activation(), activation_functions.Rectifier)
 
         next_layer = next_layer.create_next_layer(size=5, activation=activation_functions.Sigmoid)
-        self.assertEquals(next_layer.get_activation(), activation_functions.Sigmoid)
+        self.assertEqual(next_layer.get_activation(), activation_functions.Sigmoid)
 
 
 from main import InputLayer
@@ -226,4 +226,4 @@ class InputLayerCreateNextLayer(unittest.TestCase):
 
         self.assertTupleEqual(next_layer.biases().shape, (5,))
         self.assertTupleEqual(next_layer.weights().shape, (5, 3))
-        self.assertEquals(next_layer.get_activation(), activation_functions.Rectifier)
+        self.assertEqual(next_layer.get_activation(), activation_functions.Rectifier)

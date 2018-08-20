@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import cost_functions
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 
 
 class QuadraticCostTests(unittest.TestCase):
@@ -26,7 +26,7 @@ class QuadraticCostTests(unittest.TestCase):
         self.assertAlmostEqual(c, 1, places=1)
 
     def test_get_cost_initial(self):
-        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+        nnet = NetFactory.create_neural_net(sizes=[1, 1, 1])
 
         xes = [np.array([-10], float), np.array([100], float)]
         ys = [np.array([0.5], float), np.array([0.75], float)]

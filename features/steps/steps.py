@@ -1,7 +1,7 @@
 from random import SystemRandom
 import numpy as np
 import math
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 import helpers
 import gradient_descent
 import cost_functions
@@ -45,7 +45,7 @@ def step(context):
 
 @when('I initialize simple neural net with default parameters')
 def step(context):
-    context.nnet = NeuralNet(layer_sizes=[1, 10, 1])
+    context.nnet = NetFactory.create_neural_net(sizes=[1, 10, 1])
     context.nnet.randomize_parameters()
 
 
@@ -139,8 +139,7 @@ def step(context, seq_len):
 @when('I initialize a neural net for binary classification with sizes {sizes_csv}')
 def step(context, sizes_csv):
     sizes = [int(sz) for sz in sizes_csv.split(',')]
-
-    context.nnet = NeuralNet(layer_sizes=sizes)
+    context.nnet = NetFactory.create_neural_net(sizes=sizes)
 
 
 @then('neural net gives less than {classification_error}% classification error on test data set')
@@ -234,13 +233,15 @@ def step(context):
 
 @when('I choose rectifier activation function')
 def step(context):
-    context.nnet.set_activation_function(Rectifier)
+    for layer in context.nnet.layers():
+        layer.set_activation(Rectifier)
 
 
 @when('I choose rectifier activation function for hidden layer(s)')
 def step(context):
-    for layer in context.nnet.layers():
-        layer.set_activation(Rectifier)
+    layers = context.nnet.layers()
+    for i in range(len(layers) - 1):
+        layers[i].set_activation(Rectifier)
 
 
 @when('I choose softmax activation function for output layer')
