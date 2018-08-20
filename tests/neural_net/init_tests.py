@@ -3,16 +3,6 @@ from main import NeuralNet
 
 
 class NeuralNetInitialization(unittest.TestCase):
-    def test_init_with_too_little_layers(self):
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[]))
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[2]))
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[2, 1]))
-
-    def test_init_empty_layers(self):
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[0, 1, 1]))
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[13, 0, 1]))
-        self.assertRaises(NeuralNet.BadArchitecture, lambda: NeuralNet(layer_sizes=[0, 0, 0]))
-
     def test_valid_init(self):
         NeuralNet(layer_sizes=[1, 1, 1])
         NeuralNet(layer_sizes=[3, 1, 11, 151, 1])

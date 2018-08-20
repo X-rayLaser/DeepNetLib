@@ -12,7 +12,12 @@ def weighed_sum(weights, activations, biases):
 
 
 class Layer:
+    class BadArchitecture(Exception):
+        pass
+
     def __init__(self, size, prev_size, activation):
+        if size == 0 or prev_size == 0:
+            raise self.BadArchitecture('Must have at least 1 node per layer')
         self._weights = np.zeros((size, prev_size), dtype=float)
         self._biases = np.zeros((size, ), dtype=float)
         self._activation_function = activation
@@ -56,8 +61,7 @@ class Layer:
 
 class NetFactory:
     @staticmethod
-    def create_neural_net(sizes, hidden_layer_activation=Sigmoid,
-                          output_layer_activation=Sigmoid):
+    def create_neural_net(sizes, hidden_layer_activation=Sigmoid, output_layer_activation=Sigmoid):
         nnet = NeuralNet(layer_sizes=sizes)
         nnet.set_activation_function(hidden_layer_activation)
         nnet.set_output_activation_function(output_layer_activation)

@@ -5,6 +5,22 @@ import activation_functions
 
 
 class LayerInitTests(unittest.TestCase):
+    def test_init_empty_layers(self):
+        self.assertRaises(
+            Layer.BadArchitecture,
+            lambda: Layer(size=0, prev_size=0, activation=activation_functions.Sigmoid)
+        )
+
+        self.assertRaises(
+            Layer.BadArchitecture,
+            lambda: Layer(size=1, prev_size=0, activation=activation_functions.Sigmoid)
+        )
+
+        self.assertRaises(
+            Layer.BadArchitecture,
+            lambda: Layer(size=0, prev_size=1, activation=activation_functions.Sigmoid)
+        )
+
     def test_weights_is_of_correct_type(self):
         layer = Layer(size=5, prev_size=2, activation=activation_functions.Sigmoid)
         weights = layer.weights()
