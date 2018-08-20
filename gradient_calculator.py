@@ -6,6 +6,13 @@ class GradientCalculator:
     pass
 
 
+class ParameterLocation:
+    def __init__(self, layer, row, column):
+        self.layer = layer
+        self.row = row
+        self.column = column
+
+
 class NumericalDerivative:
     def __init__(self, neural_net, examples, epsilon=0.00001):
         self._neural_net = neural_net
@@ -16,49 +23,54 @@ class NumericalDerivative:
         derivative = (cost_plus - cost_minus) / (2 * self._epsilon)
         return derivative
 
-    def _increment(self, layer, i, j, epsilon):
+    def _increment(self, parameter_location, epsilon):
         raise Exception('Not implemented')
 
-    def increment_parameter(self, layer, i, j):
-        self._increment(layer, i, j, self._epsilon)
+    def increment_parameter(self, parameter_location):
+        self._increment(parameter_location, self._epsilon)
 
-    def decrement_parameter(self, layer, i, j):
-        self._increment(layer, i, j, -self._epsilon)
+    def decrement_parameter(self, parameter_location):
+        self._increment(parameter_location, -self._epsilon)
 
     def evaluate_function(self):
         return self._neural_net.get_cost(self._examples)
 
-    def partial_derivative(self, layer, i, j):
-        self.decrement_parameter(layer, i, j)
+    def partial_derivative(self, parameter_location):
+        self.decrement_parameter(parameter_location)
         cost_minus = self.evaluate_function()
 
-        self.increment_parameter(layer, i, j)
-        self.increment_parameter(layer, i, j)
+        self.increment_parameter(parameter_location)
+        self.increment_parameter(parameter_location)
         cost_plus = self.evaluate_function()
 
         derivative = self._derivative(cost_minus, cost_plus)
 
-        self.decrement_parameter(layer, i, j)
+        self.decrement_parameter(parameter_location)
         return derivative
 
 
 class WeightDerivative(NumericalDerivative):
-    def _increment(self, layer, i, j, epsilon):
+    def _increment(self, parameter_location, epsilon):
         neural_net = self._neural_net
         wlist = neural_net.weights()
-        weights = wlist[layer]
-        self._neural_net.set_weight(layer=layer + 1, row=i, col=j,
-                                    new_value=weights[i, j] + epsilon)
+        weights = wlist[parameter_location.layer]
+        current_value = weights[parameter_location.row, parameter_location.column]
+        self._neural_net.set_weight(layer=parameter_location.layer + 1,
+                                    row=parameter_location.row,
+                                    col=parameter_location.column,
+                                    new_value=current_value + epsilon)
 
 
 class BiasDerivative(NumericalDerivative):
-    def _increment(self, layer, i, j, epsilon):
+    def _increment(self, parameter_location, epsilon):
         neural_net = self._neural_net
         blist = neural_net.biases()
-        biases = blist[layer]
+        biases = blist[parameter_location.layer]
 
-        row = i
-        neural_net.set_bias(layer=layer + 1, row=row, new_value=biases[row] + epsilon)
+        row = parameter_location.row
+        neural_net.set_bias(layer=parameter_location.layer + 1,
+                            row=row,
+                            new_value=biases[row] + epsilon)
 
 
 class NumericalCalculator:
@@ -81,18 +93,17 @@ class NumericalCalculator:
                                    examples=self._examples)
         for layer in range(nmatrices):
             weight_grad.append(np.zeros(wlist[layer].shape))
+            bias_grad.append(np.zeros(blist[layer].shape))
 
             rows, cols = wlist[layer].shape
             for i in range(rows):
                 for j in range(cols):
-                    weight_grad[layer][i][j] = weight_der.partial_derivative(layer, i, j)
+                    loc = ParameterLocation(layer=layer, row=i, column=j)
+                    weight_grad[layer][i][j] = weight_der.partial_derivative(loc)
 
-        for layer in range(nmatrices):
-            bias_grad.append(np.zeros(blist[layer].shape))
-
-            rows, = blist[layer].shape
             for row in range(rows):
-                bias_grad[layer][row] = biase_der.partial_derivative(layer, row, 0)
+                loc = ParameterLocation(layer=layer, row=row, column=0)
+                bias_grad[layer][row] = biase_der.partial_derivative(loc)
 
         return weight_grad, bias_grad
 
