@@ -1,19 +1,19 @@
 import unittest
 import numpy as np
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 from activation_functions import Rectifier
 
 
 class NeuralNetFeedforward(unittest.TestCase):
     def test_feed_after_initialization(self):
-        nnet = NeuralNet(layer_sizes=[3, 2, 2])
+        nnet = NetFactory.create_neural_net(sizes=[3, 2, 2])
         x = np.array([1, 9, 323], float)
         a = nnet.feed(x)
         self.assertEqual(a[0], 0.5)
         self.assertEqual(a[1], 0.5)
 
     def test_feed_into_layer(self):
-        nnet = NeuralNet(layer_sizes=[2, 3, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 2])
 
         x = np.array([5, 10], float)
         a, z = nnet.feed_into_layer(x, layer=0)
@@ -35,7 +35,7 @@ class NeuralNetFeedforward(unittest.TestCase):
         self.assertEqual(a[1], 0.5)
 
     def test_feed_into_with_rectified_unit(self):
-        nnet = NeuralNet(layer_sizes=[3, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[3, 1, 2])
         nnet.set_output_activation_function(activation=Rectifier)
         nnet.set_layer_biases(layer=2, bias_vector=np.array([-1, 2], float))
         nnet.set_layer_weights(layer=2, weights=np.array([[0.1], [0]], float))

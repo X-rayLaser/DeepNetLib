@@ -56,7 +56,8 @@ class Layer:
 
 class NetFactory:
     @staticmethod
-    def create_neural_net(sizes, hidden_layer_activation, output_layer_activation):
+    def create_neural_net(sizes, hidden_layer_activation=Sigmoid,
+                          output_layer_activation=Sigmoid):
         nnet = NeuralNet(layer_sizes=sizes)
         nnet.set_activation_function(hidden_layer_activation)
         nnet.set_output_activation_function(output_layer_activation)

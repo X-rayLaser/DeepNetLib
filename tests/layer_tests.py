@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import NeuralNet, Layer
+from main import Layer
 import activation_functions
 
 

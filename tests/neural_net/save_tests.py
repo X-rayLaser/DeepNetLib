@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 import numpy as np
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 
 
 class SaveTests(unittest.TestCase):
@@ -13,13 +13,13 @@ class SaveTests(unittest.TestCase):
         os.remove(self.dest_fname)
 
     def test_creates_file(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         dest_fname = os.path.join('test_temp', 'nets_params.json')
         nnet.save(dest_fname=dest_fname)
         self.assertTrue(os.path.isfile(dest_fname))
 
     def test_json_is_valid(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         nnet.randomize_parameters()
         nnet.save(self.dest_fname)
         with open(self.dest_fname, 'r') as f:
@@ -30,7 +30,7 @@ class SaveTests(unittest.TestCase):
                 self.assertTrue(False, 'Invalid json')
 
     def test_json_structure_is_correct(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         nnet.save(self.dest_fname)
         with open(self.dest_fname, 'r') as f:
             net_params = json.loads(f.read())
@@ -41,7 +41,7 @@ class SaveTests(unittest.TestCase):
             self.assertIn('biases', net_params['layers'][0])
 
     def test_correct_parameters(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         nnet.randomize_parameters()
         nnet.save(self.dest_fname)
         with open(self.dest_fname, 'r') as f:
@@ -54,7 +54,7 @@ class SaveTests(unittest.TestCase):
             self.assertEqual(net_params['layers'][1]['biases'], nnet.biases()[1].tolist())
 
     def test_costs_match(self):
-        nnet = NeuralNet(layer_sizes=[2, 3, 1, 10, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 1, 10, 2])
         nnet.randomize_parameters()
 
         X = [np.array([90, 23], float), np.array([0, 2], float)]

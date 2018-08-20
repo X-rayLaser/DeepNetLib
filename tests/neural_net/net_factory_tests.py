@@ -19,7 +19,19 @@ class NetFactoryTests(unittest.TestCase):
 
         self.assertIsInstance(nnet.get_cost_function(), cost_functions.QuadraticCost)
 
-        layer = nnet.layers()[0]
-        self.assertEqual(layer.get_activation(), activation_functions.Rectifier)
+        for i in range(2):
+            layer = nnet.layers()[i]
+            self.assertEqual(layer.get_activation(), activation_functions.Rectifier)
         layer = nnet.layers()[-1]
         self.assertEqual(layer.get_activation(), activation_functions.Softmax)
+
+    def test_with_default_activations(self):
+        nnet = NetFactory.create_neural_net(sizes=[3, 2, 5, 4])
+
+        self.assertIsInstance(nnet.get_cost_function(), cost_functions.QuadraticCost)
+
+        for i in range(2):
+            layer = nnet.layers()[i]
+            self.assertEqual(layer.get_activation(), activation_functions.Sigmoid)
+        layer = nnet.layers()[-1]
+        self.assertEqual(layer.get_activation(), activation_functions.Sigmoid)

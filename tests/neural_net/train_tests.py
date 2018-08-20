@@ -1,12 +1,12 @@
 import unittest
 import numpy as np
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 import helpers
 
 
 class NeuralNetTrain(unittest.TestCase):
     def test_gives_correct_output_on_training_data(self):
-        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+        nnet = NetFactory.create_neural_net(sizes=[1, 1, 1])
 
         xes = [np.array([-10], float), np.array([100], float)]
         ys = [np.array([0.5], float), np.array([0.75], float)]
@@ -18,7 +18,7 @@ class NeuralNetTrain(unittest.TestCase):
             self.assertAlmostEqual(res[0], ys[i][0], places=1)
 
     def test_gives_correct_output_for_unseen_data(self):
-        nnet = NeuralNet(layer_sizes=[1, 10, 1])
+        nnet = NetFactory.create_neural_net(sizes=[1, 10, 1])
 
         def parabola(x):
             return x**2

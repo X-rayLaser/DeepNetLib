@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import helpers
-from main import NeuralNet
+from main import NetFactory
 from gradient_calculator import NumericalCalculator
 
 
@@ -10,7 +10,7 @@ class BackpropSlowTests(unittest.TestCase):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
     def test_back_propagation_slow(self):
-        nnet = NeuralNet(layer_sizes=[1, 1, 1])
+        nnet = NetFactory.create_neural_net(sizes=[1, 1, 1])
         x = np.array([5], float)
         y = np.array([0.25], float)
         examples = ([x], [y])
@@ -25,7 +25,7 @@ class BackpropSlowTests(unittest.TestCase):
         self.compare_grads(b_grad, b_grad_expected)
 
     def test_back_propagation_slow_type_array(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         x = np.array([5, 2], float)
         y = np.array([0.25, 0], float)
 
@@ -42,7 +42,7 @@ class BackpropSlowTests(unittest.TestCase):
         self.assertIsInstance(b_grad[1], np.ndarray)
 
     def test_back_propagation_slow_shape(self):
-        nnet = NeuralNet(layer_sizes=[3, 2, 2, 5])
+        nnet = NetFactory.create_neural_net(sizes=[3, 2, 2, 5])
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])

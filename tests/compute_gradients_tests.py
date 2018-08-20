@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import helpers
-from main import NeuralNet
+from main import NetFactory
 import cost_functions
 import activation_functions
 from gradient_calculator import BackPropagationBasedCalculator, NumericalCalculator
@@ -12,7 +12,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTrue(helpers.gradients_equal(grad1, grad2))
 
     def test_compute_gradients_with_quadratic_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 2, 10])
+        nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
         nnet.randomize_parameters()
         examples = helpers.generate_random_examples(10, 4, 10)
         calculator = BackPropagationBasedCalculator(examples=examples,
@@ -27,7 +27,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_compute_gradients_with_cross_entropy_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 2, 10])
+        nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_cost_function(cost_function=cost_functions.CrossEntropyCost())
         examples = helpers.generate_random_examples(10, 4, 10)
@@ -42,7 +42,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_with_rectifer_activation_and_quadratic_cost(self):
-        nnet = NeuralNet(layer_sizes=[4, 2, 10])
+        nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_activation_function(activation=activation_functions.Rectifier)
         examples = helpers.generate_random_examples(10, 4, 10)
@@ -57,7 +57,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
 
     def test_that_returned_type_is_array(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         x = np.array([5, 2], float)
         y = np.array([0.25, 0], float)
 
@@ -75,7 +75,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertIsInstance(b_grad[1], np.ndarray)
 
     def test_returns_correct_gradient_shape(self):
-        nnet = NeuralNet(layer_sizes=[3, 2, 2, 5])
+        nnet = NetFactory.create_neural_net(sizes=[3, 2, 2, 5])
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
@@ -93,7 +93,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[2].shape, (5,))
 
     def test_with_regularization(self):
-        nnet = NeuralNet(layer_sizes=[4, 2, 10])
+        nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
         nnet.randomize_parameters()
         nnet.set_regularization(reg_lambda=2)
         examples = helpers.generate_random_examples(10, 4, 10)

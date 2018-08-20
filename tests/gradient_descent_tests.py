@@ -1,8 +1,7 @@
 import unittest
 import numpy as np
-from main import NeuralNet
+from main import NetFactory
 from gradient_descent import GradientDescent, StochasticGradientDescent
-from backprop import BackPropagation
 from gradient_calculator import BackPropagationBasedCalculator
 
 
@@ -11,13 +10,13 @@ class GradientDescentTest(unittest.TestCase):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
         self.examples = ([x], [y])
-        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         nnet.randomize_parameters()
         self.nnet = nnet
         self.grad_descent = GradientDescent(neural_net=nnet)
 
     def test_init(self):
-        nnet = NeuralNet(layer_sizes=[2, 3, 5])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 5])
         grad_descent = GradientDescent(neural_net=nnet)
 
     def test_update_weights_decreases_cost(self):
@@ -95,7 +94,7 @@ class GradientLearningRateTests(unittest.TestCase):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
         self.examples = ([x], [y])
-        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         self.nnet = nnet
         self.Descent = GradientDescent
 
@@ -128,7 +127,7 @@ class StochasticGradientDescentTests(GradientDescentTest):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
         self.examples = ([x], [y])
-        nnet = NeuralNet(layer_sizes=[2, 3, 3])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         nnet.randomize_parameters()
         self.nnet = nnet
         self.grad_descent = StochasticGradientDescent(neural_net=nnet)

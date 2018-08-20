@@ -1,11 +1,11 @@
 import unittest
 import numpy as np
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 
 
 class SetWeight(unittest.TestCase):
     def test_set_weight(self):
-        nnet = NeuralNet(layer_sizes=[2, 3, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 3, 2])
         nnet.set_weight(layer=1, row=0, col=0, new_value=5)
         nnet.set_weight(layer=1, row=1, col=1, new_value=-2.5)
         nnet.set_weight(layer=2, row=1, col=2, new_value=1.5)
@@ -25,7 +25,7 @@ class SetWeight(unittest.TestCase):
         self.assertTrue(np.allclose(w[1], expected_w2))
 
     def test_raises_exception_for_erroneous_layer(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         self.assertRaises(NeuralNet.LayerOutOfBound,
                           lambda: nnet.set_weight(layer=0, row=0, col=0, new_value=2)
                           )
@@ -43,7 +43,7 @@ class SetWeight(unittest.TestCase):
                           )
 
     def test_raises_exception_for_erroneous_index(self):
-        nnet = NeuralNet(layer_sizes=[2, 1, 2])
+        nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
         self.assertRaises(IndexError,
                           lambda: nnet.set_weight(layer=1, row=1, col=0, new_value=2)
                           )

@@ -1,11 +1,11 @@
 import unittest
 import numpy as np
-from main import NeuralNet
+from main import NeuralNet, NetFactory
 
 
 class SetLayerWeights(unittest.TestCase):
     def test_with_single_hidden_layer(self):
-        nnet = NeuralNet(layer_sizes=[1, 2, 2])
+        nnet = NetFactory.create_neural_net(sizes=[1, 2, 2])
         weights = [[3], [-3.5]]
         nnet.set_layer_weights(layer=1, weights=np.array(weights, float))
         self.assertEqual(nnet.weights()[0].tolist(), weights)
@@ -17,7 +17,7 @@ class SetLayerWeights(unittest.TestCase):
         self.assertEqual(nnet.weights()[1].tolist(), weights2)
 
     def test_with_2_hidden_layers(self):
-        nnet = NeuralNet(layer_sizes=[1, 2, 2, 3])
+        nnet = NetFactory.create_neural_net(sizes=[1, 2, 2, 3])
         weights2 = [[0, 10], [1, 1]]
         weights3 = [[0, 10], [1, 1], [-1.5, 2]]
 
@@ -29,7 +29,7 @@ class SetLayerWeights(unittest.TestCase):
         self.assertEqual(nnet.weights()[2].tolist(), weights3)
 
     def test_raises_exception_for_array_with_wrong_layer_index(self):
-        nnet = NeuralNet(layer_sizes=[1, 2, 2])
+        nnet = NetFactory.create_neural_net(sizes=[1, 2, 2])
         self.assertRaises(NeuralNet.LayerOutOfBound,
                           lambda: nnet.set_layer_weights(layer=-1, weights=[]))
         self.assertRaises(NeuralNet.LayerOutOfBound,
@@ -40,7 +40,7 @@ class SetLayerWeights(unittest.TestCase):
                           lambda: nnet.set_layer_weights(layer=30, weights=[]))
 
     def test_raises_exception_for_array_with_wrong_dimension(self):
-        nnet = NeuralNet(layer_sizes=[1, 2, 2])
+        nnet = NetFactory.create_neural_net(sizes=[1, 2, 2])
 
         self.assertRaises(
             NeuralNet.InvalidMatrixDimensions,
