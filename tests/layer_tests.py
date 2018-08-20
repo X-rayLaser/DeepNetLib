@@ -52,6 +52,50 @@ class LayerInitTests(unittest.TestCase):
         self.assertTupleEqual(weights.shape, (2, 3))
 
 
+class LayerSetWeightsTests(unittest.TestCase):
+    def test_with_single_hidden_layer(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Sigmoid)
+        weights = [[0, 10], [1, 1], [-1, 0.5]]
+        layer.set_weights(weights=np.array(weights, float))
+
+        self.assertEqual(layer.weights().tolist(), [[0, 10], [1, 1], [-1, 0.5]])
+
+    def test_raises_exception_for_array_with_wrong_dimension(self):
+        layer = Layer(size=5, prev_size=2, activation=activation_functions.Sigmoid)
+
+        self.assertRaises(
+            Layer.InvalidMatrixDimensions,
+            lambda: layer.set_weights(weights=np.zeros((2, 2)))
+        )
+
+        self.assertRaises(
+            Layer.InvalidMatrixDimensions,
+            lambda: layer.set_weights(weights=np.zeros((4, 3)))
+        )
+
+
+class LayerSetBiasesTests(unittest.TestCase):
+    def test_with_single_hidden_layer(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Sigmoid)
+        biases = [-2, 0.5, 9]
+        layer.set_biases(biases=np.array(biases, float))
+
+        self.assertEqual(layer.biases().tolist(), [-2, 0.5, 9])
+
+    def test_raises_exception_for_array_with_wrong_dimension(self):
+        layer = Layer(size=5, prev_size=2, activation=activation_functions.Sigmoid)
+
+        self.assertRaises(
+            Layer.InvalidMatrixDimensions,
+            lambda: layer.set_biases(biases=np.zeros((2, 2)))
+        )
+
+        self.assertRaises(
+            Layer.InvalidMatrixDimensions,
+            lambda: layer.set_biases(biases=np.zeros((4, 3)))
+        )
+
+
 class LayerSetActivationTests(unittest.TestCase):
     def test_sigmoid(self):
         layer = Layer(size=2, prev_size=3, activation=activation_functions.Rectifier)

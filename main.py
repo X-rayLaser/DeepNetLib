@@ -15,6 +15,9 @@ class Layer:
     class BadArchitecture(Exception):
         pass
 
+    class InvalidMatrixDimensions(Exception):
+        pass
+
     def __init__(self, size, prev_size, activation):
         if size == 0 or prev_size == 0:
             raise self.BadArchitecture('Must have at least 1 node per layer')
@@ -53,9 +56,13 @@ class Layer:
         return self._activation_function
 
     def set_weights(self, weights):
+        if weights.shape != self.weights().shape:
+            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._weights = np.copy(weights)
 
     def set_biases(self, biases):
+        if biases.shape != self.biases().shape:
+            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._biases = np.copy(biases)
 
 
