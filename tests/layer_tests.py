@@ -96,6 +96,58 @@ class LayerSetBiasesTests(unittest.TestCase):
         )
 
 
+class LayerSetSingleWeightTests(unittest.TestCase):
+    def test_set_weight(self):
+        layer = Layer(size=2, prev_size=3, activation=activation_functions.Sigmoid)
+        layer.set_weight(row=0, col=1, new_value=2)
+        layer.set_weight(row=1, col=2, new_value=-0.5)
+
+        expected_w = np.array(
+            [[0, 2, 0],
+             [0, 0, -0.5]], float
+        )
+
+        self.assertEqual(layer.weights().tolist(), expected_w.tolist())
+
+    def test_raises_exception_for_erroneous_index(self):
+        layer = Layer(size=2, prev_size=3, activation=activation_functions.Sigmoid)
+
+        self.assertRaises(IndexError,
+                          lambda: layer.set_weight(row=2, col=0, new_value=2)
+                          )
+        self.assertRaises(IndexError,
+                          lambda: layer.set_weight(row=0, col=3, new_value=2)
+                          )
+        self.assertRaises(IndexError,
+                          lambda: layer.set_weight(row=1, col=3, new_value=2)
+                          )
+        self.assertRaises(IndexError,
+                          lambda: layer.set_weight(row=2, col=3, new_value=2)
+                          )
+
+
+class LayerSetSingleBiasTests(unittest.TestCase):
+    def test_set_bias(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Sigmoid)
+        layer.set_bias(row=0, new_value=2)
+        layer.set_bias(row=1, new_value=-0.5)
+
+        expected_b = np.array([2, -0.5, 0], float)
+
+        self.assertEqual(layer.biases().tolist(), expected_b.tolist())
+
+    def test_raises_exception_for_erroneous_index(self):
+        layer = Layer(size=3, prev_size=2, activation=activation_functions.Sigmoid)
+
+        self.assertRaises(IndexError,
+                          lambda: layer.set_bias(row=3, new_value=2)
+                          )
+        self.assertRaises(IndexError,
+                          lambda: layer.set_bias(row=30, new_value=2)
+                          )
+
+
+
 class LayerSetActivationTests(unittest.TestCase):
     def test_sigmoid(self):
         layer = Layer(size=2, prev_size=3, activation=activation_functions.Rectifier)

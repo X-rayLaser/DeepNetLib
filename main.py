@@ -65,6 +65,12 @@ class Layer:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._biases = np.copy(biases)
 
+    def set_weight(self, row, col, new_value):
+        self.weights()[row, col] = new_value
+
+    def set_bias(self, row, new_value):
+        self.biases()[row] = new_value
+
 
 class NetFactory:
     @staticmethod
@@ -238,30 +244,6 @@ class NeuralNet:
         with open(dest_fname, 'w') as f:
             f.write(json.dumps(net_params))
 
-    def set_layer_weights(self, layer, weights):
-        """layer must be between 1 and number of layers exclusive"""
-        if layer < 1 or layer >= self.number_of_layers():
-            raise self.LayerOutOfBound(
-                'layer must be between 1 and number of layers exclusive'
-            )
-
-        if weights.shape != self.weights()[layer - 1].shape:
-            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
-
-        self._layers[layer - 1].set_weights(weights)
-
-    def set_layer_biases(self, layer, bias_vector):
-        """layer must be between 1 and number of layers exclusive"""
-        if layer < 1 or layer >= self.number_of_layers():
-            raise self.LayerOutOfBound(
-                'layer must be between 1 and number of layers exclusive'
-            )
-
-        if bias_vector.shape != self.biases()[layer - 1].shape:
-            raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
-
-        self._layers[layer - 1].set_biases(bias_vector)
-
     @staticmethod
     def create_from_file(fname):
         import json
@@ -270,9 +252,10 @@ class NeuralNet:
 
         net_params = json.loads(s)
         nnet = NeuralNet(layer_sizes=net_params['layer_sizes'])
-        for layer in range(1, nnet.number_of_layers()):
-            weights = net_params['layers'][layer - 1]['weights']
-            biases = net_params['layers'][layer - 1]['biases']
-            nnet.set_layer_weights(layer=layer, weights=np.array(weights, float))
-            nnet.set_layer_biases(layer=layer, bias_vector=np.array(biases, float))
+        for layer in range(len(nnet.layers())):
+            weights = net_params['layers'][layer]['weights']
+            biases = net_params['layers'][layer]['biases']
+            nnet.layers()[layer].set_weights(weights=np.array(weights, float))
+            nnet.layers()[layer].set_biases(biases=np.array(biases, float))
+
         return nnet
