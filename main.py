@@ -44,11 +44,23 @@ class Layer:
     def set_activation(self, activation):
         self._activation_function = activation
 
+    def get_activation(self):
+        return self._activation_function
+
     def set_weights(self, weights):
         self._weights = np.copy(weights)
 
     def set_biases(self, biases):
         self._biases = np.copy(biases)
+
+
+class NetFactory:
+    @staticmethod
+    def create_neural_net(sizes, hidden_layer_activation, output_layer_activation):
+        nnet = NeuralNet(layer_sizes=sizes)
+        nnet.set_activation_function(hidden_layer_activation)
+        nnet.set_output_activation_function(output_layer_activation)
+        return nnet
 
 
 class NeuralNet:
@@ -59,6 +71,9 @@ class NeuralNet:
         pass
 
     class InvalidMatrixDimensions(Exception):
+        pass
+
+    class BadLayerSize(Exception):
         pass
 
     def __init__(self, layer_sizes):
@@ -95,6 +110,11 @@ class NeuralNet:
 
         a, z = self.layers()[layer].feed(activations)
         return self._feed_next(activations=a, layer=layer+1)
+
+    def add_layer(self, layer):
+        if layer.weights().shape[1] != self.layers()[-1].weights().shape[0]:
+            raise self.BadArchitecture('Incorrect layer')
+        self._layers.append(layer)
 
     def layers(self):
         return self._layers
