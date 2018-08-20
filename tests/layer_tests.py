@@ -213,3 +213,17 @@ class LayerCreateNextLayer(unittest.TestCase):
 
         next_layer = next_layer.create_next_layer(size=5, activation=activation_functions.Sigmoid)
         self.assertEquals(next_layer.get_activation(), activation_functions.Sigmoid)
+
+
+from main import InputLayer
+
+
+class InputLayerCreateNextLayer(unittest.TestCase):
+    def test_returns_correct_layer(self):
+        layer = InputLayer(size=3)
+        next_layer = layer.create_next_layer(size=5, activation=activation_functions.Rectifier)
+        self.assertIsInstance(next_layer, Layer)
+
+        self.assertTupleEqual(next_layer.biases().shape, (5,))
+        self.assertTupleEqual(next_layer.weights().shape, (5, 3))
+        self.assertEquals(next_layer.get_activation(), activation_functions.Rectifier)

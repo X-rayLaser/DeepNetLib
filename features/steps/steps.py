@@ -239,9 +239,10 @@ def step(context):
 
 @when('I choose rectifier activation function for hidden layer(s)')
 def step(context):
-    context.nnet.set_activation_function(Rectifier)
+    for layer in context.nnet.layers():
+        layer.set_activation(Rectifier)
 
 
 @when('I choose softmax activation function for output layer')
 def step(context):
-    context.nnet.set_output_activation_function(Softmax)
+    context.nnet.layers()[-1].set_activation(Softmax)

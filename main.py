@@ -11,7 +11,13 @@ def weighed_sum(weights, activations, biases):
     return np.dot(w, a) + b
 
 
-class Layer:
+class CreateLayerMixin:
+    def create_next_layer(self, size, activation):
+        prev_size = self.get_layer_size()
+        return Layer(size, prev_size, activation)
+
+
+class Layer(CreateLayerMixin):
     class BadArchitecture(Exception):
         pass
 
@@ -55,6 +61,9 @@ class Layer:
     def get_activation(self):
         return self._activation_function
 
+    def get_layer_size(self):
+        return self.biases().shape[0]
+
     def set_weights(self, weights):
         if weights.shape != self.weights().shape:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
@@ -71,9 +80,13 @@ class Layer:
     def set_bias(self, row, new_value):
         self.biases()[row] = new_value
 
-    def create_next_layer(self, size, activation):
-        prev_size = self.biases().shape[0]
-        return Layer(size, prev_size, activation)
+
+class InputLayer(CreateLayerMixin):
+    def __init__(self, size):
+        self._size = size
+
+    def get_layer_size(self):
+        return self._size
 
 
 class NetFactory:
