@@ -4,6 +4,14 @@ import math
 
 class CostFunction:
     def get_error_in_layer(self, nabla_next, w_next, z_gradient):
+        """
+        Calculate an error, nabla in a layer given the error in the next layer, nabla_next
+        
+        :param nabla_next: error in the next layer, numpy 1d array
+        :param w_next: matrix of weights in the next layer, numpy 2d array
+        :param z_gradient: a vector of partial derivatives of activations, numpy 1d array
+        :return: a vector of errors, numpy 1d array
+        """
         return w_next.T.dot(nabla_next) * z_gradient
 
     def get_weights_gradient(self, layer_error, previous_layer_activations):

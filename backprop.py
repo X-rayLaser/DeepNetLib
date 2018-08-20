@@ -1,13 +1,32 @@
+"""
+:class BackPropagation: implements back propagation algorithm
+"""
 from structures import LinkedList, ActivatedLayer
 
 
 class BackPropagation:
+    """
+    Implement back propagation algorithm on a single training example (x, y)
+    
+    :method back_propagate
+    """
     def __init__(self, x, y, neural_net):
+        """
+        Create an instance of a class
+        
+        :param x: input to the neural net, numpy 1d array
+        :param y: expected output of the neural net, numpy 1d array
+        :param neural_net: instance of NeuralNet type
+        """
         self._x = x
         self._y = y
         self._neural_net = neural_net
 
     def back_propagate(self):
+        """
+        Run a back propagation algorithm using for a given net
+        :return: a tuple of 2d numpy arrays gradients for weights and biases
+        """
         neural_net = self._neural_net
         cost_func = neural_net.get_cost_function()
 

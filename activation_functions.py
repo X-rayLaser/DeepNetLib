@@ -5,16 +5,33 @@ import numpy as np
 class Sigmoid:
     @staticmethod
     def activation(z):
+        """
+        Apply element-wise a sigmoid function to a numpy array z
+        
+        :param z: number or numpy 1d array
+        :return: number or numpy 1d array
+        """
         return 1.0 / (1.0 + np.exp(-z))
 
     @staticmethod
     def gradient(z):
+        """
+        Get a vector of partial derivatives of the sigmoid with respect to each element of z
+        :param z: number or numpy 1d array
+        :return: number or numpy 1d array
+        """
         return Sigmoid.activation(z) * (1 - Sigmoid.activation(z))
 
 
 class Rectifier:
     @staticmethod
     def activation(z_vector):
+        """
+        Apply element-wise a rectifier function to a numpy array z
+
+        :param z_vector: number or numpy 1d array
+        :return: number or numpy 1d array
+        """
         return np.maximum(np.zeros(z_vector.shape, dtype=float), z_vector)
 
     @staticmethod
