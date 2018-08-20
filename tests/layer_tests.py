@@ -147,11 +147,13 @@ class LayerSetSingleBiasTests(unittest.TestCase):
                           )
 
 
-
 class LayerSetActivationTests(unittest.TestCase):
     def test_sigmoid(self):
         layer = Layer(size=2, prev_size=3, activation=activation_functions.Rectifier)
         layer.set_activation(activation_functions.Sigmoid)
+        self.assertEqual(layer.get_activation().__class__,
+                         activation_functions.Sigmoid.__class__)
+
         x = np.array([1, 9, 323], float)
         a, z = layer.feed(x)
         self.assertEqual(a[0], 0.5)
@@ -160,6 +162,8 @@ class LayerSetActivationTests(unittest.TestCase):
     def test_rectifier(self):
         layer = Layer(size=2, prev_size=2, activation=activation_functions.Sigmoid)
         layer.set_activation(activation_functions.Rectifier)
+        self.assertEqual(layer.get_activation().__class__,
+                         activation_functions.Rectifier.__class__)
         x = np.array([1, 9], float)
         a, z = layer.feed(x)
         self.assertEqual(a[0], 0)

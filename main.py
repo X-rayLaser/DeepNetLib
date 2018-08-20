@@ -76,8 +76,10 @@ class NetFactory:
     @staticmethod
     def create_neural_net(sizes, hidden_layer_activation=Sigmoid, output_layer_activation=Sigmoid):
         nnet = NeuralNet(layer_sizes=sizes)
-        nnet.set_activation_function(hidden_layer_activation)
-        nnet.set_output_activation_function(output_layer_activation)
+        for layer in nnet.layers():
+            layer.set_activation(hidden_layer_activation)
+
+        nnet.layers()[-1].set_activation(output_layer_activation)
         return nnet
 
 
@@ -202,12 +204,6 @@ class NeuralNet:
 
     def get_cost_function(self):
         return self._cost_function
-
-    def get_activation_function(self):
-        return self._activation_function
-
-    def get_output_activation_function(self):
-        return self._output_activation_function
 
     def save(self, dest_fname):
         import json

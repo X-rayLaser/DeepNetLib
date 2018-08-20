@@ -3,10 +3,6 @@ from .feed_tests import *
 from .train_tests import *
 from .get_cost_function_tests import *
 from .layer_sizes_tests import *
-from .set_activation_function_tests import *
-from .set_output_activation_function_tests import *
-from .get_activation_function_tests import *
-from .get_output_activation_function_tests import *
 from .create_from_file_tests import *
 from .save_tests import *
 from .add_layer_tests import *
