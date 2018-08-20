@@ -5,6 +5,7 @@ import numpy as np
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from digit_drawing import DigitGenerator
 import helpers
+from datasets import mnist
 
 
 def noisy_digit_vector(digit, mu=0, std=0.2):
@@ -32,8 +33,8 @@ nepochs = 10
 
 gen = DigitGenerator()
 
-helpers.download_dataset()
-pixels_to_categories = helpers.get_training_data()
+mnist.download_dataset()
+pixels_to_categories = mnist.get_training_data()
 gen.train(pixels_to_categories=pixels_to_categories, nepochs=nepochs)
 
 print('Training for {} epochs is complete'.format(nepochs))
