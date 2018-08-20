@@ -167,24 +167,6 @@ class NeuralNet:
         sizes.append(weights[-1].shape[0])
         return sizes
 
-    def set_weight(self, layer, row, col, new_value):
-        """layer must be between 1 and number of layers exclusive"""
-        if layer < 1 or layer >= self.number_of_layers():
-            raise self.LayerOutOfBound(
-                'layer must be between 1 and number of layers exclusive'
-            )
-
-        self._layers[layer-1].weights()[row, col] = new_value
-
-    def set_bias(self, layer, row, new_value):
-        """layer must be between 1 and number of layers exclusive"""
-        if layer < 1 or layer >= self.number_of_layers():
-            raise self.LayerOutOfBound(
-                'layer must be between 1 and number of layers exclusive'
-            )
-
-        self._layers[layer-1].biases()[row] = new_value
-
     def set_cost_function(self, cost_function):
         self._cost_function = cost_function
 

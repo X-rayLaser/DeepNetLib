@@ -55,10 +55,10 @@ class WeightDerivative(NumericalDerivative):
         wlist = neural_net.weights()
         weights = wlist[parameter_location.layer]
         current_value = weights[parameter_location.row, parameter_location.column]
-        self._neural_net.set_weight(layer=parameter_location.layer + 1,
-                                    row=parameter_location.row,
-                                    col=parameter_location.column,
-                                    new_value=current_value + epsilon)
+        layer = self._neural_net.layers()[parameter_location.layer]
+        layer.set_weight(row=parameter_location.row,
+                         col=parameter_location.column,
+                         new_value=current_value + epsilon)
 
 
 class BiasDerivative(NumericalDerivative):
@@ -68,9 +68,9 @@ class BiasDerivative(NumericalDerivative):
         biases = blist[parameter_location.layer]
 
         row = parameter_location.row
-        neural_net.set_bias(layer=parameter_location.layer + 1,
-                            row=row,
-                            new_value=biases[row] + epsilon)
+        layer = self._neural_net.layers()[parameter_location.layer]
+
+        layer.set_bias(row=row, new_value=biases[row] + epsilon)
 
 
 class NumericalCalculator:
