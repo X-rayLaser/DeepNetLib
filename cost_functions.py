@@ -1,6 +1,14 @@
 """
 A collection of classes encapsulating different loss functions.
 
+For example, in order to compute quadratic cost:
+>>> import numpy as np
+>>> a = [np.array([2, 4, 3], float), np.array([1, -2, 0], float)]
+>>> y = [np.array([2, 4, 3], float), np.array([1, -2, 0], float)]
+>>> qc = QuadraticCost()
+>>> qc.compute_cost(a, y)
+0.0
+
 Classes:
 :class CostFunction: a base class providing methods for calculating loss and gradients
 :class QuadraticCost: a class represents quadratic loss function
@@ -183,3 +191,8 @@ class RegularizedCost(CostFunction):
 
     def get_lambda(self):
         return self._reglambda
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
