@@ -1,9 +1,36 @@
+"""
+A collection of classes which can be used for calculating gradient of loss function.
+
+Abstract classes:
+
+NumericalDerivative: a base abstract class used for calculating numerical derivative
+GradientCalculator: a base abstract class used to find gradient
+
+Concrete classes:
+
+ParameterLocation: encapsulates a location of a parameter neural net
+WeightDerivative: a class used for calculating numerical derivative with respect to weight
+BiasDerivative: a class used for calculating numerical derivative with respect to bias
+NumericalCalculator: a class which enables one to calculate gradient numerically (inefficient)
+BackPropagationBasedCalculator: a class providing efficient way of calculating gradient
+"""
 import numpy as np
 from backprop import BackPropagation
 
 
 class GradientCalculator:
-    pass
+    """
+    Implement in subclass:
+    method compute_gradients
+    """
+    def compute_gradients(self):
+        """
+        Compute gradient of loss function with respect to all weights and biases.
+        
+        :return: a tuple of 2 python list, items of 2 list are, respectively, of type numpy 2d array
+        and numpy 1d array
+        """
+        raise Exception('Not implemented')
 
 
 class ParameterLocation:
@@ -14,7 +41,25 @@ class ParameterLocation:
 
 
 class NumericalDerivative:
+    """
+    A base class providing a template for computing numerical derivatives of loss
+    function.
+    
+    Methods (public):
+    :method partial_derivative: computes a partial derivative
+    
+    Implement in subclass:
+    :method _increment: (parameter_location, epsilon) => None
+    """
     def __init__(self, neural_net, examples, epsilon=0.00001):
+        """
+        Initialize an instance.
+        
+        :param neural_net: an instance of class 'NeuralNet'
+        :param examples: a tuple, (X, Y), where X and Y are lists of numpy 1d arrays 
+        :param epsilon: a float representing an interval on which to approximate 
+        derivative
+        """
         self._neural_net = neural_net
         self._examples = examples
         self._epsilon = epsilon
@@ -36,6 +81,15 @@ class NumericalDerivative:
         return self._neural_net.get_cost(self._examples)
 
     def partial_derivative(self, parameter_location):
+        """
+        Compute a partial derivative of loss function with respect to weight or bias.
+        
+        :param parameter_location: an instance of ParameterLocation 
+        :return: float
+        
+        Side effects:
+        A method temporarily updates a given parameter (weight or bias) of neural net.
+        """
         self.decrement_parameter(parameter_location)
         cost_minus = self.evaluate_function()
 
@@ -50,6 +104,10 @@ class NumericalDerivative:
 
 
 class WeightDerivative(NumericalDerivative):
+    """
+    A subclass of NumericalDerivative used to compute numerical
+    derivatives of loss function with respect to any weight.
+    """
     def _increment(self, parameter_location, epsilon):
         neural_net = self._neural_net
         wlist = neural_net.weights()
@@ -62,6 +120,10 @@ class WeightDerivative(NumericalDerivative):
 
 
 class BiasDerivative(NumericalDerivative):
+    """
+    A subclass of NumericalDerivative used to compute numerical
+    derivatives of loss function with respect any bias.
+    """
     def _increment(self, parameter_location, epsilon):
         neural_net = self._neural_net
         blist = neural_net.biases()
@@ -73,13 +135,23 @@ class BiasDerivative(NumericalDerivative):
         layer.set_bias(row=row, new_value=biases[row] + epsilon)
 
 
-class NumericalCalculator:
+class NumericalCalculator(GradientCalculator):
+    """
+    A class to use in order to calculate gradients numerically.
+    
+    Note that this class should only be used for testing and debugging purposes
+    and it is highly inefficient. During production use instance of 
+    BackPropagationBasedCalculator instead.
+    
+    Methods:
+        override compute_gradients
+    """
     def __init__(self, examples, neural_net):
         self._examples = examples
         self._neural_net = neural_net
 
     def compute_gradients(self):
-        """approximated numerical partial derivatives"""
+        """approximated numerical partial derivatives of loss function"""
         wlist = self._neural_net.weights()
         blist = self._neural_net.biases()
 
@@ -108,7 +180,16 @@ class NumericalCalculator:
         return weight_grad, bias_grad
 
 
-class BackPropagationBasedCalculator:
+class BackPropagationBasedCalculator(GradientCalculator):
+    """
+    A class that uses back propagation algorithm to find gradient of loss function.
+
+    During production use instance of this class to calculate gradient as 
+    it uses more efficient algorithm than NumericalCalculator.
+
+    Methods:
+        override compute_gradients
+    """
     def __init__(self, examples, neural_net):
         self._examples = examples
         self._neural_net = neural_net
