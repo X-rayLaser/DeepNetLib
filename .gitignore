@@ -3,3 +3,4 @@ examples/
 generated_digits/
 *.pyc
 neural_net.json
+docs/build/
