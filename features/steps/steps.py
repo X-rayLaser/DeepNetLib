@@ -39,7 +39,7 @@ def step(context, nepoch):
 def step(context):
     data = context.training_data
     latest_cost = context.nnet.get_cost(data)
-    assert context.initial_cost > 5 * context.nnet.get_cost(data),\
+    assert context.initial_cost > context.nnet.get_cost(data),\
         'Cost is still too large. Was {}, now {}'.format(context.initial_cost, latest_cost)
 
 
