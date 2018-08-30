@@ -2,13 +2,10 @@ import helpers
 
 
 class DataSource:
-    def next_batch(self, batch_size):
+    def get_examples(self, index_from, index_to):
         raise Exception('Not implemented')
 
-    def end_of_data(self):
-        raise Exception('Not implemented')
-
-    def restart(self):
+    def number_of_examples(self):
         raise Exception('Not implemented')
 
 
@@ -19,29 +16,24 @@ class PreloadSource(DataSource):
         else:
             x_list, y_list = examples
 
-        self._index = 0
         self._xlist = x_list
         self._ylist = y_list
 
         assert len(self._xlist) == len(self._ylist)
 
-    def next_batch(self, size):
-        index = self._index
-        xs = self._xlist[index:index + size]
-        ys = self._ylist[index:index + size]
-        self._index += size
-        return xs, ys
+    def get_examples(self, index_from, index_to):
+        i = index_from
+        j = index_to
+        return self._xlist[i:j], self._ylist[i:j]
 
-    def end_of_data(self):
-        return self._index >= len(self._ylist)
-
-    def restart(self):
-        self._index = 0
+    def number_of_examples(self):
+        return len(self._ylist)
 
 
-class ExampleIterarator:
+class DataSetIterator:
     def __init__(self, data_source):
         self._src = data_source
+        self._index = 0
 
     def __iter__(self):
         return self
@@ -50,23 +42,30 @@ class ExampleIterarator:
         if self.end_of_data():
             raise StopIteration()
 
-        return self._src.next_batch(size=1)[0]
+        i = self._index
+        X, Y = self._src.get_examples(i, i+1)
+        self._index += 1
+        return X[0], Y[0]
 
     def end_of_data(self):
-        return self._src.end_of_data()
+        return self._index >= self._src.number_of_examples()
 
     def next(self):
         return self.__next__()
 
 
-class MiniBatchIterator(ExampleIterarator):
+class BatchesIterator(DataSetIterator):
     def __init__(self, data_source, batch_size=50):
-        ExampleIterarator.__init__(self, data_source=data_source)
-        self._size = batch_size
+        DataSetIterator.__init__(self, data_source=data_source)
+        self._batch_size = batch_size
+        self._index = 0
 
     def __next__(self):
         if self.end_of_data():
             raise StopIteration()
-        examples = self._src.next_batch(batch_size=self._size)
+
+        i = self._index
+        examples = self._src.get_examples(i, i + self._batch_size)
+        self._index += self._batch_size
         child_src = PreloadSource(examples=examples)
-        return ExampleIterarator(data_source=child_src)
+        return child_src
