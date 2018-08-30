@@ -39,7 +39,7 @@ class StochasticGradientDescent(GradientDescent):
     class InvalidBatchSize(Exception):
         pass
 
-    def __init__(self, neural_net, learning_rate=0.1, batch_size=50, regularization_lambda=0):
+    def __init__(self, neural_net, learning_rate=3.0, batch_size=50, regularization_lambda=0):
         if not (type(batch_size) is int) or batch_size <= 0:
             raise self.InvalidBatchSize('Batch size must be a positive integer')
         GradientDescent.__init__(self, neural_net, learning_rate=learning_rate,

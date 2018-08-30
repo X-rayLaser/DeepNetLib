@@ -27,7 +27,7 @@ Scenario: Net is trained to infer distribution generating x using stochastic gra
     And I train neural network on that data set for 100 epochs
     Then neural net gives less than 40% classification error on test data set
 
-@general @stochastic @mnist
+@general @stochastic @mnist @long
 Scenario: Net is trained to classify MNIST hand-written digits
     When I create a training and testing data from MNIST data set
     And I initialize a neural net for binary classification with sizes 784,30,10
