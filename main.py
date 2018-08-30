@@ -123,7 +123,7 @@ class NeuralNet:
 
         self._layers = []
 
-        self._AlgorithmClass = GradientDescent
+        self._trainer = GradientDescent(neural_net=self)
         self._cost_function = cost_functions.QuadraticCost()
 
     def _feed_next(self, activations, layer):
@@ -149,8 +149,7 @@ class NeuralNet:
         return self.layers()[layer].feed(x)
 
     def train(self, examples, nepochs=1):
-        descent = self._AlgorithmClass(neural_net=self)
-        descent.train(examples=examples, nepochs=nepochs)
+        self._trainer.train(examples=examples, nepochs=nepochs)
 
     def weights(self):
         return [layer.weights() for layer in self._layers]
@@ -183,8 +182,8 @@ class NeuralNet:
                 weights=self.weights()
             )
 
-    def set_learning_algorithm(self, algorithm_class):
-        self._AlgorithmClass = algorithm_class
+    def set_learning_algorithm(self, trainer):
+        self._trainer = trainer
 
     def randomize_parameters(self):
         for i in range(len(self.layers())):

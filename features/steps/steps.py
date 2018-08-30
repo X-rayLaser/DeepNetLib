@@ -164,7 +164,9 @@ def step(context, classification_error):
 
 @when('I choose stochastic gradient descent as a learning algorithm')
 def step(context):
-    context.nnet.set_learning_algorithm(gradient_descent.StochasticGradientDescent)
+    sgd = gradient_descent.StochasticGradientDescent(context.nnet,
+                                                     learning_rate=0.1)
+    context.nnet.set_learning_algorithm(sgd)
 
 
 @when('I choose cross entropy cost function')
@@ -201,6 +203,7 @@ def step(context, n, accuracy):
         if index == digit:
             matches += 1
 
+    print(matches / float(n) * 100)
     assert matches / float(n) * 100 >= int(accuracy)
 
 

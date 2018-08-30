@@ -6,12 +6,11 @@ class GradientDescent:
     class InvalidLearningRate(Exception):
         pass
 
-    def __init__(self, neural_net, learning_rate=3.0, regularization_lambda=0):
+    def __init__(self, neural_net, learning_rate=3.0):
         if learning_rate <= 0:
             raise self.InvalidLearningRate('Learning rate must be a positive number')
         self._nnet= neural_net
         self._rate = learning_rate
-        self._reglambda = regularization_lambda
 
     def update_weights(self, weight_gradient):
         weights = self._nnet.weights()
@@ -39,11 +38,10 @@ class StochasticGradientDescent(GradientDescent):
     class InvalidBatchSize(Exception):
         pass
 
-    def __init__(self, neural_net, learning_rate=3.0, batch_size=50, regularization_lambda=0):
+    def __init__(self, neural_net, learning_rate=3.0, batch_size=50):
         if not (type(batch_size) is int) or batch_size <= 0:
             raise self.InvalidBatchSize('Batch size must be a positive integer')
-        GradientDescent.__init__(self, neural_net, learning_rate=learning_rate,
-                                 regularization_lambda=regularization_lambda)
+        GradientDescent.__init__(self, neural_net, learning_rate=learning_rate)
         self._batch_size = batch_size
 
     def shuffle_examples(self, examples):
