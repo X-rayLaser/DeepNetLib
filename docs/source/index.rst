@@ -10,9 +10,18 @@ Welcome to DeepNetLib's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+------
+
 .. automodule:: gradient_calculator
-   :members:
-   :show-inheritance:
+      :members:
+      :show-inheritance:
+
+------
+
+.. automodule:: activation_functions
+    :members:
+    :show-inheritance:
+
 
 Indices and tables
 ==================

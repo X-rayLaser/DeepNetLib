@@ -1,8 +1,30 @@
+"""
+This module provides a set of classes representing different activation functions.
+
+All classes are sharing the same methods for calculation of activation and finding
+a derivative of activation with respect to z.
+
+Classes:
+    - **Sigmoid**
+    - **Rectifier**
+    - **Softmax**
+
+"""
 import math
 import numpy as np
 
 
 class Sigmoid:
+    """
+    Represents a sigmoid activation function.
+    
+    It is recommended to use sigmoid in the output layer consisting of a
+    just a single unit together with cross-entropy loss. 
+
+    Avoid using this activation function in hidden layers, because units with
+    this activation function saturate fairly quickly. It is even more important,
+    in case of deep net architectures. 
+    """
     @staticmethod
     def activation(z):
         """
@@ -17,6 +39,7 @@ class Sigmoid:
     def gradient(z):
         """
         Get a vector of partial derivatives of the sigmoid with respect to each element of z
+
         :param z: number or numpy 1d array
         :return: number or numpy 1d array
         """
@@ -24,14 +47,13 @@ class Sigmoid:
 
 
 class Rectifier:
+    """
+    Represents a rectifier activation function (or Rectified Linear Unit).
+    
+    It's best to use it in the hidden layers.
+    """
     @staticmethod
     def activation(z_vector):
-        """
-        Apply element-wise a rectifier function to a numpy array z
-
-        :param z_vector: number or numpy 1d array
-        :return: number or numpy 1d array
-        """
         return np.maximum(np.zeros(z_vector.shape, dtype=float), z_vector)
 
     @staticmethod
@@ -46,6 +68,12 @@ class Rectifier:
 
 
 class Softmax:
+    """
+    Represents a Softmax activation function.
+    
+    This activation function produces an output vector that should be interpreted
+    as PMF (Probability Mass Function).
+    """
     @staticmethod
     def activation(z_vector):
         denominator = 0
