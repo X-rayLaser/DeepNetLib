@@ -162,10 +162,10 @@ def step(context, classification_error):
     assert accuracy >= required_accuracy
 
 
-@when('I choose stochastic gradient descent as a learning algorithm')
-def step(context):
-    sgd = gradient_descent.StochasticGradientDescent(context.nnet,
-                                                     learning_rate=0.1)
+@when('I choose stochastic gradient descent as a learning algorithm with learning rate {rate}')
+def step(context, rate):
+    r = float(rate)
+    sgd = gradient_descent.StochasticGradientDescent(context.nnet, learning_rate=r)
     context.nnet.set_learning_algorithm(sgd)
 
 

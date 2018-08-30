@@ -43,8 +43,7 @@ class DigitGenerator:
             )
 
         x = helpers.category_to_vector(cat_index=digit, cat_number=10)
-        a = self._nnet.feed(x)
-        return np.array((a * 255).tolist(), dtype=np.uint8)
+        return self.generate(x)
 
     def save_as_json(self, fname):
         pass
