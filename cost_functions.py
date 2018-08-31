@@ -33,8 +33,9 @@ class CostFunction:
     """
     """
     This class is supposed to be subclassed. All subclasses must implement methods:
-    :method compute_cost: (numpy 1d array, numpy 1d array) => float 
+    :method individual_cost: (numpy 1d array, numpy 1d array) => float 
     """
+
     def get_error_in_layer(self, nabla_next, w_next, z_gradient):
         """
         Calculate an error, nabla, in a layer given the error in the next layer, nabla_next.
@@ -88,6 +89,22 @@ class CostFunction:
         """
         return 0
 
+    def compute_cost(self, activations, outputs):
+        """
+        Compute a cost.
+
+        :param activations: a list of actual output vectors each of numpy 1d array type, 
+        :param outputs: a list of correct output vectors each of numpy 1d array type 
+        :return: float
+        """
+        vector_len = len(activations)
+
+        s = 0
+        for i in range(vector_len):
+            s += self.individual_cost(activation=activations[i],
+                                      expected_output=outputs[i])
+        return s / vector_len
+
 
 class QuadraticCost(CostFunction):
     """
@@ -95,28 +112,10 @@ class QuadraticCost(CostFunction):
     
     :override compute_cost
     """
-    def _quadratic_per_example(self, activation, expected_output):
+
+    def individual_cost(self, activation, expected_output):
         v = activation - expected_output
         return v.dot(v) / 2.0
-
-    def _quadratic_cost(self, activations, outputs):
-        vector_len = len(activations)
-
-        s = 0
-        for i in range(vector_len):
-            s += self._quadratic_per_example(activation=activations[i],
-                                             expected_output=outputs[i])
-        return s / vector_len
-
-    def compute_cost(self, activations, outputs):
-        """
-        Compute a cost using quadratic loss function.
-        
-        :param activations: a list of actual output vectors each of numpy 1d array type, 
-        :param outputs: a list of correct output vectors each of numpy 1d array type 
-        :return: float
-        """
-        return self._quadratic_cost(activations=activations, outputs=outputs)
 
 
 class CrossEntropyCost(CostFunction):
@@ -126,12 +125,6 @@ class CrossEntropyCost(CostFunction):
         :override compute_cost
         :override get_final_layer_error
         """
-    def compute_cost(self, activations, outputs):
-        ce = 0
-        num_of_examples = len(outputs)
-        for i in range(num_of_examples):
-            ce += self._per_example(activations[i], outputs[i])
-        return ce / num_of_examples
 
     def get_final_layer_error(self, activation_last, expected_output, z_gradient):
         a_last = activation_last
@@ -151,7 +144,9 @@ class CrossEntropyCost(CostFunction):
 
         return -y * math.log(a) - (1 - y) * math.log(1 - a, math.e)
 
-    def _per_example(self, a, y):
+    def individual_cost(self, activation, expected_output):
+        a = activation
+        y = expected_output
         ncomponents = a.shape[0]
         ce = 0
         for i in range(ncomponents):
@@ -167,6 +162,7 @@ class RegularizedCost(CostFunction):
     :override compute_cost
     :override get_lambda
     """
+
     def __init__(self, cost_function, regularization_parameter, weights):
         """
         Initialize instance.
@@ -178,6 +174,9 @@ class RegularizedCost(CostFunction):
         self._cost_function = cost_function
         self._reglambda = regularization_parameter
         self._weights = weights
+
+    def individual_cost(self, activation, expected_output):
+        return self._cost_function.individual_cost(activation, expected_output)
 
     def compute_cost(self, activations, outputs):
         n = len(outputs)
@@ -195,4 +194,5 @@ class RegularizedCost(CostFunction):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
