@@ -2,11 +2,15 @@ import unittest
 import numpy as np
 import cost_functions
 from activation_functions import Softmax, Sigmoid, Rectifier
+from main import NetFactory
 
 
 class CrossEntropyGradientsTests(unittest.TestCase):
+    def setUp(self):
+        self.net = NetFactory.create_neural_net(sizes=[1, 2, 2])
+
     def test_get_final_layer_error_for_1_element_vectors(self):
-        cross_entropy = cost_functions.CrossEntropyCost()
+        cross_entropy = cost_functions.CrossEntropyCost(self.net)
         z_last = np.array([3], float)
         z_last_prime = Sigmoid.gradient(z_last)
 
@@ -23,7 +27,7 @@ class CrossEntropyGradientsTests(unittest.TestCase):
         self.assertAlmostEqual(nabla[0], (a_last - y), places=2)
 
     def test_get_final_layer_error_for_arrays(self):
-        cross_entropy = cost_functions.CrossEntropyCost()
+        cross_entropy = cost_functions.CrossEntropyCost(self.net)
 
         z_last = np.array([3, -1], float)
         z_last_prime = Softmax.gradient(z_last)

@@ -10,7 +10,7 @@ class BackPropagation:
     
     :method back_propagate
     """
-    def __init__(self, x, y, neural_net):
+    def __init__(self, x, y, neural_net, cost_function):
         """
         Create an instance of a class
         
@@ -21,6 +21,7 @@ class BackPropagation:
         self._x = x
         self._y = y
         self._neural_net = neural_net
+        self._cost_function = cost_function
 
     def back_propagate(self):
         """
@@ -28,7 +29,7 @@ class BackPropagation:
         :return: a tuple of 2d numpy arrays gradients for weights and biases
         """
         neural_net = self._neural_net
-        cost_func = neural_net.get_cost_function()
+        cost_func = self._cost_function
 
         weights_gradient = []
         biases_gradient = []
@@ -83,7 +84,7 @@ class BackPropagation:
     def _compute(self, layer_list, errors):
         y = self._y
         neural_net = self._neural_net
-        cost_func = neural_net.get_cost_function()
+        cost_func = self._cost_function
 
         layer = layer_list.get_item()
         z_grad = layer.weighted_sum_gradient

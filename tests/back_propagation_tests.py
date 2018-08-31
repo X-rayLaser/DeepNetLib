@@ -3,6 +3,7 @@ import numpy as np
 import helpers
 from main import NetFactory
 from gradient_calculator import NumericalCalculator
+from cost_functions import QuadraticCost
 
 
 class BackpropSlowTests(unittest.TestCase):
@@ -11,11 +12,13 @@ class BackpropSlowTests(unittest.TestCase):
 
     def test_back_propagation_slow(self):
         nnet = NetFactory.create_neural_net(sizes=[1, 1, 1])
+        cost_func = QuadraticCost(neural_net=nnet)
         x = np.array([5], float)
         y = np.array([0.25], float)
         examples = ([x], [y])
 
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+                                        cost_function=cost_func)
         w_grad, b_grad = numerical.compute_gradients()
 
         w_grad_expected = [np.array([[0]], float), np.array([[1/32]], float)]
@@ -26,11 +29,14 @@ class BackpropSlowTests(unittest.TestCase):
 
     def test_back_propagation_slow_type_array(self):
         nnet = NetFactory.create_neural_net(sizes=[2, 1, 2])
+        cost_func = QuadraticCost(neural_net=nnet)
+
         x = np.array([5, 2], float)
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+                                        cost_function=cost_func)
 
         w_grad, b_grad = numerical.compute_gradients()
         self.assertIsInstance(w_grad, list)
@@ -43,10 +49,13 @@ class BackpropSlowTests(unittest.TestCase):
 
     def test_back_propagation_slow_shape(self):
         nnet = NetFactory.create_neural_net(sizes=[3, 2, 2, 5])
+        cost_func = QuadraticCost(neural_net=nnet)
+
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet)
+        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+                                        cost_function=cost_func)
         w_grad, b_grad = numerical.compute_gradients()
 
         self.assertEqual(len(w_grad), 3)

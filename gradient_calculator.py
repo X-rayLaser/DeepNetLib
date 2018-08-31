@@ -60,7 +60,7 @@ class NumericalDerivative:
     Implement in subclass methods:
     - **_increment (parameter_location, epsilon) => None**
     """
-    def __init__(self, neural_net, examples, epsilon=0.00001):
+    def __init__(self, neural_net, examples, cost_function, epsilon=0.00001):
         """
         Initialize an instance.
         
@@ -71,6 +71,7 @@ class NumericalDerivative:
         """
         self._neural_net = neural_net
         self._examples = examples
+        self._cost_function = cost_function
         self._epsilon = epsilon
 
     def _derivative(self, cost_minus, cost_plus):
@@ -87,7 +88,7 @@ class NumericalDerivative:
         self._increment(parameter_location, -self._epsilon)
 
     def evaluate_function(self):
-        return self._neural_net.get_cost(self._examples)
+        return self._cost_function.get_cost(self._examples)
 
     def partial_derivative(self, parameter_location):
         """
@@ -152,9 +153,10 @@ class NumericalCalculator(GradientCalculator):
     and it is highly inefficient. During production use instance of BackPropagationBasedCalculator
     instead.
     """
-    def __init__(self, examples, neural_net):
+    def __init__(self, examples, neural_net, cost_function):
         self._examples = examples
         self._neural_net = neural_net
+        self._cost_function = cost_function
 
     def compute_gradients(self):
         """approximated numerical partial derivatives of loss function"""
@@ -165,10 +167,13 @@ class NumericalCalculator(GradientCalculator):
         weight_grad = []
         bias_grad = []
 
+        cost_function = self._cost_function
         weight_der = WeightDerivative(neural_net=self._neural_net,
-                                      examples=self._examples)
+                                      examples=self._examples,
+                                      cost_function=cost_function)
         biase_der = BiasDerivative(neural_net=self._neural_net,
-                                   examples=self._examples)
+                                   examples=self._examples,
+                                   cost_function=cost_function)
         for layer in range(nmatrices):
             weight_grad.append(np.zeros(wlist[layer].shape))
             bias_grad.append(np.zeros(blist[layer].shape))
@@ -193,21 +198,23 @@ class BackPropagationBasedCalculator(GradientCalculator):
     During production use instance of this class to calculate gradient as 
     it uses more efficient algorithm than NumericalCalculator.
     """
-    def __init__(self, examples, neural_net):
+    def __init__(self, examples, neural_net, cost_function):
         self._examples = examples
         self._neural_net = neural_net
+        self._cost_function = cost_function
 
     def compute_gradients(self):
         xes, ys = self._examples
         examples_count = len(ys)
-        reglambda = self._neural_net.get_cost_function().get_lambda()
+        reglambda = self._cost_function.get_lambda()
 
         weights_grad, biases_grad = self._zero_gradients_list(self._neural_net)
 
         for i in range(examples_count):
             x = xes[i]
             y = ys[i]
-            backprop = BackPropagation(x, y, neural_net=self._neural_net)
+            backprop = BackPropagation(x, y, neural_net=self._neural_net,
+                                       cost_function=self._cost_function)
             wgrad, bgrad = backprop.back_propagate()
             weights_grad = self._update_total_gradients(summed_gradients_list=weights_grad,
                                                         new_gradients_list=wgrad)

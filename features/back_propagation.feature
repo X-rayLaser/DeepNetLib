@@ -4,6 +4,7 @@ Feature: Testing a back propagation algorithm correctness
 Scenario: Back propagation outputs correct gradients when using quadratic cost
     When I initialize simple neural net with default parameters
     And I randomly initialize net's parameters
+    And I choose quadratic cost function
     And I generate a data set from a function "sin(x)^2"
     And I compute the gradient for weights and biases by running back propagation
     And I compute the gradient for weights and biases by taking numerical derivatives
@@ -24,6 +25,7 @@ Scenario: Back propagation outputs correct gradients when using rectifier activa
     When I initialize simple neural net with default parameters
     And I randomly initialize net's parameters
     And I choose rectifier activation function
+    And I choose quadratic cost function
     And I generate a data set from a function "sin(x)^2"
     And I compute the gradient for weights and biases by running back propagation
     And I compute the gradient for weights and biases by taking numerical derivatives

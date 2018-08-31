@@ -17,8 +17,6 @@ class NetFactoryTests(unittest.TestCase):
                                             hidden_layer_activation=activation_functions.Rectifier,
                                             output_layer_activation=activation_functions.Softmax)
 
-        self.assertIsInstance(nnet.get_cost_function(), cost_functions.QuadraticCost)
-
         for i in range(2):
             layer = nnet.layers()[i]
             self.assertEqual(layer.get_activation(), activation_functions.Rectifier)
@@ -27,8 +25,6 @@ class NetFactoryTests(unittest.TestCase):
 
     def test_with_default_activations(self):
         nnet = NetFactory.create_neural_net(sizes=[3, 2, 5, 4])
-
-        self.assertIsInstance(nnet.get_cost_function(), cost_functions.QuadraticCost)
 
         for i in range(2):
             layer = nnet.layers()[i]

@@ -36,6 +36,9 @@ class CostFunction:
     :method individual_cost: (numpy 1d array, numpy 1d array) => float 
     """
 
+    def __init__(self, neural_net):
+        self._net = neural_net
+
     def get_error_in_layer(self, nabla_next, w_next, z_gradient):
         """
         Calculate an error, nabla, in a layer given the error in the next layer, nabla_next.
@@ -105,6 +108,11 @@ class CostFunction:
                                       expected_output=outputs[i])
         return s / vector_len
 
+    def get_cost(self, data_set):
+        xes, ys = data_set
+        activations = [self._net.feed(x) for x in xes]
+        return self.compute_cost(activations=activations, outputs=ys)
+
 
 class QuadraticCost(CostFunction):
     """
@@ -163,7 +171,7 @@ class RegularizedCost(CostFunction):
     :override get_lambda
     """
 
-    def __init__(self, cost_function, regularization_parameter, weights):
+    def __init__(self, neural_net, cost_function, regularization_parameter, weights):
         """
         Initialize instance.
 
@@ -171,6 +179,7 @@ class RegularizedCost(CostFunction):
         :param regularization_parameter: regularization parameter, lambda, of type float
         :param weights: a python list of 2d numpy arrays - all weights of the neural net
         """
+        CostFunction.__init__(self, neural_net=neural_net)
         self._cost_function = cost_function
         self._reglambda = regularization_parameter
         self._weights = weights

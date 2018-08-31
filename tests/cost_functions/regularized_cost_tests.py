@@ -1,11 +1,16 @@
 import unittest
 import numpy as np
 from cost_functions import QuadraticCost, CrossEntropyCost, RegularizedCost
+from main import NetFactory
 
 
 class RegularizedCostTests(unittest.TestCase):
+    def setUp(self):
+        self.net = NetFactory.create_neural_net(sizes=[2, 3, 4])
+
     def check_case(self, cost_function, activations, outputs, reglambda, weights):
-        regcost = RegularizedCost(cost_function=cost_function,
+        regcost = RegularizedCost(neural_net=self.net,
+                                  cost_function=cost_function,
                                   regularization_parameter=reglambda,
                                   weights=weights)
 
@@ -22,7 +27,8 @@ class RegularizedCostTests(unittest.TestCase):
 
         reglambda = 1
         weights = [np.array([[-2]])]
-        regcost = RegularizedCost(cost_function=QuadraticCost(),
+        regcost = RegularizedCost(neural_net=self.net,
+                                  cost_function=QuadraticCost(self.net),
                                   regularization_parameter=reglambda,
                                   weights=weights)
 
@@ -36,7 +42,7 @@ class RegularizedCostTests(unittest.TestCase):
 
         weights = [np.array([[3, -1], [0.5, 2]], float),
                    np.array([[3, -1, 1]], float)]
-        self.check_case(cost_function=QuadraticCost(), activations=activations,
+        self.check_case(cost_function=QuadraticCost(self.net), activations=activations,
                         outputs=outputs, reglambda=1, weights=weights)
 
     def test_with_lambda_equal_to_zero(self):
@@ -45,7 +51,7 @@ class RegularizedCostTests(unittest.TestCase):
         outputs = [np.array([0.2, 0.5], float), np.array([0, 0], float)]
 
         weights = [np.array([[3, -1]])]
-        self.check_case(cost_function=QuadraticCost(), activations=activations,
+        self.check_case(cost_function=QuadraticCost(self.net), activations=activations,
                         outputs=outputs, reglambda=0, weights=weights)
 
     def test_regularized_xentropy(self):
@@ -54,13 +60,14 @@ class RegularizedCostTests(unittest.TestCase):
 
         weights = [np.array([[3, -1]])]
 
-        self.check_case(cost_function=CrossEntropyCost(), activations=activations,
+        self.check_case(cost_function=CrossEntropyCost(self.net), activations=activations,
                         outputs=outputs, reglambda=1, weights=weights)
 
     def test_get_lambda(self):
         weights = [np.array([[3, -1]])]
 
-        regcost = RegularizedCost(cost_function=QuadraticCost(),
+        regcost = RegularizedCost(neural_net=self.net,
+                                  cost_function=QuadraticCost(self.net),
                                   regularization_parameter=2,
                                   weights=weights)
 

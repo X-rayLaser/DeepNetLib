@@ -123,8 +123,9 @@ class NeuralNet:
 
         self._layers = []
 
-        self._trainer = GradientDescent(neural_net=self)
-        self._cost_function = cost_functions.QuadraticCost()
+        self._cost_function = cost_functions.QuadraticCost(self)
+        self._trainer = GradientDescent(neural_net=self,
+                                        cost_function=self._cost_function)
 
     def _feed_next(self, activations, layer):
         if layer >= len(self._layers):
@@ -177,6 +178,7 @@ class NeuralNet:
         if reg_lambda > 0 and not isinstance(self._cost_function,
                                              cost_functions.RegularizedCost):
             self._cost_function = cost_functions.RegularizedCost(
+                self,
                 self._cost_function,
                 regularization_parameter=reg_lambda,
                 weights=self.weights()
@@ -188,14 +190,6 @@ class NeuralNet:
     def randomize_parameters(self):
         for i in range(len(self.layers())):
             self._layers[i].randomize()
-
-    def get_cost(self, data_set):
-        xes, ys = data_set
-        activations = [self.feed(x) for x in xes]
-        return self._cost_function.compute_cost(activations=activations, outputs=ys)
-
-    def get_cost_function(self):
-        return self._cost_function
 
     def save(self, dest_fname):
         import json

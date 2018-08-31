@@ -2,11 +2,15 @@ import unittest
 import numpy as np
 import cost_functions
 from activation_functions import Sigmoid, Rectifier
+from main import NetFactory
 
 
 class QuadraticCostGradientsTests(unittest.TestCase):
+    def setUp(self):
+        self.net = NetFactory.create_neural_net(sizes=[2, 1, 1])
+
     def test_get_final_layer_error_for_1_element_vectors(self):
-        quadratic = cost_functions.QuadraticCost()
+        quadratic = cost_functions.QuadraticCost(neural_net=self.net)
 
         z_last = np.array([-1], float)
         z_last_prime = Rectifier.gradient(z_last)
@@ -17,7 +21,7 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         self.assertAlmostEqual(nabla[0], (a_last - y) * z_last_prime, places=2)
 
     def test_get_final_layer_error_for_arrays(self):
-        quadratic = cost_functions.QuadraticCost()
+        quadratic = cost_functions.QuadraticCost(neural_net=self.net)
 
         z_last = np.array([3, -1], float)
         z_last_prime = Sigmoid.gradient(z_last)
@@ -30,7 +34,7 @@ class QuadraticCostGradientsTests(unittest.TestCase):
                                places=2)
 
     def test_get_weights_gradient(self):
-        quadratic = cost_functions.QuadraticCost()
+        quadratic = cost_functions.QuadraticCost(neural_net=self.net)
 
         layer_error = np.array([3, 5, 10], float)
         activations = np.array([0.5, 0.3], float)
@@ -43,14 +47,14 @@ class QuadraticCostGradientsTests(unittest.TestCase):
         self.assertTrue(np.allclose(grad, expected_grad))
 
     def test_get_bias_gradient(self):
-        quadratic = cost_functions.QuadraticCost()
+        quadratic = cost_functions.QuadraticCost(neural_net=self.net)
 
         layer_error = np.array([2, 9, 12, 83])
         grad = quadratic.get_bias_gradient(layer_error=layer_error)
         self.assertTrue(np.allclose(layer_error, grad))
 
     def test_get_error_in_layer(self):
-        quadratic = cost_functions.QuadraticCost()
+        quadratic = cost_functions.QuadraticCost(neural_net=self.net)
 
         nabla_next = np.array([2, 9, 5], float)
         w_next = np.array([[3, 0], [0, 1], [4, 5]], float)

@@ -1,11 +1,13 @@
 import unittest
 import numpy as np
 import cost_functions
+from main import NetFactory
 
 
 class CrossEntropyCostTests(unittest.TestCase):
     def cross_entropy_cost(self, activations, outputs):
-        cost_func = cost_functions.CrossEntropyCost()
+        net = NetFactory.create_neural_net(sizes=[1, 2, 3])
+        cost_func = cost_functions.CrossEntropyCost(neural_net=net)
         return cost_func.compute_cost(activations=activations, outputs=outputs)
 
     def test_single_example_1_output_neuron_no_entropy(self):
@@ -96,5 +98,6 @@ class CrossEntropyCostTests(unittest.TestCase):
         self.assertAlmostEqual(c, 0.6931 * 2 / 3, places=3)
 
     def test_get_lambda(self):
-        cost_func = cost_functions.CrossEntropyCost()
+        net = NetFactory.create_neural_net(sizes=[1, 2, 2])
+        cost_func = cost_functions.CrossEntropyCost(neural_net=net)
         self.assertEqual(cost_func.get_lambda(), 0)

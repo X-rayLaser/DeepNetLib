@@ -26,7 +26,7 @@ def step(context):
 @when('I remember initial cost value for that data set')
 def step(context):
     data = context.training_data
-    context.initial_cost = context.nnet.get_cost(data)
+    context.initial_cost = context.cost_function.get_cost(data)
 
 
 @when('I train neural network on that data set for {nepoch} epochs')
@@ -38,8 +38,8 @@ def step(context, nepoch):
 @then('the cost function gives much smaller error value than before')
 def step(context):
     data = context.training_data
-    latest_cost = context.nnet.get_cost(data)
-    assert context.initial_cost > context.nnet.get_cost(data),\
+    latest_cost = context.cost_function.get_cost(data)
+    assert context.initial_cost > latest_cost,\
         'Cost is still too large. Was {}, now {}'.format(context.initial_cost, latest_cost)
 
 
@@ -71,16 +71,22 @@ def step(context):
 
 @when('I compute the gradient for weights and biases by running back propagation')
 def step(context):
+    cost_func = context.cost_function
     calculator = BackPropagationBasedCalculator(
-        examples=context.training_data, neural_net=context.nnet
+        examples=context.training_data,
+        neural_net=context.nnet,
+        cost_function=cost_func
     )
     context.back_prop_gradients = calculator.compute_gradients()
 
 
 @when('I compute the gradient for weights and biases by taking numerical derivatives')
 def step(context):
+    cost_func = context.cost_function
     calculator = NumericalCalculator(
-        examples=context.training_data, neural_net=context.nnet
+        examples=context.training_data,
+        neural_net=context.nnet,
+        cost_function=cost_func
     )
     context.numerical_gradients = calculator.compute_gradients()
 
@@ -164,14 +170,27 @@ def step(context, classification_error):
 
 @when('I choose stochastic gradient descent as a learning algorithm with learning rate {rate}')
 def step(context, rate):
+    cost_function = context.cost_function
     r = float(rate)
-    sgd = gradient_descent.StochasticGradientDescent(context.nnet, learning_rate=r)
+    sgd = gradient_descent.StochasticGradientDescent(
+        context.nnet,
+        cost_function=cost_function,
+        learning_rate=r)
     context.nnet.set_learning_algorithm(sgd)
+
+
+@when('I choose quadratic cost function')
+def step(context):
+    context.cost_function = cost_functions.QuadraticCost(
+        neural_net=context.nnet
+    )
 
 
 @when('I choose cross entropy cost function')
 def step(context):
-    context.nnet.set_cost_function(cost_functions.CrossEntropyCost())
+    context.cost_function = cost_functions.CrossEntropyCost(
+        neural_net=context.nnet
+    )
 
 
 @when('I create a training and testing data from MNIST data set')

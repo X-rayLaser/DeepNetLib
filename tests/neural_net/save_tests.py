@@ -3,6 +3,7 @@ import json
 import os
 import numpy as np
 from main import NeuralNet, NetFactory
+from cost_functions import CrossEntropyCost
 
 
 class SaveTests(unittest.TestCase):
@@ -56,15 +57,16 @@ class SaveTests(unittest.TestCase):
     def test_costs_match(self):
         nnet = NetFactory.create_neural_net(sizes=[2, 3, 1, 10, 2])
         nnet.randomize_parameters()
+        cost_func = CrossEntropyCost(nnet)
 
         X = [np.array([90, 23], float), np.array([0, 2], float)]
         Y = [np.array([0.4, 0.6], float), np.array([0.3, 0])]
         examples = [X, Y]
-        c1 = nnet.get_cost(examples)
+        c1 = cost_func.get_cost(examples)
 
         fname = os.path.join('test_temp', 'nets_params.json')
         nnet.save(dest_fname=fname)
 
         nnet = NeuralNet.create_from_file(fname)
-        c2 = nnet.get_cost(examples)
+        c2 = cost_func.get_cost(examples)
         self.assertAlmostEqual(c1, c2, places=4)
