@@ -7,6 +7,7 @@ Scenario: Net can guess a distribution from which examples are drawn
     And I initialize a neural net for binary classification with sizes 10,5,3
     And I randomly initialize net's parameters
     And I choose quadratic cost function
+    And I choose to use gradient descent as learning algorithm
     And I train neural network on that data set for 100 epochs
     Then neural net gives less than 40% classification error on test data set
 
@@ -16,6 +17,7 @@ Scenario: Net can guess a distribution from which examples are drawn
     And I initialize a neural net for binary classification with sizes 10,5,3
     And I randomly initialize net's parameters
     And I choose cross entropy cost function
+    And I choose to use gradient descent as learning algorithm
     And I train neural network on that data set for 100 epochs
     Then neural net gives less than 40% classification error on test data set
 

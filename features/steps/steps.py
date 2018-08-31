@@ -32,7 +32,8 @@ def step(context):
 @when('I train neural network on that data set for {nepoch} epochs')
 def step(context, nepoch):
     data = context.training_data
-    context.nnet.train(nepochs=int(nepoch), examples=data)
+    algo = context.learning_algorithm
+    algo.train(nepochs=int(nepoch), examples=data)
 
 
 @then('the cost function gives much smaller error value than before')
@@ -47,6 +48,14 @@ def step(context):
 def step(context):
     context.nnet = NetFactory.create_neural_net(sizes=[1, 10, 1])
     context.nnet.randomize_parameters()
+
+
+@when('I choose to use gradient descent as learning algorithm')
+def step(context):
+    net = context.nnet
+    context.learning_algorithm = gradient_descent.GradientDescent(
+        neural_net=net, cost_function=context.cost_function
+    )
 
 
 @when('I train neural network to approximate a function "sin(x)^2"')
@@ -173,10 +182,9 @@ def step(context, rate):
     cost_function = context.cost_function
     r = float(rate)
     sgd = gradient_descent.StochasticGradientDescent(
-        context.nnet,
-        cost_function=cost_function,
-        learning_rate=r)
-    context.nnet.set_learning_algorithm(sgd)
+        context.nnet, cost_function=cost_function, learning_rate=r
+    )
+    context.learning_algorithm = sgd
 
 
 @when('I choose quadratic cost function')

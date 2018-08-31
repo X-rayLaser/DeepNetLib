@@ -26,13 +26,11 @@ class DigitGenerator:
     def train(self, pixels_to_categories, nepochs=1):
         examples = self.prepare_train_examples(pixels_to_categories)
         cost_func = cost_functions.CrossEntropyCost(self._nnet)
-        algo = gradient_descent.StochasticGradientDescent(
+        gd = gradient_descent.StochasticGradientDescent(
             self._nnet, cost_function=cost_func, learning_rate=0.1
         )
         self._nnet.randomize_parameters()
-        self._nnet.set_cost_function(cost_functions.CrossEntropyCost(self._nnet))
-        self._nnet.set_learning_algorithm(algo)
-        self._nnet.train(examples=examples, nepochs=nepochs)
+        gd.train(examples=examples, nepochs=nepochs)
 
     def generate(self, seeding_vector):
         x = seeding_vector

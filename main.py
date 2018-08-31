@@ -108,24 +108,11 @@ class NeuralNet:
     class BadArchitecture(Exception):
         pass
 
-    class LayerOutOfBound(Exception):
-        pass
-
-    class InvalidMatrixDimensions(Exception):
-        pass
-
-    class BadLayerSize(Exception):
-        pass
-
     def __init__(self, input_size):
         if input_size < 1:
             raise self.BadArchitecture('Must have at least 1 node in input layer')
 
         self._layers = []
-
-        self._cost_function = cost_functions.QuadraticCost(self)
-        self._trainer = GradientDescent(neural_net=self,
-                                        cost_function=self._cost_function)
 
     def _feed_next(self, activations, layer):
         if layer >= len(self._layers):
@@ -149,9 +136,6 @@ class NeuralNet:
         """count starts from first hidden layer"""
         return self.layers()[layer].feed(x)
 
-    def train(self, examples, nepochs=1):
-        self._trainer.train(examples=examples, nepochs=nepochs)
-
     def weights(self):
         return [layer.weights() for layer in self._layers]
 
@@ -170,22 +154,6 @@ class NeuralNet:
 
         sizes.append(weights[-1].shape[0])
         return sizes
-
-    def set_cost_function(self, cost_function):
-        self._cost_function = cost_function
-
-    def set_regularization(self, reg_lambda=0):
-        if reg_lambda > 0 and not isinstance(self._cost_function,
-                                             cost_functions.RegularizedCost):
-            self._cost_function = cost_functions.RegularizedCost(
-                self,
-                self._cost_function,
-                regularization_parameter=reg_lambda,
-                weights=self.weights()
-            )
-
-    def set_learning_algorithm(self, trainer):
-        self._trainer = trainer
 
     def randomize_parameters(self):
         for i in range(len(self.layers())):

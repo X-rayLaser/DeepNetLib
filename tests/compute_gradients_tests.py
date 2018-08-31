@@ -31,12 +31,9 @@ class ComputeGradientsTests(unittest.TestCase):
 
     def test_compute_gradients_with_cross_entropy_cost(self):
         nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
-        cost_func = cost_functions.QuadraticCost(neural_net=nnet)
-
         nnet.randomize_parameters()
-        nnet.set_cost_function(
-            cost_function=cost_functions.CrossEntropyCost(neural_net=nnet)
-        )
+
+        cost_func = cost_functions.CrossEntropyCost(neural_net=nnet)
         examples = helpers.generate_random_examples(10, 4, 10)
         calculator = BackPropagationBasedCalculator(examples=examples,
                                                     neural_net=nnet,
@@ -119,7 +116,10 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet.randomize_parameters()
         cost_func = cost_functions.QuadraticCost(neural_net=nnet)
 
-        nnet.set_regularization(reg_lambda=2)
+        cost_func = cost_functions.RegularizedCost(neural_net=nnet,
+                                                   cost_function=cost_func,
+                                                   regularization_parameter=2,
+                                                   weights=nnet.weights())
         examples = helpers.generate_random_examples(10, 4, 10)
         calculator = BackPropagationBasedCalculator(examples=examples,
                                                     neural_net=nnet,
