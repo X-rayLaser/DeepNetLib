@@ -38,10 +38,32 @@ class LinkedList:
 
 class ActivatedLayer:
     def __init__(self, weights, biases, incoming_activation,
-                 activation, weighted_sum, weighted_sum_gradient):
+                 activation, weighted_sum, weighted_sum_gradient, expected_output, cost_func):
         self.weights = weights
         self.biases = biases
         self.incoming_activation = incoming_activation
         self.activation = activation
         self.weighted_sum = weighted_sum
         self.weighted_sum_gradient = weighted_sum_gradient
+
+        self._next = None
+        self._expected_output = expected_output
+        self._cost_func = cost_func
+        self._error = None
+
+    def set_next(self, next_layer):
+        self._next = next_layer
+
+    def get_error(self):
+        if self._error:
+            return self._error
+
+        if self._next:
+            next_layer = self._next
+            nabla_next = next_layer.get_error()
+            error = next_layer.weights.T.dot(nabla_next) * self.weighted_sum_gradient
+        else:
+            error = self._cost_func.get_final_layer_error(
+                self.activation, self._expected_output, self.weighted_sum_gradient
+            )
+        return error

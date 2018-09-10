@@ -28,16 +28,14 @@ class BackPropagation:
         Run a back propagation algorithm using for a given net
         :return: a tuple of 2d numpy arrays gradients for weights and biases
         """
-        neural_net = self._neural_net
         cost_func = self._cost_function
 
         weights_gradient = []
         biases_gradient = []
 
-        mylist = self._propagate_forward()
-        pylist = mylist.to_pylist()
+        pylist = self._propagate_forward()
 
-        layer_errors = self._compute_errors(activated_list=mylist)
+        layer_errors = self._compute_errors(activated_list=pylist)
 
         for activated_layer, nabla in zip(pylist, layer_errors):
             a_in = activated_layer.incoming_activation
@@ -53,14 +51,10 @@ class BackPropagation:
         return weights_gradient, biases_gradient
 
     def _propagate_forward(self):
-        layers = self._neural_net.layers()
-        x = self._x
-
-        linked_list = LinkedList()
-
         activated_layers = []
-        a = x
-        for layer in layers:
+        a = self._x
+        prev_activation_layer = None
+        for layer in self._neural_net.layers():
             a_in = a
             a, z, z_prime = layer.feed_rich(a_in)
             activated_layer = ActivatedLayer(weights=layer.weights(),
@@ -68,35 +62,15 @@ class BackPropagation:
                                              incoming_activation=a_in,
                                              activation=a,
                                              weighted_sum=z,
-                                             weighted_sum_gradient=z_prime)
+                                             weighted_sum_gradient=z_prime,
+                                             expected_output=self._y,
+                                             cost_func=self._cost_function)
+            if prev_activation_layer:
+                prev_activation_layer.set_next(activated_layer)
+            prev_activation_layer = activated_layer
             activated_layers.append(activated_layer)
 
-        while len(activated_layers) > 0:
-            layer = activated_layers.pop()
-            linked_list.prepend(layer)
-        return linked_list
+        return activated_layers
 
     def _compute_errors(self, activated_list):
-        errors = LinkedList()
-        self._compute(activated_list, errors)
-        return errors.to_pylist()
-
-    def _compute(self, layer_list, errors):
-        y = self._y
-        neural_net = self._neural_net
-        cost_func = self._cost_function
-
-        layer = layer_list.get_item()
-        z_grad = layer.weighted_sum_gradient
-        a = layer.activation
-
-        if layer_list.tail().is_empty():
-            nabla = cost_func.get_final_layer_error(a, y, z_grad)
-            errors.prepend(nabla)
-            return layer.weights, nabla
-
-        w_next, nabla_next = self._compute(layer_list.tail(), errors)
-        nabla = cost_func.get_error_in_layer(nabla_next, w_next, z_grad)
-        errors.prepend(nabla)
-
-        return layer.weights, nabla
+        return [layer.get_error() for layer in activated_list]
