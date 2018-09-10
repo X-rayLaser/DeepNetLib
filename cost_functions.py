@@ -150,17 +150,9 @@ class RegularizedCost(CostFunction):
         self._weights = weights
 
     def individual_cost(self, activation, expected_output):
-        return self._cost_function.individual_cost(activation, expected_output)
-
-    def compute_cost(self, activations, outputs):
-        n = len(outputs)
-
+        c = self._cost_function.individual_cost(activation, expected_output)
         square_sum = sum([(w ** 2).sum() for w in self._weights])
-
-        reg_term = self._reglambda / float(2 * n) * square_sum
-        old_cost = self._cost_function.compute_cost(activations=activations,
-                                                    outputs=outputs)
-        return old_cost + reg_term
+        return c + 0.5 * self._reglambda * square_sum
 
     def get_lambda(self):
         return self._reglambda

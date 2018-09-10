@@ -206,7 +206,6 @@ class BackPropagationBasedCalculator(GradientCalculator):
     def compute_gradients(self):
         xes, ys = self._examples
         examples_count = len(ys)
-        reglambda = self._cost_function.get_lambda()
 
         weights_grad, biases_grad = self._zero_gradients_list(self._neural_net)
 
@@ -223,10 +222,6 @@ class BackPropagationBasedCalculator(GradientCalculator):
 
         weights_grad = self._average_gradient(weights_grad, examples_count)
         biases_grad = self._average_gradient(biases_grad, examples_count)
-
-        weights = self._neural_net.weights()
-        for i in range(len(weights_grad)):
-            weights_grad[i] = weights_grad[i] + reglambda / float(examples_count) * weights[i]
 
         return weights_grad, biases_grad
 

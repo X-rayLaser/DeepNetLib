@@ -78,7 +78,7 @@ class ActivatedLayer:
         nabla = self.get_error()
         a = self.incoming_activation
 
-        return np.outer(nabla, a)
+        return np.outer(nabla, a) + self._cost_func.get_lambda() * self.weights
 
     def get_bias_gradient(self):
         """

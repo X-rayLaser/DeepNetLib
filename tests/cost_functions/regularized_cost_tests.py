@@ -19,7 +19,7 @@ class RegularizedCostTests(unittest.TestCase):
 
         wsum = sum([(w ** 2).sum() for w in weights])
         n = len(outputs)
-        self.assertAlmostEqual(c2, c1 + reglambda / (2 * n) * wsum, places=3)
+        self.assertAlmostEqual(c2, c1 + reglambda / 2 * wsum, places=3)
 
     def test_quadratic_regularized_on_single_example(self):
         activations = [np.array([-1, 1], float)]
