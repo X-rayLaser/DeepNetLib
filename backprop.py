@@ -35,15 +35,9 @@ class BackPropagation:
 
         pylist = self._propagate_forward()
 
-        layer_errors = self._compute_errors(activated_list=pylist)
-
-        for activated_layer, nabla in zip(pylist, layer_errors):
-            a_in = activated_layer.incoming_activation
-            wg = cost_func.get_weights_gradient(
-                layer_error=nabla,
-                previous_layer_activations=a_in
-            )
-            bg = cost_func.get_bias_gradient(layer_error=nabla)
+        for activated_layer in pylist:
+            wg = activated_layer.get_weights_gradient()
+            bg = activated_layer.get_bias_gradient()
 
             weights_gradient.append(wg)
             biases_gradient.append(bg)
@@ -71,6 +65,3 @@ class BackPropagation:
             activated_layers.append(activated_layer)
 
         return activated_layers
-
-    def _compute_errors(self, activated_list):
-        return [layer.get_error() for layer in activated_list]

@@ -26,9 +26,6 @@ class CostFunction:
     
     Methods:
     :method get_final_layer_error: compute an error in the output layer of neural net
-    :method get_error_in_layer: compute an error in some layer
-    :method get_weights_gradient: compute a gradient for weights in some layer
-    :method get_bias_gradient: compute a gradient for biases in some layer
     :method get_lambda: get the regularization parameter for regularaized loss function 
     """
     """
@@ -38,30 +35,6 @@ class CostFunction:
 
     def __init__(self, neural_net):
         self._net = neural_net
-
-    def get_error_in_layer(self, nabla_next, w_next, z_gradient):
-        """
-        Calculate an error, nabla, in a layer given the error in the next layer, nabla_next.
-        
-        :param nabla_next: error in the next layer, numpy 1d array
-        :param w_next: matrix of weights in the next layer, numpy 2d array
-        :param z_gradient: a vector of partial derivatives of activations, numpy 1d array
-        :return: a vector of errors, numpy 1d array
-        """
-        return w_next.T.dot(nabla_next) * z_gradient
-
-    def get_weights_gradient(self, layer_error, previous_layer_activations):
-        """
-        Calculate all partial derivatives of loss function with respect to weights in this layer.
-
-        :param layer_error: error nabla in the layer, numpy 1d array 
-        :param previous_layer_activations: activations in the previous layer, numpy 1d array
-        :return: a matrix of partial derivatives of loss function, numpy 2d array
-        """
-        nabla = layer_error
-        a = previous_layer_activations
-
-        return np.outer(nabla, a)
 
     def get_final_layer_error(self, activation_last, expected_output, z_gradient_last):
         """
@@ -75,14 +48,6 @@ class CostFunction:
         a_last = activation_last
         y = expected_output
         return (a_last - y) * z_gradient_last
-
-    def get_bias_gradient(self, layer_error):
-        """
-        Calculate a vector of partial derivatives of loss function with respect to biases in a layer.
-        :param layer_error: numpy 1d array of errors in the layer for which you want to find the gradient
-        :return: numpy 1d array of partial derivatives of loss function for a given layer
-        """
-        return layer_error
 
     def get_lambda(self):
         """

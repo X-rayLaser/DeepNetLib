@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class LinkedList:
     class Node:
         def __init__(self, item, next):
@@ -67,3 +70,18 @@ class ActivatedLayer:
                 self.activation, self._expected_output, self.weighted_sum_gradient
             )
         return error
+
+    def get_weights_gradient(self):
+        """
+        Calculate all partial derivatives of loss function with respect to weights in this layer.
+        """
+        nabla = self.get_error()
+        a = self.incoming_activation
+
+        return np.outer(nabla, a)
+
+    def get_bias_gradient(self):
+        """
+        Calculate a vector of partial derivatives of loss function with respect to biases in a layer.
+        """
+        return self.get_error()
