@@ -27,6 +27,7 @@ API details
 """
 import numpy as np
 from backprop import BackPropagation
+from data_source import DataSetIterator
 
 
 class GradientCalculator:
@@ -42,7 +43,7 @@ class GradientCalculator:
         
         :return: a tuple of 2 python list, items of 1 and 2 lists are, respectively, of type numpy 2d array and numpy 1d array
         """
-        raise Exception('Not implemented')
+        raise NotImplementedError()
 
 
 class ParameterLocation:
@@ -60,7 +61,7 @@ class NumericalDerivative:
     Implement in subclass methods:
     - **_increment (parameter_location, epsilon) => None**
     """
-    def __init__(self, neural_net, examples, cost_function, epsilon=0.00001):
+    def __init__(self, neural_net, data_src, cost_function, epsilon=0.00001):
         """
         Initialize an instance.
         
@@ -70,7 +71,7 @@ class NumericalDerivative:
         derivative
         """
         self._neural_net = neural_net
-        self._examples = examples
+        self._data_src = data_src
         self._cost_function = cost_function
         self._epsilon = epsilon
 
@@ -88,7 +89,7 @@ class NumericalDerivative:
         self._increment(parameter_location, -self._epsilon)
 
     def evaluate_function(self):
-        return self._cost_function.get_cost(self._examples)
+        return self._cost_function.get_cost(self._data_src)
 
     def partial_derivative(self, parameter_location):
         """
@@ -153,8 +154,8 @@ class NumericalCalculator(GradientCalculator):
     and it is highly inefficient. During production use instance of BackPropagationBasedCalculator
     instead.
     """
-    def __init__(self, examples, neural_net, cost_function):
-        self._examples = examples
+    def __init__(self, data_src, neural_net, cost_function):
+        self._data_src = data_src
         self._neural_net = neural_net
         self._cost_function = cost_function
 
@@ -169,10 +170,10 @@ class NumericalCalculator(GradientCalculator):
 
         cost_function = self._cost_function
         weight_der = WeightDerivative(neural_net=self._neural_net,
-                                      examples=self._examples,
+                                      data_src=self._data_src,
                                       cost_function=cost_function)
         biase_der = BiasDerivative(neural_net=self._neural_net,
-                                   examples=self._examples,
+                                   data_src=self._data_src,
                                    cost_function=cost_function)
         for layer in range(nmatrices):
             weight_grad.append(np.zeros(wlist[layer].shape))
@@ -198,20 +199,18 @@ class BackPropagationBasedCalculator(GradientCalculator):
     During production use instance of this class to calculate gradient as 
     it uses more efficient algorithm than NumericalCalculator.
     """
-    def __init__(self, examples, neural_net, cost_function):
-        self._examples = examples
+    def __init__(self, data_src, neural_net, cost_function):
+        self._data_src = data_src
         self._neural_net = neural_net
         self._cost_function = cost_function
 
     def compute_gradients(self):
-        xes, ys = self._examples
-        examples_count = len(ys)
+        data_src = self._data_src
+        examples_count = data_src.number_of_examples()
 
         weights_grad, biases_grad = self._zero_gradients_list(self._neural_net)
 
-        for i in range(examples_count):
-            x = xes[i]
-            y = ys[i]
+        for x, y in DataSetIterator(data_src):
             backprop = BackPropagation(x, y, neural_net=self._neural_net,
                                        cost_function=self._cost_function)
             wgrad, bgrad = backprop.back_propagate()

@@ -3,10 +3,10 @@ import helpers
 
 class DataSource:
     def get_examples(self, index_from, index_to):
-        raise Exception('Not implemented')
+        raise NotImplementedError()
 
     def number_of_examples(self):
-        raise Exception('Not implemented')
+        raise NotImplementedError()
 
 
 class PreloadSource(DataSource):

@@ -4,6 +4,7 @@ import os
 import numpy as np
 from main import NeuralNet, NetFactory
 from cost_functions import CrossEntropyCost
+from data_source import PreloadSource
 
 
 class SaveTests(unittest.TestCase):
@@ -61,7 +62,7 @@ class SaveTests(unittest.TestCase):
 
         X = [np.array([90, 23], float), np.array([0, 2], float)]
         Y = [np.array([0.4, 0.6], float), np.array([0.3, 0])]
-        examples = [X, Y]
+        examples = PreloadSource((X, Y))
         c1 = cost_func.get_cost(examples)
 
         fname = os.path.join('test_temp', 'nets_params.json')

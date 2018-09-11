@@ -1,5 +1,6 @@
 import helpers
 from gradient_calculator import BackPropagationBasedCalculator
+from data_source import BatchesIterator
 
 
 class GradientDescent:
@@ -23,18 +24,18 @@ class GradientDescent:
         for i in range(len(biases)):
             biases[i] -= self._rate * bias_gradient[i]
 
-    def training_epoch(self, examples):
+    def training_epoch(self, data_src):
         cost_function = self._cost_function
-        gradient_calculator = BackPropagationBasedCalculator(examples=examples,
+        gradient_calculator = BackPropagationBasedCalculator(data_src=data_src,
                                                              neural_net=self._nnet,
                                                              cost_function=cost_function)
         wgrad, bgrad = gradient_calculator.compute_gradients()
         self.update_weights(weight_gradient=wgrad)
         self.update_biases(bias_gradient=bgrad)
 
-    def train(self, examples, nepochs):
+    def train(self, data_src, nepochs):
         for i in range(nepochs):
-            self.training_epoch(examples=examples)
+            self.training_epoch(data_src=data_src)
 
 
 class StochasticGradientDescent(GradientDescent):
@@ -53,13 +54,6 @@ class StochasticGradientDescent(GradientDescent):
         x_list, y_list = examples
         return helpers.shuffle_pairwise(x_list, y_list)
 
-    def training_epoch(self, examples):
-        x_list, y_list = examples
-        x_batches = helpers.list_to_chunks(x_list,
-                                           chunk_size=self._batch_size)
-        y_batches = helpers.list_to_chunks(y_list,
-                                           chunk_size=self._batch_size)
-        batch_count = len(y_batches)
-        for i in range(batch_count):
-            mini_batch = (x_batches[i], y_batches[i])
-            GradientDescent.training_epoch(self, examples=mini_batch)
+    def training_epoch(self, data_src):
+        for batch_src in BatchesIterator(data_src, batch_size=self._batch_size):
+            GradientDescent.training_epoch(self, data_src=batch_src)

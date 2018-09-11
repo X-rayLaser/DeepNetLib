@@ -3,6 +3,7 @@ import helpers
 from main import NeuralNet, NetFactory
 import cost_functions
 import gradient_descent
+from data_source import PreloadSource
 
 
 class DigitGenerator:
@@ -30,7 +31,7 @@ class DigitGenerator:
             self._nnet, cost_function=cost_func, learning_rate=0.1
         )
         self._nnet.randomize_parameters()
-        gd.train(examples=examples, nepochs=nepochs)
+        gd.train(data_src=PreloadSource(examples), nepochs=nepochs)
 
     def generate(self, seeding_vector):
         x = seeding_vector

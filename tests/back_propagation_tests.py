@@ -4,6 +4,7 @@ import helpers
 from main import NetFactory
 from gradient_calculator import NumericalCalculator
 from cost_functions import QuadraticCost
+from data_source import PreloadSource
 
 
 class BackpropSlowTests(unittest.TestCase):
@@ -17,7 +18,8 @@ class BackpropSlowTests(unittest.TestCase):
         y = np.array([0.25], float)
         examples = ([x], [y])
 
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+        numerical = NumericalCalculator(data_src=PreloadSource(examples),
+                                        neural_net=nnet,
                                         cost_function=cost_func)
         w_grad, b_grad = numerical.compute_gradients()
 
@@ -35,7 +37,8 @@ class BackpropSlowTests(unittest.TestCase):
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+        numerical = NumericalCalculator(data_src=PreloadSource(examples),
+                                        neural_net=nnet,
                                         cost_function=cost_func)
 
         w_grad, b_grad = numerical.compute_gradients()
@@ -54,7 +57,8 @@ class BackpropSlowTests(unittest.TestCase):
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        numerical = NumericalCalculator(examples=examples, neural_net=nnet,
+        numerical = NumericalCalculator(data_src=PreloadSource(examples),
+                                        neural_net=nnet,
                                         cost_function=cost_func)
         w_grad, b_grad = numerical.compute_gradients()
 

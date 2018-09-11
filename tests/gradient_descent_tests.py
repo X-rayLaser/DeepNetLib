@@ -5,13 +5,14 @@ from gradient_descent import GradientDescent, StochasticGradientDescent
 from gradient_calculator import BackPropagationBasedCalculator
 from cost_functions import QuadraticCost
 import helpers
+from data_source import PreloadSource
 
 
 class GradientDescentTest(unittest.TestCase):
     def setUp(self):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
-        self.examples = ([x], [y])
+        self.examples = PreloadSource(([x], [y]))
         nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         nnet.randomize_parameters()
         self.nnet = nnet
@@ -28,7 +29,7 @@ class GradientDescentTest(unittest.TestCase):
     def test_update_weights_decreases_cost(self):
         cost_func = QuadraticCost(self.nnet)
         cost_before = cost_func.get_cost(self.examples)
-        calculator = BackPropagationBasedCalculator(examples=self.examples,
+        calculator = BackPropagationBasedCalculator(data_src=self.examples,
                                                     cost_function=cost_func,
                                                     neural_net=self.nnet)
 
@@ -43,7 +44,7 @@ class GradientDescentTest(unittest.TestCase):
     def test_update_biases_decreases_cost(self):
         cost_func = QuadraticCost(self.nnet)
         cost_before = cost_func.get_cost(self.examples)
-        calculator = BackPropagationBasedCalculator(examples=self.examples,
+        calculator = BackPropagationBasedCalculator(data_src=self.examples,
                                                     cost_function=cost_func,
                                                     neural_net=self.nnet)
 
@@ -57,12 +58,14 @@ class GradientDescentTest(unittest.TestCase):
     def test_update_with_multiple_examples(self):
         self.nnet.randomize_parameters()
 
-        self.examples = ([np.array([5, 2], float), np.array([5, 22], float)],
-                         [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+        self.examples = PreloadSource((
+            [np.array([5, 2], float), np.array([5, 22], float)],
+            [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+        )
 
         cost_func = QuadraticCost(self.nnet)
         cost_before = cost_func.get_cost(self.examples)
-        calculator = BackPropagationBasedCalculator(examples=self.examples,
+        calculator = BackPropagationBasedCalculator(data_src=self.examples,
                                                     cost_function=cost_func,
                                                     neural_net=self.nnet)
         for i in range(10):
@@ -76,16 +79,18 @@ class GradientDescentTest(unittest.TestCase):
     def test_training_epoch_1_example(self):
         cost_func = QuadraticCost(self.nnet)
         cost_before = cost_func.get_cost(self.examples)
-        self.grad_descent.training_epoch(examples=self.examples)
+        self.grad_descent.training_epoch(data_src=self.examples)
         cost_after = cost_func.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
 
     def test_training_epoch_2_examples(self):
         cost_func = QuadraticCost(self.nnet)
-        self.examples = ([np.array([5, 2], float), np.array([5, 22], float)],
-                         [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+        self.examples = PreloadSource((
+            [np.array([5, 2], float), np.array([5, 22], float)],
+            [np.array([0.25, 0, 1], float), np.array([0.5, 1, 0], float)])
+        )
         cost_before = cost_func.get_cost(self.examples)
-        self.grad_descent.training_epoch(examples=self.examples)
+        self.grad_descent.training_epoch(data_src=self.examples)
         cost_after = cost_func.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
 
@@ -93,14 +98,14 @@ class GradientDescentTest(unittest.TestCase):
         cost_func = QuadraticCost(self.nnet)
         self.nnet.randomize_parameters()
         cost_before = cost_func.get_cost(self.examples)
-        self.grad_descent.training_epoch(examples=self.examples)
+        self.grad_descent.training_epoch(data_src=self.examples)
         cost_after = cost_func.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
 
     def test_train_for_few_epoch(self):
         cost_func = QuadraticCost(self.nnet)
         cost_before = cost_func.get_cost(self.examples)
-        self.grad_descent.train(examples=self.examples, nepochs=2)
+        self.grad_descent.train(data_src=self.examples, nepochs=2)
         cost_after = cost_func.get_cost(self.examples)
         self.assertLess(cost_after, cost_before)
 
@@ -109,7 +114,7 @@ class GradientLearningRateTests(unittest.TestCase):
     def setUp(self):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
-        self.examples = ([x], [y])
+        self.examples = PreloadSource(([x], [y]))
         nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         self.nnet = nnet
         self.Descent = GradientDescent
@@ -150,7 +155,7 @@ class StochasticGradientDescentTests(GradientDescentTest):
     def setUp(self):
         x = np.array([5, 2], float)
         y = np.array([0.25, 0, 1], float)
-        self.examples = ([x], [y])
+        self.examples = PreloadSource(([x], [y]))
         nnet = NetFactory.create_neural_net(sizes=[2, 3, 3])
         nnet.randomize_parameters()
         self.nnet = nnet
@@ -209,7 +214,7 @@ class NeuralNetTrain(unittest.TestCase):
         xes = [np.array([-10], float), np.array([100], float)]
         ys = [np.array([0.5], float), np.array([0.75], float)]
 
-        gd.train(examples=(xes, ys), nepochs=100)
+        gd.train(data_src=PreloadSource((xes, ys)), nepochs=100)
 
         for i in range(len(xes)):
             res = nnet.feed(xes[i])
@@ -221,12 +226,12 @@ class NeuralNetTrain(unittest.TestCase):
         gd = GradientDescent(neural_net=nnet, cost_function=cost_func)
 
         def parabola(x):
-            return x**2
+            return x ** 2
 
         examples = helpers.generate_data(f=parabola, start_value=-0.6,
                                          end_value=-0.4, step_value=0.005)
 
-        gd.train(examples=examples, nepochs=10)
+        gd.train(data_src=PreloadSource(examples), nepochs=10)
 
         xval = -0.5000125
         yval = parabola(xval)

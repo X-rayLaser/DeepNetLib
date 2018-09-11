@@ -5,6 +5,7 @@ from main import NetFactory
 import cost_functions
 import activation_functions
 from gradient_calculator import BackPropagationBasedCalculator, NumericalCalculator
+from data_source import PreloadSource
 
 
 class ComputeGradientsTests(unittest.TestCase):
@@ -16,10 +17,10 @@ class ComputeGradientsTests(unittest.TestCase):
         nnet.randomize_parameters()
         cost_func = cost_functions.QuadraticCost(neural_net=nnet)
         examples = helpers.generate_random_examples(10, 4, 10)
-        calculator = BackPropagationBasedCalculator(examples=examples,
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
                                                     neural_net=nnet,
                                                     cost_function=cost_func)
-        numerical_calculator = NumericalCalculator(examples=examples,
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
                                                    neural_net=nnet,
                                                    cost_function=cost_func)
 
@@ -35,10 +36,10 @@ class ComputeGradientsTests(unittest.TestCase):
 
         cost_func = cost_functions.CrossEntropyCost(neural_net=nnet)
         examples = helpers.generate_random_examples(10, 4, 10)
-        calculator = BackPropagationBasedCalculator(examples=examples,
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
                                                     neural_net=nnet,
                                                     cost_function=cost_func)
-        numerical_calculator = NumericalCalculator(examples=examples,
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
                                                    neural_net=nnet,
                                                    cost_function=cost_func)
         w_grad1, b_grad1 = calculator.compute_gradients()
@@ -57,10 +58,10 @@ class ComputeGradientsTests(unittest.TestCase):
         cost_func = cost_functions.QuadraticCost(neural_net=nnet)
 
         examples = helpers.generate_random_examples(10, 4, 10)
-        calculator = BackPropagationBasedCalculator(examples=examples,
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
                                                     neural_net=nnet,
                                                     cost_function=cost_func)
-        numerical_calculator = NumericalCalculator(examples=examples,
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
                                                    neural_net=nnet,
                                                    cost_function=cost_func)
         w_grad1, b_grad1 = calculator.compute_gradients()
@@ -77,7 +78,7 @@ class ComputeGradientsTests(unittest.TestCase):
         y = np.array([0.25, 0], float)
 
         examples = ([x], [y])
-        calculator = BackPropagationBasedCalculator(examples=examples,
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
                                                     neural_net=nnet,
                                                     cost_function=cost_func)
 
@@ -97,7 +98,7 @@ class ComputeGradientsTests(unittest.TestCase):
         x = np.array([5, 2, -0.5], float)
         y = np.array([0.25, 0, 0, 0.7, 0.2], float)
         examples = ([x], [y])
-        numerical_calculator = NumericalCalculator(examples=examples,
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
                                                    neural_net=nnet,
                                                    cost_function=cost_func)
         w_grad, b_grad = numerical_calculator.compute_gradients()
@@ -121,10 +122,10 @@ class ComputeGradientsTests(unittest.TestCase):
                                                    regularization_parameter=2,
                                                    weights=nnet.weights())
         examples = helpers.generate_random_examples(10, 4, 10)
-        calculator = BackPropagationBasedCalculator(examples=examples,
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
                                                     neural_net=nnet,
                                                     cost_function=cost_func)
-        numerical_calculator = NumericalCalculator(examples=examples,
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
                                                    neural_net=nnet,
                                                    cost_function=cost_func)
 

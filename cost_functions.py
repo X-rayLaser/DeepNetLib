@@ -17,6 +17,7 @@ Classes:
 """
 import numpy as np
 import math
+from data_source import DataSetIterator
 
 
 class CostFunction:
@@ -73,10 +74,15 @@ class CostFunction:
                                       expected_output=outputs[i])
         return s / vector_len
 
-    def get_cost(self, data_set):
-        xes, ys = data_set
-        activations = [self._net.feed(x) for x in xes]
-        return self.compute_cost(activations=activations, outputs=ys)
+    def get_cost(self, data_src):
+        it = DataSetIterator(data_src)
+        n = data_src.number_of_examples()
+        c = 0
+        for x, y in it:
+            a = self._net.feed(x)
+            c += self.individual_cost(activation=a, expected_output=y)
+
+        return c / float(n)
 
 
 class QuadraticCost(CostFunction):
