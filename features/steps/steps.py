@@ -9,13 +9,17 @@ from digit_drawing import DigitGenerator
 from activation_functions import Rectifier, Softmax
 from gradient_calculator import NumericalCalculator, BackPropagationBasedCalculator
 from datasets import mnist
+from data_source import PreloadSource
+from data_source import DataSetIterator
 
 
 def squared_sin_data_set():
     def f(x):
         return math.sin(x) ** 2
 
-    return helpers.generate_data(f=f, start_value=0, end_value=3.14, step_value=0.1)
+    return PreloadSource(
+        helpers.generate_data(f=f, start_value=0, end_value=3.14, step_value=0.1)
+    )
 
 
 @when('I generate a data set from a function "sin(x)^2"')
@@ -33,7 +37,7 @@ def step(context):
 def step(context, nepoch):
     data = context.training_data
     algo = context.learning_algorithm
-    algo.train(nepochs=int(nepoch), examples=data)
+    algo.train(nepochs=int(nepoch), data_src=data)
 
 
 @then('the cost function gives much smaller error value than before')
@@ -82,7 +86,7 @@ def step(context):
 def step(context):
     cost_func = context.cost_function
     calculator = BackPropagationBasedCalculator(
-        examples=context.training_data,
+        data_src=context.training_data,
         neural_net=context.nnet,
         cost_function=cost_func
     )
@@ -93,7 +97,7 @@ def step(context):
 def step(context):
     cost_func = context.cost_function
     calculator = NumericalCalculator(
-        examples=context.training_data,
+        data_src=context.training_data,
         neural_net=context.nnet,
         cost_function=cost_func
     )
@@ -142,13 +146,15 @@ def create_example(slen):
 def step(context, seq_len):
     slen = int(seq_len)
 
-    context.training_data = examples_drawn_from_distributions(
+    training_data = examples_drawn_from_distributions(
         number_of_examples=200, seq_len=slen, create_example=create_example
     )
+    context.training_data = PreloadSource(training_data)
 
-    context.test_data = examples_drawn_from_distributions(
+    test_data = examples_drawn_from_distributions(
         number_of_examples=50, seq_len=slen, create_example=create_example
     )
+    context.test_data = PreloadSource(test_data)
 
 
 @when('I initialize a neural net for binary classification with sizes {sizes_csv}')
@@ -161,14 +167,12 @@ def step(context, sizes_csv):
 def step(context, classification_error):
     required_accuracy = 100 - int(classification_error)
 
-    (x_list, y_list) = context.test_data
-
-    num_of_examples = len(y_list)
+    num_of_examples = context.test_data.number_of_examples()
     matches = 0
-    for i in range(num_of_examples):
-        a = context.nnet.feed(x_list[i])
+    for x, y in DataSetIterator(context.test_data):
+        a = context.nnet.feed(x)
         index = np.argmax(a)
-        expected_index = np.argmax(y_list[i])
+        expected_index = np.argmax(y)
         if index == expected_index:
             matches += 1
 
@@ -204,8 +208,8 @@ def step(context):
 @when('I create a training and testing data from MNIST data set')
 def step(context):
     mnist.download_dataset()
-    context.training_data = mnist.get_training_data()
-    context.test_data = mnist.get_test_data()
+    context.training_data = PreloadSource(mnist.get_training_data())
+    context.test_data = PreloadSource(mnist.get_test_data())
 
 
 @when('I train a digit generator')
