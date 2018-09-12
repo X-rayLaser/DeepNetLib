@@ -34,8 +34,9 @@ class CostFunction:
     :method individual_cost: (numpy 1d array, numpy 1d array) => float 
     """
 
-    def __init__(self, neural_net):
+    def __init__(self, neural_net, l2_reg_term=0):
         self._net = neural_net
+        self._reg_lambda = l2_reg_term
 
     def get_final_layer_error(self, activation_last, expected_output, z_gradient_last):
         """
@@ -56,25 +57,20 @@ class CostFunction:
 
         :return: a positive floating point number 
         """
-        return 0
+        return self._reg_lambda
 
-    def compute_cost(self, activations, outputs):
+    def get_regularized_cost(self, loss):
+        square_sum = sum([(w ** 2).sum() for w in self._net.weights()])
+        reg_term = 0.5 * self.get_lambda() * square_sum
+        return loss + reg_term
+
+    def get_cost(self, data_src):
         """
         Compute a cost.
 
-        :param activations: a list of actual output vectors each of numpy 1d array type, 
-        :param outputs: a list of correct output vectors each of numpy 1d array type 
+        :param data_src: instance of DataSource sub class
         :return: float
         """
-        vector_len = len(activations)
-
-        s = 0
-        for i in range(vector_len):
-            s += self.individual_cost(activation=activations[i],
-                                      expected_output=outputs[i])
-        return s / vector_len
-
-    def get_cost(self, data_src):
         it = DataSetIterator(data_src)
         n = data_src.number_of_examples()
         c = 0
@@ -82,7 +78,8 @@ class CostFunction:
             a = self._net.feed(x)
             c += self.individual_cost(activation=a, expected_output=y)
 
-        return c / float(n)
+        loss = c / float(n)
+        return self.get_regularized_cost(loss)
 
 
 class QuadraticCost(CostFunction):
@@ -132,36 +129,6 @@ class CrossEntropyCost(CostFunction):
             ce += self._between_numbers(a[i], y[i])
 
         return ce
-
-
-class RegularizedCost(CostFunction):
-    """
-    A class-decorator to wrap a loss function object and add L2 regularization.
-
-    :override compute_cost
-    :override get_lambda
-    """
-
-    def __init__(self, neural_net, cost_function, regularization_parameter, weights):
-        """
-        Initialize instance.
-
-        :param cost_function: a subclass of CostFunction class 
-        :param regularization_parameter: regularization parameter, lambda, of type float
-        :param weights: a python list of 2d numpy arrays - all weights of the neural net
-        """
-        CostFunction.__init__(self, neural_net=neural_net)
-        self._cost_function = cost_function
-        self._reglambda = regularization_parameter
-        self._weights = weights
-
-    def individual_cost(self, activation, expected_output):
-        c = self._cost_function.individual_cost(activation, expected_output)
-        square_sum = sum([(w ** 2).sum() for w in self._weights])
-        return c + 0.5 * self._reglambda * square_sum
-
-    def get_lambda(self):
-        return self._reglambda
 
 
 if __name__ == "__main__":

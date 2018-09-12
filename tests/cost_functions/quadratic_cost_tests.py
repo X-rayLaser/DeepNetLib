@@ -10,24 +10,15 @@ class QuadraticCostTests(unittest.TestCase):
         self.net = NetFactory.create_neural_net(sizes=[3, 1, 2])
 
     def test_quadratic_cost(self):
-        activations = [np.array([0.7, 0.6], float), np.array([1, 0], float)]
-        outputs = [np.array([0.2, 0.5], float), np.array([0, 0], float)]
-        quadracost = cost_functions.QuadraticCost(neural_net=self.net)
-        c = quadracost.compute_cost(activations=activations, outputs=outputs)
-        self.assertAlmostEqual(c, 0.315, places=3)
-
-    def test_quadratic_per_example(self):
+        inputs = [np.array([0.7, 0.6, 0.1], float),
+                 np.array([1, 0, 0], float)]
+        outputs = [np.array([0, 0.5], float), np.array([0, 0], float)]
         quadracost = cost_functions.QuadraticCost(neural_net=self.net)
 
-        a = [np.array([0.5, 0.7], float)]
-        y = [np.array([0.2, 0.1], float)]
-        c = quadracost.compute_cost(activations=a, outputs=y)
-        self.assertAlmostEqual(c, 0.225, places=3)
+        src = PreloadSource((inputs, outputs))
+        c = quadracost.get_cost(data_src=src)
 
-        a = [np.array([1, 0], float)]
-        y = [np.array([0, 1], float)]
-        c = quadracost.compute_cost(activations=a, outputs=y)
-        self.assertAlmostEqual(c, 1, places=1)
+        self.assertAlmostEqual(c, 0.75/4.0, places=3)
 
     def test_get_cost_initial(self):
         nnet = NetFactory.create_neural_net(sizes=[1, 1, 1])
