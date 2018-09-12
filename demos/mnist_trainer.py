@@ -74,7 +74,8 @@ class MnistTrainer:
 
         sgd = StochasticGradientDescent(
             neural_net=neural_net, cost_function=self._cost_function,
-            learning_rate=0.05, batch_size=self._config['mini_batch_size']
+            learning_rate=self._config['learning_rate'],
+            batch_size=self._config['mini_batch_size']
         )
 
         for i in range(nepoch):
@@ -106,12 +107,14 @@ class TrainerConfig:
     @staticmethod
     def make_config(hidden_layer_sizes, hidden_activation=Rectifier,
                     output_activation=Softmax, loss_function=CrossEntropyCost,
-                    L2_regularization_term=0, mini_batch_size=10):
+                    L2_regularization_term=0, learning_rate=0.1,
+                    mini_batch_size=10):
         return {
             'hidden_layer_sizes': hidden_layer_sizes,
             'hidden_activation': hidden_activation,
             'output_activation': output_activation,
             'loss_function': loss_function,
+            'learning_rate': learning_rate,
             'regularization_term': L2_regularization_term,
             'mini_batch_size': mini_batch_size
         }

@@ -12,6 +12,7 @@ conf = TrainerConfig.make_config(hidden_layer_sizes=[15, 15],
                                  output_activation=Softmax,
                                  loss_function=CrossEntropyCost,
                                  L2_regularization_term=1,
+                                 learning_rate=0.05,
                                  mini_batch_size=10)
 
 trainer = MnistTrainer(conf)
