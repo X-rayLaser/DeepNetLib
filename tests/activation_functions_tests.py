@@ -105,6 +105,11 @@ class SoftmaxTests(unittest.TestCase):
             np.allclose(a, np.array([0.1192029, 0.880797], float), )
         )
 
+    def test_on_vectors_with_huge_components(self):
+        z = np.array([np.finfo(float).max, 2, np.finfo(float).max / 2], float)
+        # won't raise OverflowError
+        a = Softmax.activation(z)
+
 
 class SoftmaxGradientTests(unittest.TestCase):
     def test_returns_jacobian_matrix_of_valid_shape(self):

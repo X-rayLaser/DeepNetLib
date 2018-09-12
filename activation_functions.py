@@ -76,16 +76,8 @@ class Softmax:
     """
     @staticmethod
     def activation(z_vector):
-        denominator = 0
-        for z in z_vector:
-            denominator += math.exp(z)
-
-        def f(n):
-            return math.exp(n) / denominator
-
-        vf = np.vectorize(f)
-        a = vf(z_vector)
-        return a
+        e_z = np.exp(z_vector - np.max(z_vector))
+        return e_z / e_z.sum()
 
     @staticmethod
     def gradient(z_vector):
