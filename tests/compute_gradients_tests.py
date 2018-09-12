@@ -112,7 +112,7 @@ class ComputeGradientsTests(unittest.TestCase):
         self.assertTupleEqual(b_grad[1].shape, (2,))
         self.assertTupleEqual(b_grad[2].shape, (5,))
 
-    def test_with_regularization(self):
+    def test_with_regularized_quadratic_loss(self):
         nnet = NetFactory.create_neural_net(sizes=[4, 2, 10])
         nnet.randomize_parameters()
         cost_func = cost_functions.QuadraticCost(neural_net=nnet)
@@ -134,3 +134,26 @@ class ComputeGradientsTests(unittest.TestCase):
 
         self.compare_grads(grad1=w_grad1, grad2=w_grad2)
         self.compare_grads(grad1=b_grad1, grad2=b_grad2)
+
+    def test_with_regularized_cross_entropy(self):
+        nnet = NetFactory.create_neural_net(sizes=[4, 2, 5, 10])
+        nnet.randomize_parameters()
+        cost_func = cost_functions.CrossEntropyCost(neural_net=nnet)
+
+        cost_func = cost_functions.RegularizedCost(neural_net=nnet,
+                                                   cost_function=cost_func,
+                                                   regularization_parameter=2,
+                                                   weights=nnet.weights())
+        examples = helpers.generate_random_examples(10, 4, 10)
+        calculator = BackPropagationBasedCalculator(data_src=PreloadSource(examples),
+                                                    neural_net=nnet,
+                                                    cost_function=cost_func)
+        numerical_calculator = NumericalCalculator(data_src=PreloadSource(examples),
+                                                   neural_net=nnet,
+                                                   cost_function=cost_func)
+
+        w_grad1, b_grad1 = calculator.compute_gradients()
+        w_grad2, b_grad2 = numerical_calculator.compute_gradients()
+
+        self.compare_grads(grad1=b_grad1, grad2=b_grad2)
+        self.compare_grads(grad1=w_grad1, grad2=w_grad2)

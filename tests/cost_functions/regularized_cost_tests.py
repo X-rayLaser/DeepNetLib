@@ -19,7 +19,7 @@ class RegularizedCostTests(unittest.TestCase):
 
         wsum = sum([(w ** 2).sum() for w in weights])
         n = len(outputs)
-        self.assertAlmostEqual(c2, c1 + reglambda / 2 * wsum, places=3)
+        self.assertAlmostEqual(c2, c1 + reglambda / 2.0 * wsum, places=3)
 
     def test_quadratic_regularized_on_single_example(self):
         activations = [np.array([-1, 1], float)]
@@ -62,6 +62,15 @@ class RegularizedCostTests(unittest.TestCase):
 
         self.check_case(cost_function=CrossEntropyCost(self.net), activations=activations,
                         outputs=outputs, reglambda=1, weights=weights)
+
+    def test_regularized_xentropy_with_many_examples(self):
+        activations = [np.array([0.7, 0.6], float), np.array([0.2, 0])]
+        outputs = [np.array([0.2, 0.5], float), np.array([0.5, 0.5])]
+
+        weights = [np.array([[3, -1]])]
+
+        self.check_case(cost_function=CrossEntropyCost(self.net), activations=activations,
+                        outputs=outputs, reglambda=0.25, weights=weights)
 
     def test_get_lambda(self):
         weights = [np.array([[3, -1]])]
