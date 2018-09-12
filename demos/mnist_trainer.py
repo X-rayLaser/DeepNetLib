@@ -35,11 +35,20 @@ class MnistTrainer:
 
     def _load_mnist_examples(self):
         mnist.download_dataset()
+
         train_data = mnist.get_training_data()
         test_data = mnist.get_test_data()
 
-        self._data_src = PreloadSource(train_data)
-        self._test_data_src = PreloadSource(test_data)
+        dataset_size = self._config['dataset_size']
+        if dataset_size:
+            train_size = dataset_size
+            test_size = dataset_size
+        else:
+            train_size = len(train_data)
+            test_size = len(test_data)
+
+        self._data_src = PreloadSource(train_data[:train_size])
+        self._test_data_src = PreloadSource(test_data[:test_size])
 
     def _transform_examples(self):
         return 28, 28
@@ -108,7 +117,7 @@ class TrainerConfig:
     def make_config(hidden_layer_sizes, hidden_activation=Rectifier,
                     output_activation=Softmax, loss_function=CrossEntropyCost,
                     L2_regularization_term=0, learning_rate=0.1,
-                    mini_batch_size=10):
+                    mini_batch_size=10, dataset_size=None):
         return {
             'hidden_layer_sizes': hidden_layer_sizes,
             'hidden_activation': hidden_activation,
@@ -116,5 +125,6 @@ class TrainerConfig:
             'loss_function': loss_function,
             'learning_rate': learning_rate,
             'regularization_term': L2_regularization_term,
-            'mini_batch_size': mini_batch_size
+            'mini_batch_size': mini_batch_size,
+            'dataset_size': dataset_size
         }

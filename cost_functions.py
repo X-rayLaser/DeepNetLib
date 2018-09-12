@@ -60,6 +60,9 @@ class CostFunction:
         return self._reg_lambda
 
     def get_regularized_cost(self, loss):
+        if self.get_lambda() == 0:
+            return loss
+
         square_sum = sum([(w ** 2).sum() for w in self._net.weights()])
         reg_term = 0.5 * self.get_lambda() * square_sum
         return loss + reg_term

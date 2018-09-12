@@ -50,11 +50,13 @@ class Layer(CreateLayerMixin):
 
     def randomize(self):
         rows, cols = self.weights().shape
-        self._weights = np.random.randn(rows, cols)
+        max_val = 0.1
+        self._weights = np.random.randn(rows, cols) * max_val
 
         rows, = self.biases().shape
-        mu = 2
-        self._biases = np.random.normal(loc=mu, scale=1, size=(rows, ))
+        mu = 1
+        self._biases = np.zeros(rows)
+        self._biases.fill(mu)
 
     def set_activation(self, activation):
         self._activation_function = activation
