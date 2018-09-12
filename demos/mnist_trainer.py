@@ -5,7 +5,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from main import NetFactory
 from data_source import PreloadSource, DataSetIterator
 from gradient_descent import StochasticGradientDescent, GradientDescent
-from cost_functions import QuadraticCost, CrossEntropyCost, RegularizedCost
+from cost_functions import QuadraticCost, CrossEntropyCost
 from activation_functions import Rectifier, Sigmoid, Softmax
 from datasets import mnist
 import numpy as np
@@ -58,21 +58,14 @@ class MnistTrainer:
         )
 
     def _choose_cost_function(self):
-        if self._config['loss_function'] == 'quadratic':
-            loss = QuadraticCost(neural_net=self._neural_net)
-        else:
-            loss = CrossEntropyCost(neural_net=self._neural_net)
-
         reg_term = self._config['regularization_term']
-        if reg_term > 0:
-            cost_function = RegularizedCost(
-                neural_net=self._neural_net, cost_function=loss,
-                regularization_parameter=5, weights=self._neural_net.weights()
-            )
+        if self._config['loss_function'] == 'quadratic':
+            loss_constructor = QuadraticCost
         else:
-            cost_function = loss
+            loss_constructor = CrossEntropyCost
 
-        self._cost_function = cost_function
+        self._cost_function = loss_constructor(neural_net=self._neural_net,
+                                                   l2_reg_term=reg_term)
 
     def start(self, nepoch=50, randomize=True):
         neural_net = self._neural_net

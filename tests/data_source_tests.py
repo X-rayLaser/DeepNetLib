@@ -10,12 +10,12 @@ class ExampleIteratorTests(TestCase):
         it = data_source.DataSetIterator(data_source=src)
 
         x, y = it.next()
-        self.assertEquals(x, 0)
-        self.assertEquals(y, 3)
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 3)
 
         x, y = it.next()
-        self.assertEquals(x, 1)
-        self.assertEquals(y, 4)
+        self.assertEqual(x, 1)
+        self.assertEqual(y, 4)
 
     def test_next_raises_stop_iteration(self):
         xs = [0]
@@ -37,8 +37,8 @@ class MiniBatchIteratorTests(TestCase):
         new_src = iter.next()
 
         for x, y in data_source.DataSetIterator(new_src):
-            self.assertEquals(x, 0)
-            self.assertEquals(y, 3)
+            self.assertEqual(x, 0)
+            self.assertEqual(y, 3)
 
     def test_next_with_batch_size_2(self):
         xs = [0, 1]
@@ -48,8 +48,8 @@ class MiniBatchIteratorTests(TestCase):
         new_src = iter.next()
         batch = data_source.DataSetIterator(new_src)
         x, y = batch.next()
-        self.assertEquals(x, 0)
-        self.assertEquals(y, 3)
+        self.assertEqual(x, 0)
+        self.assertEqual(y, 3)
         x, y = batch.next()
-        self.assertEquals(x, 1)
-        self.assertEquals(y, 4)
+        self.assertEqual(x, 1)
+        self.assertEqual(y, 4)
