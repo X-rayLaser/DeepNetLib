@@ -40,6 +40,19 @@ class LinkedList:
 
 
 class ActivatedLayer:
+    """
+    Linked collection of objects each of which encapsulates activations in some layer.
+    
+    It is used by back propagation routine to easily calculate gradients of the
+    cost function with respect to weights and biases.
+    
+    Each instance of this class is related to the corresponding Layer instance. 
+    
+    Public methods:
+        set_next: set next layer in the chain
+        get_weights_gradient: compute a matrix of derivatives w.r.t weights
+        get_bias_gradient: compute a vector of derivatives w.r.t. biases
+    """
     def __init__(self, weights, biases, incoming_activation,
                  activation, weighted_sum, weighted_sum_gradient, expected_output, cost_func):
         self.weights = weights

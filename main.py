@@ -328,10 +328,21 @@ class NeuralNet:
         return sizes
 
     def randomize_parameters(self):
+        """
+        Do guassian initialization of weights, set biases to small constant.
+        
+        :return: None
+        """
         for i in range(len(self.layers())):
             self._layers[i].randomize()
 
     def save(self, dest_fname):
+        """
+        Save a current state of the net in a file in JSON format.
+        
+        :param dest_fname: a full path to the file, string
+        :return: None
+        """
         import json
         layers = []
 
@@ -350,6 +361,12 @@ class NeuralNet:
 
     @staticmethod
     def create_from_file(fname):
+        """
+        Restore a neural net from a JSON-formatted file.
+        
+        :param fname: a full path to the file storing weights and biases
+        :return: an instance of NeuralNet class
+        """
         import json
         with open(fname, 'r') as f:
             s = f.read()

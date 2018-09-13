@@ -74,7 +74,7 @@ class MnistTrainer:
             loss_constructor = CrossEntropyCost
 
         self._cost_function = loss_constructor(neural_net=self._neural_net,
-                                                   l2_reg_term=reg_term)
+                                               l2_reg_term=reg_term)
 
     def start(self, nepoch=50, randomize=True):
         neural_net = self._neural_net

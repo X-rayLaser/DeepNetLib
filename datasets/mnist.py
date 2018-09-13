@@ -62,6 +62,10 @@ def download_file_or_get_cached(url, saved_fname):
 
 
 def download_dataset():
+    """
+    Download a MNIST data set from a website and store it locally.
+    :return: None
+    """
     os.makedirs('examples', exist_ok=True)
 
     download_file_or_get_cached(url='train-images-idx3-ubyte.gz',
@@ -78,6 +82,12 @@ def download_dataset():
 
 
 def get_training_data():
+    """
+    Get training data of MNIST data set.
+    
+    :return: a tuple of 2 lists, a list of input vectors and a list of
+        corresponding output vectors (both as numpy 1d arrays)
+    """
     mndata = MNIST('examples')
 
     X_train = []
@@ -97,6 +107,12 @@ def get_training_data():
 
 
 def get_test_data():
+    """
+    Get test data of MNIST data set.
+
+    :return: a tuple of 2 lists, a list of input vectors and a list of
+        corresponding output vectors (both as numpy 1d arrays)
+    """
     mndata = MNIST('examples')
 
     X = []
