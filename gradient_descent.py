@@ -4,10 +4,25 @@ from data_source import BatchesIterator
 
 
 class GradientDescent:
+    """An implementation of gradient descent algorithm.
+    
+    It takes an instance NeuralNet as a parameter, mutates and trains it.
+    
+    Public methods:
+        training_epoch: train for 1 epoch
+        train: train for a given number of iterations (epochs)
+    """
     class InvalidLearningRate(Exception):
         pass
 
     def __init__(self, neural_net, cost_function, learning_rate=3.0):
+        """
+        Set initial learning configuration.
+        
+        :param neural_net: an instance of NeuralNet class to train 
+        :param cost_function: an instance of CostFunction sub class
+        :param learning_rate: a float, determines the size of the update step
+        """
         if learning_rate <= 0:
             raise self.InvalidLearningRate('Learning rate must be a positive number')
         self._nnet= neural_net
@@ -25,6 +40,12 @@ class GradientDescent:
             biases[i] -= self._rate * bias_gradient[i]
 
     def training_epoch(self, data_src):
+        """
+        Perform a single iteration of gradient descent.
+        
+        :param data_src: an instance of DataSource sub class 
+        :return: None
+        """
         cost_function = self._cost_function
         gradient_calculator = BackPropagationBasedCalculator(data_src=data_src,
                                                              neural_net=self._nnet,
@@ -34,16 +55,38 @@ class GradientDescent:
         self.update_biases(bias_gradient=bgrad)
 
     def train(self, data_src, nepochs):
+        """Train a neural net for a given number of iterations.
+        
+        :param data_src: an instance of DataSource sub class
+        :param nepochs: int, number of iterations to do
+        """
         for i in range(nepochs):
             self.training_epoch(data_src=data_src)
 
 
 class StochasticGradientDescent(GradientDescent):
+    """A subclass of GradientDescent. It implements a stochastic gradient descent.
+    
+    Unlike GradientDescent instances, instances of this class will update
+    parameters using a gradient calculated on a small subset of training set
+    (say, 50 or 100 training examples). This allows for a much faster training.
+    
+    Overridden methods:
+        training_epoch
+    """
     class InvalidBatchSize(Exception):
         pass
 
     def __init__(self, neural_net, cost_function,
                  learning_rate=3.0, batch_size=50):
+        """
+        Initial configuration.
+        
+        :param neural_net: an instance of NeuralNet class to train 
+        :param cost_function: an instance of CostFunction class
+        :param learning_rate: float, determines how large is the update step
+        :param batch_size: int, number of training examples used to compute a gradient
+        """
         if not (type(batch_size) is int) or batch_size <= 0:
             raise self.InvalidBatchSize('Batch size must be a positive integer')
         GradientDescent.__init__(self, neural_net, cost_function,

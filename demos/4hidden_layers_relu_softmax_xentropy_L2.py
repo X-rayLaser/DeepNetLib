@@ -7,7 +7,7 @@ from cost_functions import CrossEntropyCost
 from activation_functions import Rectifier, Sigmoid, Softmax
 
 
-conf = TrainerConfig.make_config(hidden_layer_sizes=[13, 12, 11, 10],
+conf = TrainerConfig.make_config(hidden_layer_sizes=[30, 30, 30, 30],
                                  hidden_activation=Rectifier,
                                  output_activation=Softmax,
                                  loss_function=CrossEntropyCost,

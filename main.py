@@ -18,6 +18,24 @@ class CreateLayerMixin:
 
 
 class Layer(CreateLayerMixin):
+    """
+    A fully-connected layer used by instances of NeuralNet classes.
+    
+    Layer is a subclass of CreateLayerMixin class.
+    
+    Methods:
+        feed: take an input vector and return Z and activation vectors
+        feed_rich: similar to feed, but in addition return vector of Z derivatives
+        weigts: return a matrix of weights
+        biases: return a matrix of biases
+        randomize: perform initialization of parameters in the layer
+        set_activation: set an activation function for this layer
+        get_activation: get an activation function
+        set_weights: use a given matrix for weights of the layer
+        set_biases: use a given vector for biases
+        set_weight: set a value for an individual weight
+        set_bias: set a values for an bias vector component 
+    """
     class BadArchitecture(Exception):
         pass
 
@@ -25,6 +43,12 @@ class Layer(CreateLayerMixin):
         pass
 
     def __init__(self, size, prev_size, activation):
+        """
+        
+        :param size: number of units in the layer, int
+        :param prev_size: number of units in preceding layer, int
+        :param activation: an activation function, one of Sigmoid, Rectifier, Softmax
+        """
         if size == 0 or prev_size == 0:
             raise self.BadArchitecture('Must have at least 1 node per layer')
         self._weights = np.zeros((size, prev_size), dtype=float)
@@ -32,23 +56,49 @@ class Layer(CreateLayerMixin):
         self._activation_function = activation
 
     def feed(self, x):
+        """
+        For a given vector x, find a weighted sum and activation vectors. 
+        :param x: an input vector, a numpy 1d array
+        :return: a tuple of activations and weighted sums as numpy 1d arrays
+        """
         z = weighed_sum(weights=self.weights(), activations=x,
                         biases=self.biases())
         a = self._activation_function.activation(z)
         return a, z
 
     def feed_rich(self, x):
+        """
+        Similarly to feed method, but compute derivatives of weighted sum vector.
+        
+        :param x: an input vector, a numpy 1d array
+        :return: a tuple of activations, weighted sums and their derivatives as numpy 1d arrays 
+        """
         a, z = self.feed(x)
         z_prime = self._activation_function.gradient(z)
         return a, z, z_prime
 
     def weights(self):
+        """
+        
+        :return: return a reference to the weight matrix as numpy 2d array 
+        """
         return self._weights
 
     def biases(self):
+        """
+        
+        :return: return a reference to the bias vector as numpy 1d array 
+        """
         return self._biases
 
     def randomize(self):
+        """
+        Randomly initialize weights for the purpose of symmetry breaking.
+        
+        Assign all biases to small positive constant. 
+        
+        :return: None
+        """
         rows, cols = self.weights().shape
         max_val = 0.1
         self._weights = np.random.randn(rows, cols) * max_val
@@ -59,28 +109,71 @@ class Layer(CreateLayerMixin):
         self._biases.fill(mu)
 
     def set_activation(self, activation):
+        """
+        Set an activation function for this layer.
+        
+        :param activation: one of Sigmoid, Rectifier, Softmax classes 
+        :return: None
+        """
         self._activation_function = activation
 
     def get_activation(self):
+        """
+        Get an activation function used by the layer.
+        
+        :return: one of Sigmoid, Rectifier, Softmax classes 
+        """
         return self._activation_function
 
     def get_layer_size(self):
+        """
+        Get a number of units in the layer.
+        
+        :return: a number of units, int 
+        """
         return self.biases().shape[0]
 
     def set_weights(self, weights):
+        """
+        Set the exact weights matrix to use.
+        
+        :param weights: numpy 2d array 
+        :return: None
+        """
         if weights.shape != self.weights().shape:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._weights = np.copy(weights)
 
     def set_biases(self, biases):
+        """
+        Set the exact vector of biases.
+        
+        :param biases: numpy 1d array
+        :return: None
+        """
         if biases.shape != self.biases().shape:
             raise self.InvalidMatrixDimensions('Wrong weight matrix dimensions')
         self._biases = np.copy(biases)
 
     def set_weight(self, row, col, new_value):
+        """
+        Assign a value to the weight in specified location.
+        
+        :param row: a row in the matrix, int  
+        :param col: a column in the matrix, int
+        :param new_value: new value of the weight
+        :return: None
+        """
         self.weights()[row, col] = new_value
 
     def set_bias(self, row, new_value):
+        """
+        Assign a value to the bias in specified row.
+        
+        :param row: a 0-based index of a bias vector 
+        :param new_value: new value of the bias
+        :return: None
+        """
         self.biases()[row] = new_value
 
 
