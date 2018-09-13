@@ -21,12 +21,14 @@ class Layer(CreateLayerMixin):
     """
     A fully-connected layer used by instances of NeuralNet classes.
     
+    Can be used as a hidden layer or output layer.
+    
     Layer is a subclass of CreateLayerMixin class.
     
     Methods:
         feed: take an input vector and return Z and activation vectors
         feed_rich: similar to feed, but in addition return vector of Z derivatives
-        weigts: return a matrix of weights
+        weights: return a matrix of weights
         biases: return a matrix of biases
         randomize: perform initialization of parameters in the layer
         set_activation: set an activation function for this layer
@@ -178,6 +180,13 @@ class Layer(CreateLayerMixin):
 
 
 class InputLayer(CreateLayerMixin):
+    """
+    An input layer in the neural net.
+    
+    No need to include it in a neural net. It serves just
+    to simplify the creation of next layers actually present in the
+    network structure.
+    """
     def __init__(self, size):
         self._size = size
 
@@ -186,8 +195,21 @@ class InputLayer(CreateLayerMixin):
 
 
 class NetFactory:
+    """
+    A factory class encapsulating the building an instances of NeuralNet class.
+    
+    Use this class rather than instantiating NeuralNet objects directly.
+    """
     @staticmethod
     def create_neural_net(sizes, hidden_layer_activation=Sigmoid, output_layer_activation=Sigmoid):
+        """
+        Create a neural net with specified architecture.
+        
+        :param sizes: a python list containing sizes of all layers except the input layer 
+        :param hidden_layer_activation: activation function used in all hidden layers
+        :param output_layer_activation: activation function applied in the output layer 
+        :return: an instance of NeuralNet class
+        """
         input_size = sizes[0]
         nnet = NeuralNet(input_size=input_size)
 
@@ -201,10 +223,32 @@ class NetFactory:
 
 
 class NeuralNet:
+    """
+    An implementation of an artificial neural network.
+    
+    Methods:
+        add_layer: add an additional layer
+        layers: get a list of all layers
+        feed: map an input vector x to some output vector y
+        feed_into_layer: feed an input directly to the specified layer
+        weights: get a list of all weight matrices
+        biases: get a list of all biases
+        number_of_layers: get a total number of layers
+        layer_sizes: get a list of sizes of each layer
+        randomize_parameters: randomly initialize weights and biases
+        save: save weights and biases in a file
+    
+    Static methods:
+        create_from_file: restore a network from a file
+    """
     class BadArchitecture(Exception):
         pass
 
     def __init__(self, input_size):
+        """
+        
+        :param input_size: number of elements in all input vector 
+        """
         if input_size < 1:
             raise self.BadArchitecture('Must have at least 1 node in input layer')
 
@@ -218,14 +262,31 @@ class NeuralNet:
         return self._feed_next(activations=a, layer=layer+1)
 
     def add_layer(self, layer):
+        """
+        Append a layer to the neural net.
+        
+        :param layer: an instance of Layer class 
+        :return: None
+        :raise NeuralNet.BadArchitecture in case there is a mismatch in matrix sizes 
+        """
         if len(self.layers()) > 0 and layer.weights().shape[1] != self.layers()[-1].weights().shape[0]:
             raise self.BadArchitecture('Incompatible layers')
         self._layers.append(layer)
 
     def layers(self):
+        """
+        
+        :return: a python list of Layer instances 
+        """
         return self._layers
 
     def feed(self, x):
+        """
+        For a given vector x, find an output vector.
+        
+        :param x: input vector, numpy 1d array 
+        :return: output of the network, numpy 1d array
+        """
         return self._feed_next(activations=x, layer=0)
 
     def feed_into_layer(self, x, layer):
@@ -233,9 +294,19 @@ class NeuralNet:
         return self.layers()[layer].feed(x)
 
     def weights(self):
+        """
+        Get all weights in all layers, 1 matrix per layer.
+        
+        :return: a python list of weight matrices of type numpy 2d array
+        """
         return [layer.weights() for layer in self._layers]
 
     def biases(self):
+        """
+        Get all biases in all layers, 1 bias vector per layer.
+         
+        :return: a python list of bias vectors of type numpy 1d array 
+        """
         return [layer.biases() for layer in self._layers]
 
     def number_of_layers(self):
@@ -243,6 +314,11 @@ class NeuralNet:
         return len(self._layers) + 1
 
     def layer_sizes(self):
+        """
+        Get a list of sizes of all layers except the input layer.
+        
+        :return: a python list of integers 
+        """
         sizes = []
         weights = self.weights()
         for i in range(len(weights)):
