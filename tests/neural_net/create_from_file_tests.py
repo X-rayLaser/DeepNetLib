@@ -1,7 +1,7 @@
 import unittest
 import json
 import os
-from main import NeuralNet
+from neural_net import NeuralNet
 
 
 class CreateFromFileTests(unittest.TestCase):

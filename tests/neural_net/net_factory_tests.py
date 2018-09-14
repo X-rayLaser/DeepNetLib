@@ -1,5 +1,5 @@
 import unittest
-from main import NeuralNet, NetFactory
+from neural_net import NeuralNet, NetFactory
 import activation_functions
 import cost_functions
 

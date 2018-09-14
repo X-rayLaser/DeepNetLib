@@ -1,5 +1,5 @@
 import unittest
-from main import NeuralNet, Layer, NetFactory
+from neural_net import NeuralNet, Layer, NetFactory
 
 
 class AddLayerTests(unittest.TestCase):

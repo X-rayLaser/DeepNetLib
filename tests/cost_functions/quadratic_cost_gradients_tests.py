@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import cost_functions
 from activation_functions import Sigmoid, Rectifier
-from main import NetFactory
+from neural_net import NetFactory
 
 
 class QuadraticCostGradientsTests(unittest.TestCase):

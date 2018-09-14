@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import NeuralNet, NetFactory
+from neural_net import NeuralNet, NetFactory
 from activation_functions import Rectifier
 
 

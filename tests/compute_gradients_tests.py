@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import helpers
-from main import NetFactory
+from neural_net import NetFactory
 import cost_functions
 import activation_functions
 from gradient_calculator import BackPropagationBasedCalculator, NumericalCalculator

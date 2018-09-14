@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import Layer
+from neural_net import Layer, InputLayer
 import activation_functions
 
 
@@ -213,9 +213,6 @@ class LayerCreateNextLayer(unittest.TestCase):
 
         next_layer = next_layer.create_next_layer(size=5, activation=activation_functions.Sigmoid)
         self.assertEqual(next_layer.get_activation(), activation_functions.Sigmoid)
-
-
-from main import InputLayer
 
 
 class InputLayerCreateNextLayer(unittest.TestCase):

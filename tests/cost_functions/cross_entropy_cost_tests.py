@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import cost_functions
-from main import NetFactory
+from neural_net import NetFactory
 
 
 class CrossEntropyCostTests(unittest.TestCase):

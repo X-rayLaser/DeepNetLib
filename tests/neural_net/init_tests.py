@@ -1,5 +1,5 @@
 import unittest
-from main import NeuralNet
+from neural_net import NeuralNet
 
 
 class NeuralNetInitialization(unittest.TestCase):

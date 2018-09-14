@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import helpers
-from main import NetFactory
+from neural_net import NetFactory
 from gradient_calculator import NumericalCalculator
 from cost_functions import QuadraticCost
 from data_source import PreloadSource

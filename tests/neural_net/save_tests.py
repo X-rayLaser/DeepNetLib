@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 import numpy as np
-from main import NeuralNet, NetFactory
+from neural_net import NeuralNet, NetFactory
 from cost_functions import CrossEntropyCost
 from data_source import PreloadSource
 

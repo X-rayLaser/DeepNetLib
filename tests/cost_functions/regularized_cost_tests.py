@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from cost_functions import QuadraticCost, CrossEntropyCost
-from main import NetFactory
+from neural_net import NetFactory
 from data_source import PreloadSource
 
 

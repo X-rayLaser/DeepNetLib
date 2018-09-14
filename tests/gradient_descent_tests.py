@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from main import NetFactory
+from neural_net import NetFactory
 from gradient_descent import GradientDescent, StochasticGradientDescent
 from gradient_calculator import BackPropagationBasedCalculator
 from cost_functions import QuadraticCost

@@ -1,7 +1,7 @@
 from random import SystemRandom
 import numpy as np
 import math
-from main import NeuralNet, NetFactory
+from neural_net import NeuralNet, NetFactory
 import helpers
 import gradient_descent
 import cost_functions

@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
-from main import NetFactory
+from neural_net import NetFactory
 from data_source import PreloadSource, DataSetIterator
 from gradient_descent import StochasticGradientDescent, GradientDescent
 from cost_functions import QuadraticCost, CrossEntropyCost
