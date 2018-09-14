@@ -1,6 +1,7 @@
 import unittest
 import os
 import numpy as np
+from PIL import Image
 from helpers import shuffle_pairwise, list_to_chunks, InvalidChunkSize
 import helpers
 
@@ -178,7 +179,7 @@ class MakeDigitImage(unittest.TestCase):
         vector = np.array([2, 9, 10, 0, 254, 0], dtype=np.uint8)
         helpers.create_image(dest_fname=dest_file,
                              pixel_vector=vector, width=2, height=3)
-        from PIL import Image
+
         try:
             im = Image.open(dest_file)
             self.assertEqual(im.width, 2)

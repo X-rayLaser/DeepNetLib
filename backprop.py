@@ -1,7 +1,7 @@
 """
 :class BackPropagation: implements back propagation algorithm
 """
-from structures import LinkedList, ActivatedLayer
+from structures import ActivatedLayer
 
 
 class BackPropagation:

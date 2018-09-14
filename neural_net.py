@@ -1,6 +1,5 @@
+import json
 import numpy as np
-import cost_functions
-from gradient_descent import GradientDescent
 from activation_functions import Sigmoid
 
 
@@ -343,7 +342,6 @@ class NeuralNet:
         :param dest_fname: a full path to the file, string
         :return: None
         """
-        import json
         layers = []
 
         net_layers = len(self.biases())
@@ -367,7 +365,6 @@ class NeuralNet:
         :param fname: a full path to the file storing weights and biases
         :return: an instance of NeuralNet class
         """
-        import json
         with open(fname, 'r') as f:
             s = f.read()
 

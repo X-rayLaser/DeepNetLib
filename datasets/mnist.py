@@ -1,4 +1,6 @@
 import os
+from shutil import copyfile
+import gzip
 import numpy as np
 import requests
 import requests_mock
@@ -26,15 +28,12 @@ def cached_exists(fname):
 def cache_file(fname):
     if not cached_exists(fname):
         os.makedirs(os.path.join('examples', 'cached'), exist_ok=True)
-        from shutil import copyfile
         src = os.path.join('examples', fname)
         dst = os.path.join('examples', 'cached', fname)
         copyfile(src, dst)
 
 
 def uncompress(src, dest):
-    import gzip
-
     with open(src, 'rb') as fs:
         unzipped_data = gzip.decompress(fs.read())
         with open(dest, 'wb') as fd:

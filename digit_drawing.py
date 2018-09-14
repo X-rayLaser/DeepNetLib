@@ -1,6 +1,6 @@
 import numpy as np
 import helpers
-from neural_net import NeuralNet, NetFactory
+from neural_net import NetFactory
 import cost_functions
 import gradient_descent
 from data_source import PreloadSource

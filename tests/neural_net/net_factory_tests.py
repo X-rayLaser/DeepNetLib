@@ -1,7 +1,6 @@
 import unittest
 from neural_net import NeuralNet, NetFactory
 import activation_functions
-import cost_functions
 
 
 class NetFactoryTests(unittest.TestCase):

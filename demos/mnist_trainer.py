@@ -4,9 +4,9 @@ import os
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 from neural_net import NetFactory
 from data_source import PreloadSource, DataSetIterator
-from gradient_descent import StochasticGradientDescent, GradientDescent
+from gradient_descent import StochasticGradientDescent
 from cost_functions import QuadraticCost, CrossEntropyCost
-from activation_functions import Rectifier, Sigmoid, Softmax
+from activation_functions import Rectifier, Softmax
 from datasets import mnist
 import numpy as np
 

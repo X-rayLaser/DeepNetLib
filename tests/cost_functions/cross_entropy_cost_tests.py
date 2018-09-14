@@ -1,4 +1,5 @@
 import unittest
+from math import exp
 import numpy as np
 import cost_functions
 from neural_net import NetFactory
@@ -27,7 +28,6 @@ class CrossEntropyCostTests(unittest.TestCase):
         self.assertAlmostEqual(c, 0.6931, places=4)
 
     def test_single_example_1_output_neuron_max_entropy(self):
-        from math import exp
         a = [np.array([1 - exp(-10)], float)]
         y = [np.array([0], float)]
         c = self.cross_entropy_cost(a, y)
@@ -75,7 +75,6 @@ class CrossEntropyCostTests(unittest.TestCase):
         self.assertAlmostEqual(c, 0.6931 * 2, places=3)
 
     def test_single_example_many_output_neurons_max_entropy(self):
-        from math import exp
         a = [np.array([1 - exp(-10), exp(-10)], float)]
         y = [np.array([0, 1], float)]
         c = self.cross_entropy_cost(a, y)

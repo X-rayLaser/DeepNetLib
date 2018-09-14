@@ -1,6 +1,7 @@
 import random
 import os
 import numpy as np
+from PIL import Image
 
 
 def generate_data(f, start_value, end_value, step_value):
@@ -142,8 +143,6 @@ def create_image(dest_fname, pixel_vector, width, height):
     dest_fname.split()
     dirname, fname = os.path.split(dest_fname)
     os.makedirs(dirname, exist_ok=True)
-
-    from PIL import Image
 
     pixels = pixel_vector.reshape((height, width))
     im = Image.fromarray(pixels.astype('uint8'), mode='L')

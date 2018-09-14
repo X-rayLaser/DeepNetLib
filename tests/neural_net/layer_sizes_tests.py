@@ -1,5 +1,5 @@
 import unittest
-from neural_net import NeuralNet, NetFactory
+from neural_net import NetFactory
 
 
 class LayerSizesTests(unittest.TestCase):

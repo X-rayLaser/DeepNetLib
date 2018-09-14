@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import cost_functions
-from neural_net import NeuralNet, NetFactory
+from neural_net import NetFactory
 from data_source import PreloadSource
 
 

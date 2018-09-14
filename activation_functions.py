@@ -10,7 +10,6 @@ Classes:
     - **Softmax**
 
 """
-import math
 import numpy as np
 
 

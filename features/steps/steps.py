@@ -1,6 +1,7 @@
 from random import SystemRandom
 import numpy as np
 import math
+import random
 from neural_net import NeuralNet, NetFactory
 import helpers
 import gradient_descent
@@ -124,7 +125,6 @@ def examples_drawn_from_distributions(number_of_examples, seq_len, create_exampl
 
 
 def create_example(slen):
-    import random
     sr = random.SystemRandom()
 
     num_of_distrib = 3
