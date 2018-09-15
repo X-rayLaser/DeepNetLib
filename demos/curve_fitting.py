@@ -23,7 +23,8 @@ while x < 11:
     x += 1
 
 
-net = NetFactory.create_neural_net([1, 200, 1], hidden_layer_activation=Sigmoid,
+net = NetFactory.create_neural_net([1, 200, 1],
+                                   hidden_layer_activation=Sigmoid,
                                    output_layer_activation=Rectifier)
 
 net.randomize_parameters()
@@ -43,4 +44,3 @@ while t < 10:
     y_estimate = net.feed(x)
     print('{} -> {}'.format(x, y_estimate))
     t += 0.1
-
