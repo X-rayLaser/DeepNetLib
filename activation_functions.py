@@ -95,3 +95,16 @@ class Softmax:
                     jacobian[i, j] = si * sj
 
         return jacobian
+
+
+class Identity:
+    """
+    Represents a vectorized form of function y = x.
+    """
+    @staticmethod
+    def activation(z):
+        return z
+
+    @staticmethod
+    def gradient(z):
+        return np.ones(z.shape[0])
