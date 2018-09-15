@@ -9,21 +9,21 @@ parameters in a file and restore the neural net from this file later to continue
 Please, note that it is not suitable for production environment. For production grade development or serious
 prototyping you want to use TensorFlow or other machine learning frameworks.
 
-## The motivation
+# Motivation
 
 The initial purpose of this project was to better understand inner workings of feed-forward (and, possibly, others)
-neural networks through heads on approach. In particular, dive into the details of how neural networks learn, how can
-they approximate functions, how back propagation works, see the differences between different activation and loss
-functions, etc.
+neural networks through heads on approach. In particular, dive into the details of how neural networks learn, how
+can they approximate functions, how back propagation works, see the differences between different activation and
+loss functions, etc.
 
-As the amount of code grew, I have decided to turn it into a repository and upload it here. I hope someone will find
-it useful.
+As the amount of code grew, I have decided to turn it into a repository and upload it here. I hope someone will
+find it useful.
 
 Feel free to clone it, experiment with it, copy and paste pieces of code (or the whole thing) into your own
 projects. Try out different demo scripts in /demos folder (see below) to see the neural net in action.
-Specifically, run scripts like 4hidden_layers_relu_softmax_xentropy_L2 to see how neural network performs on
-standard MNIST dataset. Or see how can it be used in reverse, that is how it can generate the images of digits
-from some vectors. Enjoy.
+Specifically, run scripts like `4hidden_layers_relu_softmax_xentropy_L2` to see how neural network performs
+on standard MNIST dataset. Or see how can it be used in reverse, that is how it can generate the images of
+digits from some vectors. Enjoy.
 
 # Features
 
@@ -44,7 +44,7 @@ Specifically, one can:
  8. Save the learned model (weights and biases) in the JSON formatted file
  9. Restore a neural net from the file
 
-## Getting started
+# Getting started
 
 Open a terminal
 
@@ -75,7 +75,7 @@ Install projects dependencies
     pip install -r requirements.txt
 Now you are all set.
 
-## Simple usage
+# Simple usage
 
 In this simple example we are going to create a neural network and train it to fit a simple curve y = x*x.
 First, let's import everything that we will need
@@ -140,7 +140,7 @@ Hopefully, everything went well. Let's test our trained neural net on a few exam
         print('{} -> {}'.format(x, y_estimate))
         t += 0.1
 
-## Running tests
+# Running tests
 
 Run unit and integration tests.
 
@@ -153,7 +153,7 @@ All tests should pass, but if one or 2 fail on rare occasion,  than it is ok. Th
 to the training process causing 1 or 2 tests checking classification accuracy to fail sometimes.
 A few warnings are also ok.
 
- ## Trying demos
+# Trying demos
 
 Try out these python scripts performing classification tasks on MNIST data set. You should wait a couple of minutes
 after launch before you see any feedback text such as current learning iteration and classification accuracy.
@@ -183,9 +183,17 @@ Generate images of hand-written digits from vectors.
 
     python generating_digits.py
 
-Generate images from vectors corrupted by guassian noise.
+Generate images from vectors corrupted by gaussian noise.
 
     python noisy_digits.py
 
-## License
+
+##**Regression**
+
+Fit a function y=x^2
+
+    python curve_fitting.py
+
+
+# License
 MIT license.
