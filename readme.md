@@ -1,4 +1,49 @@
-## Welcome!
+# Welcome
+This is a simple deep learning library implementing feed-forward neural networks and algorithms for training it.
+It is written in Python and Numpy.
+
+The library provides the most basic functionality. One can train a feed-forward neural network on a data set and use
+the net later for predicting a vector Y from vector X. It is also possible to train neural net for awhile, save its
+parameters in a file and restore the neural net from this file later to continue training.
+
+Please, note that it is not suitable for production environment. For production grade development or serious
+prototyping you want to use TensorFlow or other machine learning frameworks.
+
+## The motivation
+
+The initial purpose of this project was to better understand inner workings of feed-forward (and, possibly, others)
+neural networks through heads on approach. In particular, dive into the details of how neural networks learn, how can
+they approximate functions, how back propagation works, see the differences between different activation and loss
+functions, etc.
+
+As the amount of code grew, I have decided to turn it into a repository and upload it here. I hope someone will find
+it useful.
+
+Feel free to clone it, experiment with it, copy and paste pieces of code (or the whole thing) into your own
+projects. Try out different demo scripts in /demos folder (see below) to see the neural net in action.
+Specifically, run scripts like 4hidden_layers_relu_softmax_xentropy_L2 to see how neural network performs on
+standard MNIST dataset. Or see how can it be used in reverse, that is how it can generate the images of digits
+from some vectors. Enjoy.
+
+# Features
+
+You have a freedom of choosing the architecture of the net (how many hidden layers are there and their size),
+which loss function to use, which activation functions to have for hidden layers and for output layer, and more.
+
+There are few other customizations and options available such as choosing mini batch size for the stochastic gradient
+descent, using L2 regularization etc.
+Specifically, one can:
+
+ 1. Choose an architecture of the net (how many hidden layers are there and their size)
+ 2. Choose a between different loss functions (quadratic vs cross-entropy)
+ 3. Use distinct activation functions for hidden layers and output layer (e. g. have RELU in hidden layers and soft-max in the output layer)
+ 4. Choose from a few most commonly used activation functions: Sigmoid, Rectifier, Soft-max
+ 5. Use L2 (weight decay) regularization
+ 6. Optimize with batch gradient descent or stochastic gradient descent
+ 7. Set the size of the mini batch
+ 8. Save the learned model (weights and biases) in the JSON formatted file
+ 9. Restore a neural net from the file
+
 ## Getting started
 
 Open a terminal
@@ -42,7 +87,9 @@ First, let's import everything that we will need
     from cost_functions import QuadraticCost
     from gradient_descent import GradientDescent
 
-We create a feed-forward neural network with 3 layers with 1 unit in the input layer, 1 unit in the output layer and 200 units in the hidden layer. We use logistic sigmoid for hidden layer as an activation, also we use a Rectifier (or Rectified Linear Unit) as an activation in the output layer.
+We create a feed-forward neural network with 3 layers with 1 unit in the input layer, 1 unit in the output layer
+and 200 units in the hidden layer. We use logistic sigmoid for hidden layer as an activation, also we use a
+Rectifier (or Rectified Linear Unit) as an activation in the output layer.
 
     net = NetFactory.create_neural_net([1, 200, 1],
                                    hidden_layer_activation=Sigmoid,
@@ -56,7 +103,8 @@ We are going to optimize quadratic loss function and use L2 regularization
 
     cost = QuadraticCost(neural_net=net, l2_reg_term=0.0005)
 
-Now we will instantiate a gradient descent object which will try to minimize this loss. The learning_rate parameter indicates how large will be each update step
+Now we will instantiate a gradient descent object which will try to minimize this loss. The learning_rate parameter
+indicates how large will be each update step
 
     gd = GradientDescent(neural_net=net, cost_function=cost,
                          learning_rate=0.001)
@@ -107,9 +155,11 @@ A few warnings are also ok.
 
  ## Trying demos
 
-Try out these python scripts performing classification tasks on MNIST data set. You should wait a couple of minutes after launch before you see any feedback text such as current learning iteration and classification accuracy.
+Try out these python scripts performing classification tasks on MNIST data set. You should wait a couple of minutes
+after launch before you see any feedback text such as current learning iteration and classification accuracy.
 
-Keep in mind that some scripts are expected to run for quite some time before they finish. Feel free to terminate the program at any time by pressing ctrl+c.
+Keep in mind that some scripts are expected to run for quite some time before they finish. Feel free to terminate
+the program at any time by pressing ctrl+c.
 
 **Classification scripts**
 
@@ -117,7 +167,8 @@ One hidden layer, sigmoid activation function for all layers, unregularized cros
 
     python 1hidden_layer_sigmoid_xentropy.py
 
-2 hidden layers, rectified linear units (RELU) for hidden layers, soft-max activation for output layer. Cross entropy loss with L2 regularization.
+2 hidden layers, rectified linear units (RELU) for hidden layers, soft-max activation for output layer. Cross
+entropy loss with L2 regularization.
 
     python 2hidden_layers_relu_softmax_xentropy_L2.py
 
